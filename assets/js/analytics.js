@@ -6,8 +6,21 @@
     function trackEvent(eventName, eventParams = {}) {
         if (typeof gtag !== 'undefined') {
             gtag('event', eventName, eventParams);
+            console.log('📊 GA4 Event:', eventName, eventParams);
+        } else {
+            console.warn('⚠️ GA4 não carregado ainda');
         }
     }
+
+    // Evento de teste para forçar ativação do GA4
+    window.addEventListener('load', function () {
+        setTimeout(function () {
+            trackEvent('site_loaded', {
+                event_category: 'engagement',
+                timestamp: new Date().toISOString()
+            });
+        }, 1000);
+    });
 
     // Aguarda o DOM carregar
     document.addEventListener('DOMContentLoaded', function () {
