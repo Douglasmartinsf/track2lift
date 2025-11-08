@@ -54,6 +54,7 @@ document.getElementById('currentYear').textContent = new Date().getFullYear();
             options: {
                 responsive: true,
                 maintainAspectRatio: true,
+                aspectRatio: window.innerWidth < 768 ? 1.5 : 2,
                 plugins: {
                     legend: { display: false },
                     tooltip: {

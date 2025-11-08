@@ -102,10 +102,10 @@
             link.addEventListener('click', function () {
                 const linkText = this.textContent.trim().toLowerCase();
                 let platform = 'other';
-                
+
                 if (linkText.includes('instagram')) platform = 'instagram';
                 else if (linkText.includes('linkedin')) platform = 'linkedin';
-                
+
                 trackEvent('social_click', {
                     platform: platform
                 });
