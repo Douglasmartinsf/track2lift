@@ -12,16 +12,6 @@
         }
     }
 
-    // Evento de teste para forçar ativação do GA4
-    window.addEventListener('load', function () {
-        setTimeout(function () {
-            trackEvent('site_loaded', {
-                event_category: 'engagement',
-                timestamp: new Date().toISOString()
-            });
-        }, 1000);
-    });
-
     // Aguarda o DOM carregar
     document.addEventListener('DOMContentLoaded', function () {
 
@@ -32,10 +22,8 @@
         if (heroCTA) {
             heroCTA.addEventListener('click', function () {
                 trackEvent('cta_click', {
-                    cta_location: 'hero',
-                    cta_text: 'Comece a sua evolução',
-                    event_category: 'engagement',
-                    event_label: 'Hero CTA'
+                    button_location: 'hero',
+                    button_text: 'Comece a sua evolução'
                 });
             });
         }
@@ -45,10 +33,8 @@
         if (headerCTA && headerCTA.textContent.includes('Acessar Agora')) {
             headerCTA.addEventListener('click', function () {
                 trackEvent('cta_click', {
-                    cta_location: 'header',
-                    cta_text: 'Acessar Agora',
-                    event_category: 'engagement',
-                    event_label: 'Header CTA'
+                    button_location: 'header',
+                    button_text: 'Acessar Agora'
                 });
             });
         }
@@ -59,37 +45,19 @@
             if (cta.textContent.includes('Comece a sua evolução') && cta !== heroCTA) {
                 cta.addEventListener('click', function () {
                     trackEvent('cta_click', {
-                        cta_location: 'final_section',
-                        cta_text: 'Comece a sua evolução',
-                        event_category: 'engagement',
-                        event_label: 'Final CTA'
+                        button_location: 'final_section',
+                        button_text: 'Comece a sua evolução'
                     });
                 });
             }
         });
 
-        // ===== TRACKING DE SEÇÃO IA =====
-
-        // Botão "Gerar Sugestão de Refeição"
-        const generateButton = document.getElementById('generateButton');
-        if (generateButton) {
-            generateButton.addEventListener('click', function () {
-                trackEvent('ai_recipe_generate_click', {
-                    event_category: 'ai_interaction',
-                    event_label: 'Generate Recipe Button'
-                });
-            });
-        }
-
         // CTA "Acessar Plataforma Completa" (dentro do resultado da IA)
-        // Este será rastreado dinamicamente quando o resultado for exibido
         document.addEventListener('click', function (e) {
             if (e.target.textContent.includes('Acessar Plataforma Completa')) {
                 trackEvent('cta_click', {
-                    cta_location: 'ai_result',
-                    cta_text: 'Acessar Plataforma Completa',
-                    event_category: 'conversion',
-                    event_label: 'AI Result CTA'
+                    button_location: 'ai_result',
+                    button_text: 'Acessar Plataforma Completa'
                 });
             }
         });
@@ -102,9 +70,7 @@
             link.addEventListener('click', function () {
                 trackEvent('navigation_click', {
                     link_text: this.textContent.trim(),
-                    link_url: this.getAttribute('href'),
-                    event_category: 'navigation',
-                    event_label: 'Menu Navigation'
+                    section_target: this.getAttribute('href')
                 });
             });
         });
@@ -123,9 +89,7 @@
                 if (scrollPercent >= depth && !scrollDepthTracked.includes(depth)) {
                     scrollDepthTracked.push(depth);
                     trackEvent('scroll_depth', {
-                        scroll_depth: depth + '%',
-                        event_category: 'engagement',
-                        event_label: 'Scroll Depth: ' + depth + '%'
+                        depth_percentage: depth
                     });
                 }
             });
@@ -136,10 +100,14 @@
         const socialLinks = document.querySelectorAll('footer a');
         socialLinks.forEach(function (link) {
             link.addEventListener('click', function () {
+                const linkText = this.textContent.trim().toLowerCase();
+                let platform = 'other';
+                
+                if (linkText.includes('instagram')) platform = 'instagram';
+                else if (linkText.includes('linkedin')) platform = 'linkedin';
+                
                 trackEvent('social_click', {
-                    social_network: this.textContent.trim(),
-                    event_category: 'social',
-                    event_label: 'Footer Social Link'
+                    platform: platform
                 });
             });
         });
