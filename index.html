@@ -360,9 +360,9 @@
 
         <!-- ===== Progress Graph Section ===== -->
         <section id="progress" class="py-24 bg-black bg-opacity-20">
-            <div class="container mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center">
+            <div class="container mx-auto px-6 flex flex-col lg:grid lg:grid-cols-2 gap-12 items-center">
                 <!-- Coluna de Texto -->
-                <div>
+                <div class="text-center lg:text-left">
                     <span class="text-sm font-bold uppercase text-destaque tracking-wider">Visualize a vitória</span>
                     <h2 class="text-4xl md:text-5xl font-bold my-4">
                         Dados que Geram Resultados Reais
@@ -372,13 +372,13 @@
                         está melhorando e o que precisa de ajuste.
                     </p>
                     <p class="text-lg text-zinc-300">
-                        O gráfico ao lado mostra a <strong>evolução da carga média</strong> ao longo de 8 semanas.
+                        O gráfico <span class="lg:inline hidden">ao lado</span><span class="lg:hidden inline">abaixo</span> mostra a <strong>evolução da carga média</strong> ao longo de 8 semanas.
                     </p>
                 </div>
 
                 <!-- Coluna do Gráfico -->
-                <div class="bg-card p-4 md:p-8 rounded-2xl shadow-xl border border-zinc-700">
-                    <canvas id="progressChart" class="max-h-64 md:max-h-96"></canvas>
+                <div class="w-full max-w-lg mx-auto lg:max-w-none lg:mx-0 bg-card p-4 md:p-8 rounded-2xl shadow-xl border border-zinc-700">
+                    <canvas id="progressChart" class="w-full max-h-64 md:max-h-96"></canvas>
                 </div>
             </div>
         </section>
