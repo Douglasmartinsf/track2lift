@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="pt-br" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRACK2LIFT - Seu treino, sua dieta, um app.</title>
+
+    <!-- Google Analytics 4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-XXXXXXXXXX');
+    </script>
+
+    <!-- Tailwind CSS CDN (carrega após a configuração local) -->
+    <script src="assets/js/tailwind-config.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Configuração da API (deve carregar ANTES de app.js) -->
+    <script src="assets/js/config.js"></script>
+
+    <!-- Configuração de fontes e estilos locais -->
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="assets/css/hero-texture.css">
+</head>
+
+<body class="bg-fundo text-texto antialiased">
+
+    <!-- ===== Header ===== -->
+    <header class="sticky top-0 z-50 bg-fundo shadow-lg shadow-black/20">
+        <nav class="px-6 lg:px-8 xl:px-12 py-4">
+            <div class="flex md:grid md:grid-cols-3 items-center justify-between md:gap-8">
+                <!-- Logo (SVG) para o Header -->
+                <a href="#" class="inline-flex items-center justify-start" aria-label="TRACK2LIFT">
+                    <img id="siteLogo" src="logo/logo.svg" alt="TRACK2LIFT" class="h-5 md:h-6 lg:h-7 w-auto"
+                        onerror="this.style.display='none'" />
+                    <!-- Texto de fallback para leitores de tela / quando imagem não carregar -->
+                    <span class="sr-only">TRACK2LIFT</span>
+                </a>
+
+                <!-- Menu Hamburguer (Mobile) -->
+                <button id="mobileMenuButton" class="md:hidden text-texto hover:text-destaque transition duration-300"
+                    aria-label="Menu">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+
+                <!-- Menu de Navegação (Desktop - Centralizado) -->
+                <div class="hidden md:flex items-center justify-center gap-8 nav-menu">
+                    <a href="#features" class="text-zinc-300 hover:text-destaque transition duration-300 font-medium">
+                        Recursos
+                    </a>
+                    <span class="text-destaque">|</span>
+                    <a href="#ai-demo" class="text-zinc-300 hover:text-destaque transition duration-300 font-medium">
+                        IA
+                    </a>
+                    <span class="text-destaque">|</span>
+                    <a href="#progress" class="text-zinc-300 hover:text-destaque transition duration-300 font-medium">
+                        Progresso
+                    </a>
+                </div>
+
+                <!-- Botão CTA (Alinhado à direita - escondido em mobile) -->
+                <div class="hidden md:flex justify-end">
+                    <a href="#download"
+                        class="cta-button cta-button-no-glow bg-destaque text-texto font-bold py-2 px-5 rounded-lg hover:bg-red-700 text-sm">
+                        Acessar Agora
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Menu Mobile (oculto por padrão) -->
+        <div id="mobileMenu" class="hidden md:hidden bg-card border-t border-zinc-700">
+            <div class="px-6 py-4 space-y-4">
+                <a href="#features"
+                    class="block text-zinc-300 hover:text-destaque transition duration-300 font-medium py-2">
+                    Recursos
+                </a>
+                <a href="#ai-demo"
+                    class="block text-zinc-300 hover:text-destaque transition duration-300 font-medium py-2">
+                    IA
+                </a>
+                <a href="#progress"
+                    class="block text-zinc-300 hover:text-destaque transition duration-300 font-medium py-2">
+                    Progresso
+                </a>
+                <a href="#download"
+                    class="block bg-destaque text-texto font-bold py-3 px-5 rounded-lg hover:bg-red-700 text-center mt-4">
+                    Acessar Agora
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ===== Hero Section ===== -->
+    <main>
+        <section id="hero-section"
+            class="relative overflow-hidden py-20 md:py-28 text-center bg-gradient-to-br from-[#181818] via-[#1e1e1e] to-[#0f0f0f]">
+            <!-- Elementos decorativos geométricos -->
+            <div class="absolute inset-0 opacity-[0.07]" style="z-index: 5; isolation: isolate; will-change: auto;">
+                <!-- Canto superior esquerdo -->
+                <div class="absolute w-[550px] h-[550px] rounded-full bg-gradient-to-tr from-red-700 via-red-600 to-transparent blur-[150px] -top-64 -left-64"
+                    style="animation: none !important; transform: translateZ(0); backface-visibility: hidden;">
+                </div>
+                <!-- Canto superior direito -->
+                <div class="absolute w-[550px] h-[550px] rounded-full bg-gradient-to-tl from-red-700 via-red-600 to-transparent blur-[150px] -top-64 -right-64"
+                    style="animation: none !important; transform: translateZ(0); backface-visibility: hidden;">
+                </div>
+                <!-- Canto inferior direito -->
+                <div class="absolute w-[350px] h-[350px] rounded-full bg-gradient-to-tr from-red-700 via-transparent to-transparent blur-[200px] bottom-0 right-0"
+                    style="animation: none !important; transform: translateZ(0); backface-visibility: hidden;">
+                </div>
+            </div>
+
+            <!-- Conteúdo central -->
+            <div class="relative z-10 container mx-auto px-6">
+                <div class="mb-8">
+                    <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-wide logo-font"
+                        aria-label="TRACK2LIFT">
+                        <span>TRACK</span><span class="text-destaque">2</span><span>LIFT</span>
+                    </h1>
+                </div>
+
+                <h1 class="text-4xl md:text-6xl font-extrabold mb-4 leading-tight logo-font">
+                    Seu treino, sua dieta.
+                </h1>
+                <h2 class="text-4xl md:text-6xl font-extrabold text-destaque mb-10 logo-font">
+                    Um app.
+                </h2>
+
+                <p class="text-lg md:text-xl text-zinc-300 max-w-2xl mx-auto mb-12">
+                    Pare de adivinhar. Registre seus treinos, planeje sua dieta e veja seu progresso decolar com
+                    recomendações inteligentes.
+                </p>
+
+                <div id="download" class="flex justify-center items-center">
+                    <a href="#features" id="heroCTA"
+                        class="cta-button bg-destaque text-texto font-bold py-4 px-10 rounded-lg text-lg hover:bg-red-700">
+                        Comece a sua evolução
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== Features Section ===== -->
+        <section id="features" class="py-24 bg-black bg-opacity-20">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl md:text-4xl font-bold text-center mb-16">
+                    Tudo que você precisa para <span class="text-destaque">evoluir</span>.
+                </h2>
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+
+                    <!-- Feature 1: Log de Treino -->
+                    <div
+                        class="bg-card p-8 rounded-2xl shadow-xl border border-zinc-700 text-center transform transition duration-300 hover:scale-105 hover:border-destaque">
+                        <div class="flex justify-center mb-6">
+                            <svg class="w-16 h-16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+                                aria-label="Barbell">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path d="M2 12h1" stroke="#DC2626" stroke-width="1.4" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                                <path d="M6 8h-2a1 1 0 0 0 -1 1v6a1 1 0 0 0 1 1h2" stroke="#DC2626" stroke-width="1.4"
+                                    stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M6 7v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1 -1v-10a1 1 0 0 0 -1 -1h-1a1 1 0 0 0 -1 1z"
+                                    stroke="#DC2626" stroke-width="1.4" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                                <path d="M9 12h6" stroke="#DC2626" stroke-width="1.4" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                                <path d="M15 7v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1 -1v-10a1 1 0 0 0 -1 -1h-1a1 1 0 0 0 -1 1z"
+                                    stroke="#DC2626" stroke-width="1.4" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                                <path d="M18 8h2a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-2" stroke="#DC2626" stroke-width="1.4"
+                                    stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M22 12h-1" stroke="#DC2626" stroke-width="1.4" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-3">Log de Treino</h3>
+                        <p class="text-zinc-300">Registre cada série, repetição e peso. Acompanhe sua força e progrida
+                            sem estagnação.</p>
+                    </div>
+
+                    <!-- Feature 2: Dieta -->
+                    <div
+                        class="bg-card p-8 rounded-2xl shadow-xl border border-zinc-700 text-center transform transition duration-300 hover:scale-105 hover:border-destaque">
+                        <div class="flex justify-center mb-6">
+                            <svg class="w-16 h-16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+                                aria-label="Apple">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path
+                                    d="M4 11.319c0 3.102 .444 5.319 2.222 7.978c1.351 1.797 3.156 2.247 5.08 .988c.426 -.268 .97 -.268 1.397 0c1.923 1.26 3.728 .809 5.079 -.988c1.778 -2.66 2.222 -4.876 2.222 -7.977c0 -2.661 -1.99 -5.32 -4.444 -5.32c-1.267 0 -2.41 .693 -3.22 1.44a.5 .5 0 0 1 -.672 0c-.809 -.746 -1.953 -1.44 -3.22 -1.44c-2.454 0 -4.444 2.66 -4.444 5.319"
+                                    stroke="#DC2626" stroke-width="1.4" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                                <path d="M7 12c0 -1.47 .454 -2.34 1.5 -3" stroke="#DC2626" stroke-width="1.4"
+                                    stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M12 7c0 -1.2 .867 -4 3 -4" stroke="#DC2626" stroke-width="1.4"
+                                    stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-3">Controle de Dieta</h3>
+                        <p class="text-zinc-300">Monitore suas calorias e macros. Alcance seus objetivos de peso com
+                            precisão.</p>
+                    </div>
+
+                    <!-- Feature 3: Recomendações -->
+                    <div
+                        class="bg-card p-8 rounded-2xl shadow-xl border border-zinc-700 text-center transform transition duration-300 hover:scale-105 hover:border-destaque">
+                        <div class="flex justify-center mb-6">
+                            <svg class="w-16 h-16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+                                aria-label="Bulb">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path d="M3 12h1m8 -9v1m8 8h1m-15.4 -6.4l.7 .7m12.1 -.7l-.7 .7" stroke="#DC2626"
+                                    stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M9 16a5 5 0 1 1 6 0a3.5 3.5 0 0 0 -1 3a2 2 0 0 1 -4 0a3.5 3.5 0 0 0 -1 -3"
+                                    stroke="#DC2626" stroke-width="1.4" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                                <path d="M9.7 17l4.6 0" stroke="#DC2626" stroke-width="1.4" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-3">Recomendações IA</h3>
+                        <p class="text-zinc-300">Receba sugestões de treinos e dietas baseadas no seu progresso e
+                            objetivos.</p>
+                    </div>
+
+                    <!-- Feature 4: Progresso -->
+                    <div
+                        class="bg-card p-8 rounded-2xl shadow-xl border border-zinc-700 text-center transform transition duration-300 hover:scale-105 hover:border-destaque">
+                        <div class="flex justify-center mb-6">
+                            <svg class="w-16 h-16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+                                aria-label="Chart Histogram">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path d="M3 3v18h18" stroke="#DC2626" stroke-width="1.4" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                                <path d="M20 18v3" stroke="#DC2626" stroke-width="1.4" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                                <path d="M16 16v5" stroke="#DC2626" stroke-width="1.4" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                                <path d="M12 13v8" stroke="#DC2626" stroke-width="1.4" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                                <path d="M8 16v5" stroke="#DC2626" stroke-width="1.4" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                                <path d="M3 11c6 0 5 -5 9 -5s3 5 9 5" stroke="#DC2626" stroke-width="1.4"
+                                    stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-3">Tracking de Progresso</h3>
+                        <p class="text-zinc-300">Acompanhe sua evolução com gráficos detalhados e veja seus resultados
+                            crescerem.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== NOVA SEÇÃO: Gemini AI Demo ===== -->
+        <section id="ai-demo" class="py-24 relative overflow-hidden">
+            <!-- Elemento decorativo esquerdo -->
+            <div class="absolute left-0 top-1/2 -translate-y-1/2 pointer-events-none"
+                style="width: 500px; height: 500px; background: radial-gradient(circle, rgba(220, 38, 38, 0.25) 0%, rgba(220, 38, 38, 0.1) 40%, transparent 70%); filter: blur(80px); transform: translateY(-50%) translateX(-40%); animation: pulseGlow 6s ease-in-out infinite;">
+            </div>
+
+            <!-- Elemento decorativo direito -->
+            <div class="absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none"
+                style="width: 500px; height: 500px; background: radial-gradient(circle, rgba(239, 68, 68, 0.25) 0%, rgba(220, 38, 38, 0.1) 40%, transparent 70%); filter: blur(80px); transform: translateY(-50%) translateX(40%); animation: pulseGlow 6s ease-in-out infinite 3s;">
+            </div>
+
+            <div class="container mx-auto px-6 relative z-10">
+                <div class="text-center mb-16">
+                    <span class="text-sm font-bold uppercase text-destaque tracking-wider">TRACK2LIFT AI</span>
+                    <h2 class="text-4xl md:text-5xl font-bold my-4">
+                        Experimente o poder da nossa IA
+                    </h2>
+                    <p class="text-lg text-zinc-300 max-w-2xl mx-auto">
+                        Receba uma sugestão de refeição instantânea com base no seu objetivo e nos ingredientes que você
+                        tem em casa.
+                    </p>
+                </div>
+
+                <!-- Card único que alterna entre formulário e resultado -->
+                <div class="max-w-3xl mx-auto">
+                    <div id="formCard" class="bg-card p-8 rounded-2xl shadow-xl border border-zinc-700 space-y-6">
+                        <div>
+                            <label class="block text-sm font-medium text-zinc-200 mb-3">Seu Objetivo Principal</label>
+                            <div class="space-y-2">
+                                <label
+                                    class="objective-option flex items-center p-4 bg-zinc-700 border-2 border-zinc-600 rounded-lg cursor-pointer transition-all duration-200 hover:border-destaque hover:bg-zinc-600">
+                                    <input type="radio" name="objetivo" value="Perder Peso"
+                                        class="hidden objetivo-radio" checked>
+                                    <div
+                                        class="radio-custom w-5 h-5 rounded-full border-2 border-zinc-400 mr-3 flex items-center justify-center transition-all duration-200">
+                                        <div
+                                            class="radio-dot w-3 h-3 rounded-full bg-destaque opacity-0 transition-opacity duration-200">
+                                        </div>
+                                    </div>
+                                    <span class="text-texto font-medium">Perder Peso</span>
+                                </label>
+
+                                <label
+                                    class="objective-option flex items-center p-4 bg-zinc-700 border-2 border-zinc-600 rounded-lg cursor-pointer transition-all duration-200 hover:border-destaque hover:bg-zinc-600">
+                                    <input type="radio" name="objetivo" value="Manter Peso"
+                                        class="hidden objetivo-radio">
+                                    <div
+                                        class="radio-custom w-5 h-5 rounded-full border-2 border-zinc-400 mr-3 flex items-center justify-center transition-all duration-200">
+                                        <div
+                                            class="radio-dot w-3 h-3 rounded-full bg-destaque opacity-0 transition-opacity duration-200">
+                                        </div>
+                                    </div>
+                                    <span class="text-texto font-medium">Manter Peso</span>
+                                </label>
+
+                                <label
+                                    class="objective-option flex items-center p-4 bg-zinc-700 border-2 border-zinc-600 rounded-lg cursor-pointer transition-all duration-200 hover:border-destaque hover:bg-zinc-600">
+                                    <input type="radio" name="objetivo" value="Ganhar Massa Muscular"
+                                        class="hidden objetivo-radio">
+                                    <div
+                                        class="radio-custom w-5 h-5 rounded-full border-2 border-zinc-400 mr-3 flex items-center justify-center transition-all duration-200">
+                                        <div
+                                            class="radio-dot w-3 h-3 rounded-full bg-destaque opacity-0 transition-opacity duration-200">
+                                        </div>
+                                    </div>
+                                    <span class="text-texto font-medium">Ganhar Massa Muscular</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="ingredientesInput"
+                                class="block text-sm font-medium text-zinc-200 mb-2">Ingredientes que você tem
+                                (separados por vírgula)</label>
+                            <input type="text" id="ingredientesInput"
+                                class="w-full bg-zinc-700 border border-zinc-600 rounded-lg px-4 py-3 text-texto focus:outline-none focus:border-destaque"
+                                placeholder="Ex: frango, arroz, brócolis, ovo">
+                        </div>
+
+                        <button id="generateButton"
+                            class="cta-button w-full bg-destaque text-texto font-bold py-4 px-10 rounded-lg text-lg">
+                            Gerar Sugestão de Refeição
+                        </button>
+                    </div>
+
+                    <!-- Coluna de Resultado (inicialmente oculta) -->
+                    <div id="resultCard"
+                        class="hidden bg-card p-8 rounded-2xl shadow-xl border border-zinc-700 min-h-[300px] text-zinc-300 text-lg">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ===== Progress Graph Section ===== -->
+        <section id="progress" class="py-24 bg-black bg-opacity-20">
+            <div class="container mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center">
+                <!-- Coluna de Texto -->
+                <div>
+                    <span class="text-sm font-bold uppercase text-destaque tracking-wider">Visualize a vitória</span>
+                    <h2 class="text-4xl md:text-5xl font-bold my-4">
+                        Dados que Geram Resultados Reais
+                    </h2>
+                    <p class="text-lg text-zinc-300 mb-6">
+                        O TRACK2LIFT transforma seus dados em gráficos fáceis de entender. Saiba exatamente onde você
+                        está melhorando e o que precisa de ajuste.
+                    </p>
+                    <p class="text-lg text-zinc-300">
+                        O gráfico ao lado mostra a <strong>evolução da carga média</strong> ao longo de 8 semanas.
+                    </p>
+                </div>
+
+                <!-- Coluna do Gráfico -->
+                <div class="bg-card p-4 md:p-8 rounded-2xl shadow-xl border border-zinc-700">
+                    <canvas id="progressChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== Final CTA Section ===== -->
+        <section class="relative py-24 bg-card border-t border-zinc-700 overflow-hidden">
+            <!-- Elementos decorativos -->
+            <div class="absolute inset-0 opacity-[0.12]">
+                <div
+                    class="absolute w-[600px] h-[600px] rounded-full bg-gradient-to-br from-red-700 via-red-600 to-transparent blur-[150px] -top-32 -right-32">
+                </div>
+                <div
+                    class="absolute w-[500px] h-[500px] rounded-full bg-gradient-to-tl from-red-600 via-red-700 to-transparent blur-[130px] -bottom-32 -left-32">
+                </div>
+            </div>
+
+            <div class="container mx-auto px-6 text-center relative z-10">
+                <h2 class="text-4xl md:text-5xl font-bold mb-6">
+                    Pronto para levar seu treino <br />
+                    a <span class="text-destaque">outro nível</span>?
+                </h2>
+                <p class="text-xl text-zinc-300 max-w-xl mx-auto mb-10">
+                    Acesse o TRACK2LIFT agora e comece sua transformação.
+                </p>
+
+                <!-- Botão de Ação Final -->
+                <div class="flex justify-center items-center">
+                    <a href="#"
+                        class="cta-button bg-destaque text-texto font-bold py-4 px-10 rounded-lg text-lg hover:bg-red-700">
+                        Comece a sua evolução
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ===== Footer ===== -->
+    <footer class="py-10">
+        <div class="container mx-auto px-6 text-center">
+            <p class="text-zinc-400 text-sm">
+                &copy; <span id="currentYear"></span> TRACK2LIFT. Todos os direitos reservados.
+            </p>
+            <div class="flex justify-center gap-6 mt-4">
+                <a href="#" class="text-zinc-400 hover:text-destaque transition duration-300">Instagram</a>
+                <a href="#" class="text-zinc-400 hover:text-destaque transition duration-300">Privacidade</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ===== JavaScript externo ===== -->
+    <script src="assets/js/analytics.js" defer></script>
+    <script src="assets/js/app.js" defer></script>
+
+</body>
+
+</html>

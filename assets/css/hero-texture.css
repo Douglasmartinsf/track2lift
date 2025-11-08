@@ -1,0 +1,160 @@
+/* Textura de palavras motivacionais no hero - agora criadas via JS */
+#animated-words-container {
+    position: absolute;
+    left: -10%;
+    right: -10%;
+    top: 0;
+    bottom: 0;
+    font-weight: bold;
+    font-size: 1.5rem;
+    line-height: 2.5;
+    word-wrap: break-word;
+    white-space: normal;
+    pointer-events: none;
+    user-select: none;
+    overflow: visible;
+    z-index: 0;
+}
+
+#animated-words-container span {
+    display: inline-block;
+    margin-right: 2rem;
+    color: #a1a1aa;
+    opacity: 0.036;
+    transition: color 0.6s ease, opacity 0.6s ease, transform 0.4s ease, -webkit-text-stroke 0.4s ease;
+    -webkit-text-stroke: 0px transparent;
+    text-stroke: 0px transparent;
+}
+
+/* Palavra individual destacada em vermelho (animação aleatória) */
+#animated-words-container span.word-highlight {
+    color: #EF4444 !important;
+    /* Vermelho mais vibrante (red-500) */
+    opacity: 0.35 !important;
+    /* Aumentado de 0.15 para 0.35 */
+    animation: text-stroke-draw 1.2s ease-out forwards;
+}
+
+/* Animação de remoção do contorno */
+#animated-words-container span.word-removing {
+    animation: text-stroke-remove 0.8s ease-in forwards;
+}
+
+/* Garante que as palavras voltam ao estado normal sem animação quando hover não está ativo */
+#hero-section:not(:has(#heroCTA:hover)) #animated-words-container span:not(.word-highlight):not(.word-removing) {
+    animation: none;
+    -webkit-text-stroke: 0px transparent;
+    text-shadow: none;
+}
+
+/* Efeito de hover no botão CTA - muda cor de TODAS as palavras para vermelho */
+#hero-section:has(#heroCTA:hover) #animated-words-container span {
+    color: #EF4444;
+    /* Vermelho mais vibrante (red-500) */
+    opacity: 0.45;
+    /* Aumentado de 0.28 para 0.45 */
+    transform: scale(1.05);
+    animation: text-stroke-draw 1.2s ease-out forwards;
+}
+
+@keyframes text-stroke-draw {
+    0% {
+        -webkit-text-stroke: 2px rgba(255, 255, 255, 0);
+        text-shadow: none;
+    }
+
+    25% {
+        -webkit-text-stroke: 2px rgba(255, 255, 255, 0.2);
+        text-shadow:
+            0 0 2px rgba(255, 255, 255, 0.3),
+            1px 0 0 rgba(255, 255, 255, 0.1);
+    }
+
+    50% {
+        -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.4);
+        text-shadow:
+            0 0 4px rgba(255, 255, 255, 0.4),
+            1px 0 0 rgba(255, 255, 255, 0.2),
+            -1px 0 0 rgba(255, 255, 255, 0.2),
+            0 1px 0 rgba(255, 255, 255, 0.2);
+    }
+
+    75% {
+        -webkit-text-stroke: 1px rgba(255, 255, 255, 0.5);
+        text-shadow:
+            0 0 6px rgba(255, 255, 255, 0.5),
+            1px 0 0 rgba(255, 255, 255, 0.3),
+            -1px 0 0 rgba(255, 255, 255, 0.3),
+            0 1px 0 rgba(255, 255, 255, 0.3),
+            0 -1px 0 rgba(255, 255, 255, 0.3);
+    }
+
+    100% {
+        -webkit-text-stroke: 1px rgba(255, 255, 255, 0.6);
+        text-shadow:
+            0 0 8px rgba(255, 255, 255, 0.4),
+            1px 0 0 rgba(255, 255, 255, 0.4),
+            -1px 0 0 rgba(255, 255, 255, 0.4),
+            0 1px 0 rgba(255, 255, 255, 0.4),
+            0 -1px 0 rgba(255, 255, 255, 0.4),
+            1px 1px 0 rgba(255, 255, 255, 0.3),
+            -1px -1px 0 rgba(255, 255, 255, 0.3);
+    }
+}
+
+@keyframes text-stroke-remove {
+    0% {
+        -webkit-text-stroke: 1px rgba(255, 255, 255, 0.6);
+        text-shadow:
+            0 0 8px rgba(255, 255, 255, 0.4),
+            1px 0 0 rgba(255, 255, 255, 0.4),
+            -1px 0 0 rgba(255, 255, 255, 0.4),
+            0 1px 0 rgba(255, 255, 255, 0.4),
+            0 -1px 0 rgba(255, 255, 255, 0.4),
+            1px 1px 0 rgba(255, 255, 255, 0.3),
+            -1px -1px 0 rgba(255, 255, 255, 0.3);
+    }
+
+    50% {
+        -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3);
+        text-shadow:
+            0 0 4px rgba(255, 255, 255, 0.2),
+            1px 0 0 rgba(255, 255, 255, 0.2),
+            -1px 0 0 rgba(255, 255, 255, 0.2),
+            0 1px 0 rgba(255, 255, 255, 0.2);
+    }
+
+    100% {
+        -webkit-text-stroke: 0px transparent;
+        text-shadow: none;
+    }
+}
+
+/* Máscara para suavizar palavras próximas ao texto da hero */
+#hero-section::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 50%,
+            rgba(24, 24, 24, 0.5) 0%,
+            rgba(24, 24, 24, 0.3) 50%,
+            transparent 80%);
+    pointer-events: none;
+    z-index: 3;
+    transition: background 0.4s ease;
+}
+
+/* Aumenta o fade central no hover do botão */
+#heroCTA:hover~#hero-section::after,
+#hero-section:has(#heroCTA:hover)::after {
+    background: radial-gradient(ellipse 90% 100% at 50% 50%,
+            rgba(24, 24, 24, 0.85) 0%,
+            rgba(24, 24, 24, 0.65) 40%,
+            rgba(24, 24, 24, 0.35) 70%,
+            transparent 100%);
+}
+
+/* Canvas do gráfico sem background (transparente) */
+#heroProgressChart {
+    isolation: isolate;
+}

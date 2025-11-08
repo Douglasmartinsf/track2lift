@@ -1,0 +1,421 @@
+/* Estilos extraídos de index.html */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&display=swap');
+
+/* Fonte local Montserrat Alternates (inserida localmente em assets/fonts/) */
+@font-face {
+    font-family: 'MontserratAlt1';
+    src: url('/assets/fonts/MontserratAlt1-ExtraBold.woff2') format('woff2'),
+        url('/assets/fonts/MontserratAlt1-ExtraBold.woff') format('woff');
+    font-weight: 800;
+    font-style: normal;
+    font-display: swap;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+}
+
+/* Estilo para o estado de loading do botão */
+.btn-loading {
+    position: relative;
+    color: transparent !important;
+    cursor: not-allowed;
+}
+
+.btn-loading::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-top: -12px;
+    margin-left: -12px;
+    width: 24px;
+    height: 24px;
+    border: 3px solid #FCFCFC;
+    border-top-color: #DC2626;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Animação de pulse para elementos decorativos */
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 0.3;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.5;
+        transform: scale(1.1);
+    }
+}
+
+/* Animação mais intensa para os elementos decorativos da seção IA */
+@keyframes pulseGlow {
+
+    0%,
+    100% {
+        opacity: 0.6;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+/* Classe para usar a mesma fonte da logo no hero */
+.logo-font {
+    font-family: 'MontserratAlt1', 'Inter', sans-serif;
+    font-weight: 800;
+}
+
+/* Customização do select dropdown */
+select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23DC2626' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1.25rem;
+    padding-right: 2.5rem;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+    outline: none;
+}
+
+select:hover {
+    border-color: #DC2626;
+}
+
+select:focus {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23EF4444' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    outline: none;
+}
+
+/* Estilo das opções (limitado em dropdowns nativos) */
+select option {
+    background-color: #27272a;
+    color: #FCFCFC;
+    padding: 12px 16px;
+}
+
+select option:checked {
+    background-color: #DC2626;
+    color: #FCFCFC;
+}
+
+/* Estilo customizado para radio buttons de objetivo */
+.objective-option input:checked~.radio-custom {
+    border-color: #DC2626;
+}
+
+.objective-option input:checked~.radio-custom .radio-dot {
+    opacity: 1;
+}
+
+.objective-option:has(input:checked) {
+    border-color: #DC2626 !important;
+    background-color: rgba(220, 38, 38, 0.1);
+}
+
+.objective-option:hover {
+    transform: translateX(4px);
+}
+
+/* Customização do input de texto */
+input[type="text"] {
+    transition: border-color 0.3s ease;
+    outline: none;
+}
+
+/* Remove fundo branco do autocomplete do navegador */
+input[type="text"]:-webkit-autofill,
+input[type="text"]:-webkit-autofill:hover,
+input[type="text"]:-webkit-autofill:focus,
+input[type="text"]:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px #3f3f46 inset !important;
+    -webkit-text-fill-color: #FCFCFC !important;
+    box-shadow: 0 0 0 1000px #3f3f46 inset !important;
+    background-color: #3f3f46 !important;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+input[type="text"]:hover {
+    border-color: #DC2626;
+}
+
+input[type="text"]:focus {
+    outline: none;
+    border-color: #DC2626 !important;
+}
+
+/* Formatação do conteúdo gerado pela IA */
+#resultCard h3 {
+    color: #DC2626;
+    font-size: 1.75rem;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    line-height: 1.3;
+}
+
+#resultCard h4 {
+    color: #FCFCFC;
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #DC2626;
+    display: inline-block;
+}
+
+#resultCard ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 1rem 0;
+}
+
+#resultCard li {
+    padding: 0.5rem 0 0.5rem 1.5rem;
+    position: relative;
+    color: #d4d4d8;
+    line-height: 1.6;
+}
+
+#resultCard li::before {
+    content: '▸';
+    color: #DC2626;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+}
+
+#resultCard p {
+    color: #d4d4d8;
+    line-height: 1.6;
+    margin: 0.75rem 0;
+}
+
+#resultCard ol {
+    counter-reset: step-counter;
+    list-style: none;
+    padding-left: 0;
+    margin: 1rem 0;
+}
+
+#resultCard ol li {
+    counter-increment: step-counter;
+    padding-left: 2.5rem;
+    position: relative;
+    margin-bottom: 0.75rem;
+}
+
+#resultCard ol li::before {
+    content: counter(step-counter);
+    position: absolute;
+    left: 0;
+    top: 0.5rem;
+    background: #DC2626;
+    color: #FCFCFC;
+    font-weight: bold;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.875rem;
+}
+
+/* Ajusta o card quando tem conteúdo gerado */
+#resultCard:has(h3) {
+    display: block;
+    text-align: left;
+}
+
+/* Layout de duas colunas para o conteúdo da receita */
+#resultCard .recipe-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+@media (max-width: 768px) {
+    #resultCard .recipe-content {
+        grid-template-columns: 1fr;
+    }
+}
+
+#resultCard .recipe-section {
+    flex: 1;
+}
+
+/* Fallbacks para cores customizadas (no caso do Tailwind CDN não gerar as utilidades) */
+.bg-fundo {
+    background-color: #181818 !important;
+}
+
+.text-texto {
+    color: #FCFCFC !important;
+}
+
+/* Fallbacks para a cor de destaque usada em botões e bordas */
+.bg-destaque {
+    background-color: #DC2626 !important;
+}
+
+.text-destaque {
+    color: #DC2626 !important;
+}
+
+.border-destaque {
+    border-color: #DC2626 !important;
+}
+
+/* Fallbacks para utilitários de hover do Tailwind que podem não ter sido gerados */
+.hover\:border-destaque:hover {
+    border-color: #DC2626 !important;
+}
+
+.hover\:scale-105:hover {
+    transform: scale(1.05) !important;
+}
+
+/* Estilos específicos para links de navegação no header */
+header nav a[href^="#"] {
+    transition: color 0.3s ease;
+}
+
+/* Underline apenas para links do menu central (não para a logo) */
+.nav-menu a[href^="#"] {
+    position: relative;
+}
+
+.nav-menu a[href^="#"]::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: #DC2626;
+    transition: width 0.3s ease;
+}
+
+.nav-menu a[href^="#"]:hover {
+    color: #DC2626 !important;
+}
+
+.nav-menu a[href^="#"]:hover::after {
+    width: 100%;
+}
+
+header nav a.bg-destaque:hover {
+    background-color: #b91c1c !important;
+}
+
+/* Animações elaboradas para botões CTA principais */
+.cta-button {
+    position: relative;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Bordas laterais (esquerda e direita) */
+.cta-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-left: 3px solid #ff8787;
+    border-right: 3px solid #ff8787;
+    border-radius: 0.5rem;
+    opacity: 0;
+    clip-path: inset(50% 0 50% 0);
+}
+
+/* Bordas superior e inferior */
+.cta-button::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-top: 3px solid #ffa5a5;
+    border-bottom: 3px solid #ffa5a5;
+    border-radius: 0.5rem;
+    opacity: 0;
+    clip-path: inset(0 50% 0 50%);
+}
+
+.cta-button:hover::before {
+    opacity: 1;
+    animation: draw-sides 0.6s ease-out forwards;
+}
+
+.cta-button:hover::after {
+    opacity: 1;
+    animation: draw-top-bottom 0.6s ease-out forwards;
+}
+
+/* Anima laterais: do centro para bordas (cima e baixo) */
+@keyframes draw-sides {
+    0% {
+        clip-path: inset(50% 0 50% 0);
+    }
+
+    100% {
+        clip-path: inset(0 0 0 0);
+    }
+}
+
+/* Anima superior/inferior: das laterais para o centro (esquerda e direita) */
+@keyframes draw-top-bottom {
+    0% {
+        clip-path: inset(0 50% 0 50%);
+    }
+
+    100% {
+        clip-path: inset(0 0 0 0);
+    }
+}
+
+.cta-button:hover {
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: 0 6px 30px rgba(220, 38, 38, 0.5), 0 -4px 60px rgba(220, 38, 38, 0.3);
+}
+
+.cta-button:active {
+    transform: translateY(-2px) scale(1.02);
+}
+
+/* Variante sem glow para botões do header */
+.cta-button-no-glow:hover::before {
+    animation: draw-sides 0.3s ease-out forwards;
+}
+
+.cta-button-no-glow:hover::after {
+    animation: draw-top-bottom 0.3s ease-out forwards;
+}
+
+.cta-button-no-glow:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.cta-button-no-glow:active {
+    transform: translateY(-1px) scale(1.02);
+}

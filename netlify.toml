@@ -1,0 +1,19 @@
+# Netlify configuration
+[build]
+  publish = "."
+  functions = "netlify/functions"
+
+# Redirects and headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+# Redireciona erros 404 para index.html (single page app)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

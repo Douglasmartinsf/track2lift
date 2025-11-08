@@ -1,0 +1,40 @@
+# TRACK2LIFT - .gitignore
+
+# API Keys e configurações sensíveis
+assets/js/config.js
+
+# Arquivos do sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+npm-debug.log*
+
+# Netlify
+.netlify/
+functions-dist/
+
+# Dependências (se adicionar build no futuro)
+node_modules/
+package-lock.json
+yarn.lock
+
+# Ambiente local
+.env
+.env.local
+.env.production
+.env.development
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Build artifacts (se adicionar no futuro)
+dist/
+build/
+.cache/
