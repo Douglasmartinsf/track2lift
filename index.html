@@ -288,72 +288,101 @@
                 </div>
 
                 <!-- Card único que alterna entre formulário e resultado -->
-                <div class="max-w-3xl mx-auto">
+                <div class="max-w-4xl mx-auto">
                     <div id="formCard" class="bg-card p-8 rounded-2xl shadow-xl border border-zinc-700 space-y-6">
                         <div>
-                            <label class="block text-sm font-medium text-zinc-200 mb-3">Seu Objetivo Principal</label>
-                            <div class="space-y-2">
-                                <label
-                                    class="objective-option flex items-center p-4 bg-zinc-700 border-2 border-zinc-600 rounded-lg cursor-pointer transition-all duration-200 hover:border-destaque hover:bg-zinc-600">
+                            <label class="block text-sm font-medium text-zinc-200 mb-4 text-center">Seu Objetivo
+                                Principal</label>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <!-- Card: Perder Peso -->
+                                <label class="objective-card group cursor-pointer">
                                     <input type="radio" name="objetivo" value="Perder Peso"
                                         class="hidden objetivo-radio" checked>
                                     <div
-                                        class="radio-custom w-5 h-5 rounded-full border-2 border-zinc-400 mr-3 flex items-center justify-center transition-all duration-200">
-                                        <div
-                                            class="radio-dot w-3 h-3 rounded-full bg-destaque opacity-0 transition-opacity duration-200">
-                                        </div>
+                                        class="objective-card-inner bg-zinc-700 border-2 border-zinc-600 rounded-xl p-6 transition-all duration-300 hover:border-destaque hover:shadow-lg hover:shadow-destaque/20 group-hover:scale-105 flex flex-col items-center text-center space-y-3">
+                                        <!-- Ícone Perder Peso -->
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            class="text-zinc-400 group-hover:text-destaque transition-colors duration-300">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                            <path
+                                                d="M18.918 8.174c2.56 4.982 .501 11.656 -5.38 12.626c-7.702 1.687 -12.84 -7.716 -7.054 -13.229c.309 -.305 1.161 -1.095 1.516 -1.349c0 .528 .27 3.475 1 3.167c3 0 4 -4.222 3.587 -7.389c2.7 1.411 4.987 3.376 6.331 6.174z" />
+                                        </svg>
+                                        <span class="text-texto font-bold text-lg">Perder Peso</span>
+                                        <p class="text-zinc-400 text-sm">Déficit calórico e cardio</p>
                                     </div>
-                                    <span class="text-texto font-medium">Perder Peso</span>
                                 </label>
 
-                                <label
-                                    class="objective-option flex items-center p-4 bg-zinc-700 border-2 border-zinc-600 rounded-lg cursor-pointer transition-all duration-200 hover:border-destaque hover:bg-zinc-600">
+                                <!-- Card: Manter Peso -->
+                                <label class="objective-card group cursor-pointer">
                                     <input type="radio" name="objetivo" value="Manter Peso"
                                         class="hidden objetivo-radio">
                                     <div
-                                        class="radio-custom w-5 h-5 rounded-full border-2 border-zinc-400 mr-3 flex items-center justify-center transition-all duration-200">
-                                        <div
-                                            class="radio-dot w-3 h-3 rounded-full bg-destaque opacity-0 transition-opacity duration-200">
-                                        </div>
+                                        class="objective-card-inner bg-zinc-700 border-2 border-zinc-600 rounded-xl p-6 transition-all duration-300 hover:border-destaque hover:shadow-lg hover:shadow-destaque/20 group-hover:scale-105 flex flex-col items-center text-center space-y-3">
+                                        <!-- Ícone Manter Peso -->
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            class="text-zinc-400 group-hover:text-destaque transition-colors duration-300">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                            <path d="M7 20l10 0" />
+                                            <path d="M6 6l6 -1l6 1" />
+                                            <path d="M12 3l0 17" />
+                                            <path d="M9 12l-3 -6l-3 6a3 3 0 0 0 6 0" />
+                                            <path d="M21 12l-3 -6l-3 6a3 3 0 0 0 6 0" />
+                                        </svg>
+                                        <span class="text-texto font-bold text-lg">Manter Peso</span>
+                                        <p class="text-zinc-400 text-sm">Calorias de manutenção</p>
                                     </div>
-                                    <span class="text-texto font-medium">Manter Peso</span>
                                 </label>
 
-                                <label
-                                    class="objective-option flex items-center p-4 bg-zinc-700 border-2 border-zinc-600 rounded-lg cursor-pointer transition-all duration-200 hover:border-destaque hover:bg-zinc-600">
+                                <!-- Card: Ganhar Massa -->
+                                <label class="objective-card group cursor-pointer">
                                     <input type="radio" name="objetivo" value="Ganhar Massa Muscular"
                                         class="hidden objetivo-radio">
                                     <div
-                                        class="radio-custom w-5 h-5 rounded-full border-2 border-zinc-400 mr-3 flex items-center justify-center transition-all duration-200">
-                                        <div
-                                            class="radio-dot w-3 h-3 rounded-full bg-destaque opacity-0 transition-opacity duration-200">
-                                        </div>
+                                        class="objective-card-inner bg-zinc-700 border-2 border-zinc-600 rounded-xl p-6 transition-all duration-300 hover:border-destaque hover:shadow-lg hover:shadow-destaque/20 group-hover:scale-105 flex flex-col items-center text-center space-y-3">
+                                        <!-- Ícone Ganhar Massa -->
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            class="text-zinc-400 group-hover:text-destaque transition-colors duration-300">
+                                            <path
+                                                d="M2.017 20.305c1.13 1.614 6.042 2.882 8.362-.14c2.51 1.2 6.65.828 10.02-1.052c.468-.261.912-.591 1.183-1.054c.613-1.045.628-2.495-.49-4.634c-1.865-4.655-5.218-8.74-6.572-10.383c-.278-.254-2.052-.614-3.133-.96c-.478-.147-1.367-.246-2.431 1.156c-.505.665-2.796 2.297.111 3.395c.45.115.782.326 2.836-.05c.268-.046.936 0 1.407.827l.983 1.406a.96.96 0 0 1 .17.44c.172 1.5.166 3.376 1.002 4.326c-1.291-.933-4.664-2.042-7.206 1.113M2.001 12.94a6.714 6.714 0 0 1 8.416-.419" />
+                                        </svg>
+                                        <span class="text-texto font-bold text-lg">Ganhar Massa</span>
+                                        <p class="text-zinc-400 text-sm">Superávit e treino intenso</p>
                                     </div>
-                                    <span class="text-texto font-medium">Ganhar Massa Muscular</span>
                                 </label>
                             </div>
                         </div>
-
-                        <div>
-                            <label for="ingredientesInput"
-                                class="block text-sm font-medium text-zinc-200 mb-2">Ingredientes que você tem
-                                (separados por vírgula)</label>
-                            <input type="text" id="ingredientesInput"
-                                class="w-full bg-zinc-700 border border-zinc-600 rounded-lg px-4 py-3 text-texto focus:outline-none focus:border-destaque"
-                                placeholder="Ex: frango, arroz, brócolis, ovo">
-                        </div>
-
-                        <button id="generateButton"
-                            class="cta-button w-full bg-destaque text-texto font-bold py-4 px-10 rounded-lg text-lg">
-                            Gerar Sugestão de Refeição
-                        </button>
                     </div>
-
-                    <!-- Coluna de Resultado (inicialmente oculta) -->
-                    <div id="resultCard"
-                        class="hidden bg-card p-8 rounded-2xl shadow-xl border border-zinc-700 min-h-[300px] text-zinc-300 text-lg">
-                    </div>
+                    <span class="text-texto font-medium">Ganhar Massa Muscular</span>
+                    </label>
                 </div>
+            </div>
+
+            <div>
+                <label for="ingredientesInput" class="block text-sm font-medium text-zinc-200 mb-2">Ingredientes que
+                    você tem
+                    (separados por vírgula)</label>
+                <input type="text" id="ingredientesInput"
+                    class="w-full bg-zinc-700 border border-zinc-600 rounded-lg px-4 py-3 text-texto focus:outline-none focus:border-destaque"
+                    placeholder="Ex: frango, arroz, brócolis, ovo">
+            </div>
+
+            <button id="generateButton"
+                class="cta-button w-full bg-destaque text-texto font-bold py-4 px-10 rounded-lg text-lg">
+                Gerar Sugestão de Refeição
+            </button>
+            </div>
+
+            <!-- Coluna de Resultado (inicialmente oculta) -->
+            <div id="resultCard"
+                class="hidden bg-card p-8 rounded-2xl shadow-xl border border-zinc-700 min-h-[300px] text-zinc-300 text-lg">
+            </div>
+            </div>
             </div>
         </section>
 

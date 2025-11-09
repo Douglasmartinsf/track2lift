@@ -113,22 +113,19 @@ select option:checked {
     color: #FCFCFC;
 }
 
-/* Estilo customizado para radio buttons de objetivo */
-.objective-option input:checked~.radio-custom {
-    border-color: #DC2626;
-}
-
-.objective-option input:checked~.radio-custom .radio-dot {
-    opacity: 1;
-}
-
-.objective-option:has(input:checked) {
+/* Estilo customizado para cards de objetivo */
+.objective-card input:checked~.objective-card-inner {
     border-color: #DC2626 !important;
-    background-color: rgba(220, 38, 38, 0.1);
+    background-color: rgba(220, 38, 38, 0.15);
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.2);
 }
 
-.objective-option:hover {
-    transform: translateX(4px);
+.objective-card input:checked~.objective-card-inner svg {
+    color: #DC2626 !important;
+}
+
+.objective-card input:checked~.objective-card-inner span {
+    color: #DC2626 !important;
 }
 
 /* Customização do input de texto */
