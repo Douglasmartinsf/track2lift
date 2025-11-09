@@ -61,21 +61,11 @@
     animation: text-stroke-remove 0.8s ease-in forwards;
 }
 
-/* Garante que as palavras voltam ao estado normal sem animação quando hover não está ativo */
-#hero-section:not(:has(#heroCTA:hover)) #animated-words-container span:not(.word-highlight):not(.word-removing) {
+/* Garante que as palavras voltam ao estado normal sem animação */
+#animated-words-container span:not(.word-highlight):not(.word-removing) {
     animation: none;
     -webkit-text-stroke: 0px transparent;
     text-shadow: none;
-}
-
-/* Efeito de hover no botão CTA - muda cor de TODAS as palavras para vermelho */
-#hero-section:has(#heroCTA:hover) #animated-words-container span {
-    color: #EF4444;
-    /* Vermelho mais vibrante (red-500) */
-    opacity: 0.45;
-    /* Aumentado de 0.28 para 0.45 */
-    transform: scale(1.05);
-    animation: text-stroke-draw 1.2s ease-out forwards;
 }
 
 @keyframes text-stroke-draw {

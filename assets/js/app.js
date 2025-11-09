@@ -395,41 +395,8 @@ Use HTML limpo sem comentários. Responda em português do Brasil.`;
         }
     }
 
-    function stopAnimation() {
-        if (animationInterval) {
-            clearInterval(animationInterval);
-            animationInterval = null;
-        }
-        // Aplica animação de remoção quando hover está ativo
-        if (currentRedWord) {
-            currentRedWord.classList.remove('word-highlight');
-            currentRedWord.classList.add('word-removing');
-
-            setTimeout(() => {
-                if (currentRedWord) {
-                    currentRedWord.classList.remove('word-removing');
-                }
-            }, 800);
-        }
-    }
-
-    // Monitora o hover do botão
-    heroCTA.addEventListener('mouseenter', stopAnimation);
-    heroCTA.addEventListener('mouseleave', () => {
-        // Remove estilos inline que podem estar interferindo
-        wordElements.forEach(word => {
-            word.style.removeProperty('animation');
-            word.style.removeProperty('-webkit-text-stroke');
-            word.style.removeProperty('text-shadow');
-        });
-
-        // Força um reflow para garantir que as mudanças sejam aplicadas
-        void wordsContainer.offsetHeight;
-
-        // Reinicia a animação
-        startAnimation();
-    });
-
     // Inicia a animação
     startAnimation();
 })();
+
+
