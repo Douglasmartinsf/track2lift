@@ -51,16 +51,7 @@ Acesse: http://localhost:8000
 ### API Keys
 - ✅ **NUNCA** comite o arquivo `config.js` (já está no `.gitignore`)
 - ✅ **SEMPRE** use `config.example.js` como referência
-- ✅ Para produção, considere:
-  - Backend proxy para esconder API Keys
-  - Variáveis de ambiente server-side
-  - Restrições de domínio no Google Cloud Console
-
-### Arquivos Sensíveis
-Os seguintes arquivos NÃO devem ser commitados:
-- `assets/js/config.js` - Contém API Keys
-- `.env` - Se adicionar no futuro
-- Qualquer arquivo com credenciais
+- ✅ Para produção, use Netlify Functions com variáveis de ambiente
 
 ## 📁 Estrutura do Projeto
 
@@ -96,22 +87,39 @@ track2lift/
 
 ## 🎨 Funcionalidades
 
-- ✅ Hero section com palavras motivacionais animadas
-- ✅ Sistema de features com ícones customizados
-- ✅ Demo de IA para sugestões de refeições
-- ✅ Gráficos de progresso interativos
-- ✅ Design responsivo e moderno
-- ✅ Animações suaves e elegantes
+### Interface
+- **Hero Section Dinâmica**: Textura animada com 19 palavras motivacionais, layering z-index (0-10), fade mask radial gradient
+- **Design System**: Tailwind CSS customizado via `tailwind-config.js` (cores: fundo #181818, destaque #DC2626, card #27272a)
+- **Navegação**: Header sticky com menu horizontal e underline animation via `.nav-menu`
+- **Responsividade**: Breakpoints mobile-first (sm:640px, md:768px, lg:1024px)
 
-## 📝 Contribuindo
+### Visualização de Dados
+- **Chart.js**: Gráficos de linha com gradiente canvas (rgba decay 0.6→0.05)
+- **Progress Tracking**: 8 semanas de dados, tooltips customizados, escala Y: 60-90kg, step 5
+- **Aspect Ratio Responsivo**: 1.5 (mobile) / 2 (desktop)
 
-1. Faça um fork do projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/MinhaFeature`)
-3. Commit suas mudanças (`git commit -m 'Add: Minha nova feature'`)
-4. Push para a branch (`git push origin feature/MinhaFeature`)
-5. Abra um Pull Request
+### IA Generativa
+- **Google Gemini 2.0 Flash**: Sugestões de refeições personalizadas
+- **Arquitetura Serverless**: Netlify Functions (`/netlify/functions/gemini.js`) como proxy seguro
+- **Input System**: Card-based objective selection (3 opções com ícones SVG, radio buttons customizados)
+- **Retry Logic**: `fetchWithRetry()` com 3 tentativas, delay 1s
+- **Loading State**: `.btn-loading` com spinner CSS puro (keyframe `spin`)
 
-**Lembre-se**: Nunca comite arquivos com API Keys!
+### Analytics
+- **Google Analytics 4**: Measurement ID G-K0PQ8F17GD
+- **Event Tracking** (`analytics.js`):
+  - `cta_click`: {button_location, button_text}
+  - `navigation_click`: {link_text, section_target}
+  - `scroll_depth`: {depth_percentage: 25/50/75/100}
+  - `social_click`: {platform}
+
+### Performance
+- **Zero Build**: HTML/CSS/JS estático, sem bundler
+- **CDN Dependencies**: Tailwind CSS, Chart.js
+- **Font Loading**: `MontserratAlt1` local (.woff2 + .woff), Inter via Google Fonts
+- **Lazy Loading**: Scripts com `defer`, Chart.js animations desabilitadas no hero
+
+## � Licença
 
 ## 📄 Licença
 
@@ -122,7 +130,3 @@ Este projeto é apenas para fins educacionais e de demonstração.
 Para problemas com a API do Gemini:
 - Documentação: https://ai.google.dev/docs
 - Obter API Key: https://aistudio.google.com/apikey
-
----
-
-Desenvolvido com ❤️ e 💪

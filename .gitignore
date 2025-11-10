@@ -3,6 +3,9 @@
 # API Keys e configurações sensíveis
 assets/js/config.js
 
+# GitHub Copilot
+.github/copilot-instructions.md
+
 # Arquivos do sistema
 .DS_Store
 Thumbs.db
