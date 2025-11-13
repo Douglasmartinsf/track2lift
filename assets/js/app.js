@@ -1,3 +1,387 @@
+/*
+=================================================
+=== 🚀 App Navigation & Workout Logger Logic ===
+=================================================
+*/
+// ===============================
+// === Supabase Edition SPA Logic ===
+// ===============================
+(function () {
+    // --- Configuração Pública do Supabase (embed pública) ---
+    // Estes valores são públicos (chave anon) e usados para permitir operações básicas do frontend.
+    const SUPABASE_URL = "https://qxyazvgwlenprvmbjehr.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF4eWF6dmd3bGVucHJ2bWJqZWhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMwNjYwMjcsImV4cCI6MjA3ODY0MjAyN30.gDpxBscKUbLK9IlR3lqH7Wuh3_IdFPG6uPCEQ-dIYZI";
+
+    // --- Inicialização do Supabase ---
+    let supabase;
+    try {
+        const { createClient } = window['@supabase/supabase-js'] || window.supabase || {};
+        if (typeof createClient === 'function') {
+            supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+        } else if (window.supabase && typeof window.supabase.createClient === 'function') {
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        } else {
+            throw new Error('Supabase client não disponível. Verifique se o CDN foi carregado.');
+        }
+    } catch (e) {
+        console.error("Erro ao inicializar Supabase. Verifique o CDN.", e);
+        const authMessage = document.getElementById('authMessage');
+        if (authMessage) {
+            authMessage.textContent = "Erro crítico ao carregar o app. Verifique o console.";
+            authMessage.style.color = "#DC2626";
+        }
+        return;
+    }
+
+    // --- Validação de Configuração (Apenas para Gemini local) ---
+    if (!window.APP_CONFIG || !window.APP_CONFIG.GEMINI_API_KEY) {
+        console.warn("Aviso: config.js não encontrado ou GEMINI_API_KEY faltando. A demo de IA pode falhar localmente.");
+    }
+
+    // --- Seletores de Navegação ---
+    const landingPageContainer = document.getElementById('landingPageContainer');
+    const appContainer = document.getElementById('appContainer');
+    const authContainer = document.getElementById('authContainer');
+
+    const headerNavMenu = document.querySelector('.nav-menu');
+    const headerCtaButton = document.querySelector('header .cta-button');
+    const logoLink = document.querySelector('header a[aria-label="TRACK2LIFT"]');
+    const logoutButton = document.getElementById('logoutButton');
+
+    // Botões CTA da Landing Page
+    const ctaButtons = document.querySelectorAll('a[href="#download"], a[href="#features"]#heroCTA');
+
+    // --- Seletores do App (Dashboard) ---
+    const dashboardView = document.getElementById('dashboardView');
+    const showWorkoutFormBtn = document.getElementById('showWorkoutFormBtn');
+    const savedWorkoutsList = document.getElementById('savedWorkoutsList');
+    const noWorkoutsMessage = document.getElementById('noWorkoutsMessage');
+
+    // --- Seletores do App (Formulário) ---
+    const workoutFormView = document.getElementById('workoutFormView');
+    const goBackToDashboardBtn = document.getElementById('goBackToDashboardBtn');
+    const workoutDateInput = document.getElementById('workoutDate');
+    const workoutNameInput = document.getElementById('workoutName');
+    const exerciseListContainer = document.getElementById('exerciseListContainer');
+    const addExerciseBtn = document.getElementById('addExerciseBtn');
+    const saveWorkoutBtn = document.getElementById('saveWorkoutBtn');
+
+    // --- Seletores de Auth ---
+    const loginForm = document.getElementById('loginForm');
+    const signupForm = document.getElementById('signupForm');
+    const switchToSignup = document.getElementById('switchToSignup');
+    const switchToLogin = document.getElementById('switchToLogin');
+    const authErrorMsg = document.getElementById('authErrorMsg');
+
+    let exerciseCounter = 0;
+    let currentUser = null;
+
+    // --- Navegação SPA ---
+    function showLandingPage() {
+        landingPageContainer?.classList.remove('hidden');
+        appContainer?.classList.add('hidden');
+        authContainer?.classList.add('hidden');
+        // Restaurar header para o modo Landing: garantir que o menu esteja visível e com layout md:flex
+        headerNavMenu?.classList.add('md:flex');
+        headerNavMenu?.classList.remove('hidden');
+        headerCtaButton?.classList.remove('hidden');
+        // Reexibir seções que o auth pode ter escondido — usa style.display para forçar quando necessário
+        ['hero-section', 'features', 'ai-demo', 'progress'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.classList.remove('hidden');
+                // Remove qualquer ocultação inline aplicada anteriormente
+                if (el.style && el.style.display === 'none') el.style.display = '';
+            }
+        });
+
+        window.scrollTo(0, 0);
+    }
+
+    function showAuthPage() {
+        landingPageContainer?.classList.add('hidden');
+        appContainer?.classList.add('hidden');
+        authContainer?.classList.remove('hidden');
+        headerNavMenu?.classList.add('hidden');
+        headerCtaButton?.classList.add('hidden');
+        // Esconder seções principais explicitamente (caso estejam fora do landingPageContainer)
+        // Usa style.display = 'none' para forçar a ocultação mesmo que outras classes interfiram
+        ['hero-section', 'features', 'ai-demo', 'progress'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.classList.add('hidden');
+                try {
+                    el.style.display = 'none';
+                } catch (e) {
+                    // ignora
+                }
+            }
+        });
+
+        window.scrollTo(0, 0);
+    }
+
+
+    function showAppPage() {
+        landingPageContainer?.classList.add('hidden');
+        appContainer?.classList.remove('hidden');
+        authContainer?.classList.add('hidden');
+        headerNavMenu?.classList.add('hidden');
+        headerCtaButton?.classList.add('hidden');
+        showDashboardView();
+        window.scrollTo(0, 0);
+    }
+
+    function showDashboardView() {
+        dashboardView?.classList.remove('hidden');
+        workoutFormView?.classList.add('hidden');
+        loadWorkouts();
+    }
+
+    function showWorkoutFormView() {
+        dashboardView?.classList.add('hidden');
+        workoutFormView?.classList.remove('hidden');
+        exerciseListContainer.innerHTML = '';
+        exerciseCounter = 0;
+        addExerciseBlock();
+        if (workoutDateInput && !workoutDateInput.value) {
+            workoutDateInput.valueAsDate = new Date();
+        }
+        if (workoutNameInput) workoutNameInput.value = '';
+    }
+
+    // --- Auth Logic ---
+    async function handleLogin(e) {
+        e.preventDefault();
+        authErrorMsg.textContent = '';
+        const email = loginForm.email.value;
+        const password = loginForm.password.value;
+        const { error, data } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) {
+            authErrorMsg.textContent = error.message;
+            return;
+        }
+        currentUser = data.user;
+        showAppPage();
+    }
+
+    async function handleSignup(e) {
+        e.preventDefault();
+        authErrorMsg.textContent = '';
+        const email = signupForm.email.value;
+        const password = signupForm.password.value;
+        const { error, data } = await supabase.auth.signUp({ email, password });
+        if (error) {
+            authErrorMsg.textContent = error.message;
+            return;
+        }
+        currentUser = data.user;
+        showAppPage();
+    }
+
+    async function handleLogout() {
+        await supabase.auth.signOut();
+        currentUser = null;
+        showLandingPage();
+    }
+
+    // --- Persistência Supabase ---
+    async function loadWorkouts() {
+        if (!currentUser) return;
+        const { data: workouts, error } = await supabase
+            .from('workouts')
+            .select('id, date, name, exercises')
+            .eq('user_id', currentUser.id)
+            .order('date', { ascending: false });
+        if (error) {
+            savedWorkoutsList.innerHTML = `<div class="text-red-500">Erro ao carregar treinos: ${error.message}</div>`;
+            return;
+        }
+        if (!workouts || workouts.length === 0) {
+            noWorkoutsMessage?.classList.remove('hidden');
+            savedWorkoutsList.innerHTML = '';
+            return;
+        }
+        noWorkoutsMessage?.classList.add('hidden');
+        savedWorkoutsList.innerHTML = '';
+        workouts.forEach(workout => {
+            const formattedDate = new Date(workout.date).toLocaleDateString('pt-BR', { timeZone: 'UTC' });
+            const workoutHtml = `
+                <div class="bg-card p-4 rounded-lg border border-zinc-700 flex justify-between items-center">
+                    <div>
+                        <h4 class="text-xl font-bold">${workout.name || 'Treino Rápido'}</h4>
+                        <p class="text-zinc-400">${formattedDate}</p>
+                    </div>
+                    <span class="text-zinc-500">${workout.exercises?.length || 0} exercícios</span>
+                </div>
+            `;
+            savedWorkoutsList.insertAdjacentHTML('beforeend', workoutHtml);
+        });
+    }
+
+    async function saveWorkoutToSupabase() {
+        if (!currentUser) return;
+        const workoutData = {
+            user_id: currentUser.id,
+            date: workoutDateInput.value,
+            name: workoutNameInput.value || 'Treino Rápido',
+            exercises: []
+        };
+        const exerciseBlocks = exerciseListContainer.querySelectorAll('.exercise-block');
+        exerciseBlocks.forEach(block => {
+            const exerciseName = block.querySelector('.exercise-name-input').value;
+            if (!exerciseName) return;
+            const exercise = { name: exerciseName, sets: [] };
+            const setRows = block.querySelectorAll('.set-row');
+            setRows.forEach(row => {
+                const reps = row.querySelector('.reps-input').value;
+                const weight = row.querySelector('.weight-input').value;
+                if (reps || weight) {
+                    exercise.sets.push({ reps: reps || 0, weight: weight || 0 });
+                }
+            });
+            workoutData.exercises.push(exercise);
+        });
+        if (workoutData.exercises.length === 0) {
+            alert('Adicione pelo menos um exercício com nome.');
+            return;
+        }
+        const { error } = await supabase.from('workouts').insert([workoutData]);
+        if (error) {
+            alert('Erro ao salvar treino: ' + error.message);
+            return;
+        }
+        showDashboardView();
+    }
+
+    // --- Lógica do Logger de Treino (Formulário) ---
+    function addExerciseBlock() {
+        exerciseCounter++;
+        const exerciseId = `exercise-${exerciseCounter}`;
+        const exerciseHtml = `
+            <div id="${exerciseId}" class="exercise-block bg-zinc-800 p-4 rounded-lg border border-zinc-700 space-y-4">
+                <div class="flex justify-between items-center gap-4">
+                    <input type="text"
+                        class="exercise-name-input w-full bg-zinc-700 border border-zinc-600 rounded-lg px-4 py-3 text-texto focus:outline-none focus:border-destaque"
+                        placeholder="Nome do Exercício (ex: Supino Reto)">
+                    <button class="remove-exercise-btn text-zinc-400 hover:text-red-500 transition duration-300" data-target="${exerciseId}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                    </button>
+                </div>
+                <div class="sets-container space-y-3"></div>
+                <button class="add-set-btn w-full bg-destaque bg-opacity-20 hover:bg-opacity-40 text-destaque font-semibold py-2 px-4 rounded-lg transition duration-300">
+                    Adicionar Série
+                </button>
+            </div>
+        `;
+        exerciseListContainer.insertAdjacentHTML('beforeend', exerciseHtml);
+        const newBlock = document.getElementById(exerciseId);
+        const setsContainer = newBlock.querySelector('.sets-container');
+        addSetBlock(setsContainer);
+    }
+
+    function addSetBlock(setsContainer) {
+        const setCount = setsContainer.children.length + 1;
+        const setHtml = `
+            <div class="set-row grid grid-cols-3 gap-3 items-center">
+                <span class="text-zinc-300 font-medium text-center">Série ${setCount}</span>
+                <input type="number"
+                    class="reps-input w-full bg-zinc-700 border border-zinc-600 rounded-lg px-4 py-2 text-texto focus:outline-none focus:border-destaque"
+                    placeholder="Reps">
+                <input type="number"
+                    class="weight-input w-full bg-zinc-700 border border-zinc-600 rounded-lg px-4 py-2 text-texto focus:outline-none focus:border-destaque"
+                    placeholder="Peso (kg)">
+            </div>
+        `;
+        setsContainer.insertAdjacentHTML('beforeend', setHtml);
+    }
+
+    // --- Event Listeners ---
+    ctaButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+            e.preventDefault();
+            showAuthPage();
+        });
+    });
+
+    logoLink?.addEventListener('click', (e) => {
+        e.preventDefault();
+        showLandingPage();
+    });
+
+    logoutButton?.addEventListener('click', (e) => {
+        e.preventDefault();
+        handleLogout();
+    });
+
+    showWorkoutFormBtn?.addEventListener('click', showWorkoutFormView);
+    goBackToDashboardBtn?.addEventListener('click', (e) => {
+        e.preventDefault();
+        showDashboardView();
+    });
+    addExerciseBtn?.addEventListener('click', addExerciseBlock);
+    saveWorkoutBtn?.addEventListener('click', saveWorkoutToSupabase);
+
+    // Delegação para botões dinâmicos
+    exerciseListContainer?.addEventListener('click', function (e) {
+        const addSetBtn = e.target.closest('.add-set-btn');
+        if (addSetBtn) {
+            const setsContainer = addSetBtn.previousElementSibling;
+            addSetBlock(setsContainer);
+        }
+        const removeBtn = e.target.closest('.remove-exercise-btn');
+        if (removeBtn) {
+            const targetId = removeBtn.dataset.target;
+            const exerciseElement = document.getElementById(targetId);
+            if (exerciseElement) {
+                if (exerciseListContainer.children.length > 1) {
+                    exerciseElement.remove();
+                } else {
+                    alert('Você deve ter pelo menos um exercício.');
+                }
+            }
+        }
+    });
+
+    // Auth forms
+    loginForm?.addEventListener('submit', handleLogin);
+    signupForm?.addEventListener('submit', handleSignup);
+    switchToSignup?.addEventListener('click', (e) => {
+        e.preventDefault();
+        loginForm.classList.add('hidden');
+        signupForm.classList.remove('hidden');
+        authErrorMsg.textContent = '';
+    });
+    switchToLogin?.addEventListener('click', (e) => {
+        e.preventDefault();
+        signupForm.classList.add('hidden');
+        loginForm.classList.remove('hidden');
+        authErrorMsg.textContent = '';
+    });
+
+    // --- Sessão Persistente ---
+    async function checkSession() {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session && session.user) {
+            currentUser = session.user;
+            showAppPage();
+        } else {
+            showLandingPage();
+        }
+    }
+    checkSession();
+
+    // Atualiza sessão ao logar/deslogar
+    supabase.auth.onAuthStateChange((_event, session) => {
+        if (session && session.user) {
+            currentUser = session.user;
+            showAppPage();
+        } else {
+            currentUser = null;
+            showLandingPage();
+        }
+    });
+})();
 // Código movido de index.html - carregado com `defer`
 
 // Atualiza o ano no footer
@@ -252,63 +636,36 @@ Use HTML limpo sem comentários. Responda em português do Brasil.`;
     }
 
     async function callGeminiAPI(systemPrompt, userQuery) {
-        // Detecta se está rodando em produção (Netlify) ou local
-        const isProduction = window.location.hostname !== 'localhost' &&
-            window.location.hostname !== '127.0.0.1' &&
-            !window.location.hostname.includes('192.168.');
+        // Usa o proxy serverless (Netlify Function) — o endpoint deve existir em produção
+        const PROXY_ENDPOINT = '/.netlify/functions/gemini';
 
-        if (isProduction) {
-            // Produção: usa Netlify Function (API Key segura no servidor)
-            const functionUrl = '/.netlify/functions/gemini';
+        const options = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ systemPrompt, userQuery })
+        };
 
-            const response = await fetch(functionUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ systemPrompt, userQuery })
-            });
+        // fetchWithRetry já retorna JSON quando a resposta é ok
+        const data = await fetchWithRetry(PROXY_ENDPOINT, options, 3, 1000);
 
-            if (!response.ok) {
-                const errorData = await response.json().catch(() => ({}));
-                throw new Error(errorData.error || `Erro HTTP: ${response.status}`);
-            }
+        // A resposta pode variar conforme a versão da API. Suportamos múltiplos formatos.
+        // 1) data.text (caso a function retorne um campo text simplificado)
+        if (typeof data === 'string') return data;
+        if (data?.text) return data.text;
 
-            const data = await response.json();
-            return data.text;
+        // 2) Estrutura do modelo: candidates[0].content.parts[0].text
+        try {
+            const candidateText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (candidateText) return candidateText;
+        } catch (e) { /* ignore */ }
 
-        } else {
-            // Local: usa config.js (desenvolvimento)
-            const apiKey = window.APP_CONFIG?.GEMINI_API_KEY || "";
-
-            if (!apiKey || apiKey.trim() === "") {
-                throw new Error("API_KEY_MISSING");
-            }
-
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${apiKey}`;
-
-            const payload = {
-                contents: [{
-                    parts: [{ text: userQuery }]
-                }],
-                systemInstruction: {
-                    parts: [{ text: systemPrompt }]
-                },
-            };
-
-            const options = {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            };
-
-            const result = await fetchWithRetry(apiUrl, options);
-
-            const candidate = result.candidates?.[0];
-            if (candidate && candidate.content?.parts?.[0]?.text) {
-                return candidate.content.parts[0].text;
-            } else {
-                throw new Error("Resposta da API em formato inesperado.");
-            }
+        // 3) Alguns endpoints podem retornar generated_text ou output[0]
+        if (data?.generated_text) return data.generated_text;
+        if (Array.isArray(data?.output) && data.output[0]?.content) {
+            return data.output[0].content;
         }
+
+        throw new Error('Resposta do proxy em formato inesperado. Veja console para detalhes.');
     }
 })();
 
