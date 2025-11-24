@@ -1,138 +1,55 @@
-# TRACK2LIFT
+# TRACK2LIFT — Visão Geral do Projeto
 
-Site estático single-page para rastreamento de treinos, dieta e progresso com IA integrada.
+TRACK2LIFT é uma aplicação front-end estática (single-page) focada em rastreamento de treinos, registro de exercícios e visualização de progresso com integração experimental de IA. O repositório contém a landing page pública, a aplicação interna (login/dashboard), e recursos estáticos (CSS, imagens, SVGs, scripts) organizados para evitar processos de build.
 
-## 🚀 Como Rodar Localmente
+Visão geral das funcionalidades
+- Landing Page: seção pública com hero, chamadas para ação e visual atrativo (textura tipográfica e gráficos decorativos). Serve como ponto de atração e introdução ao produto.
+- Autenticação: tela de login/cadastro integrada com Supabase; fluxos de sessão, alteração de senha e gerenciamento de conta estão implementados no front-end.
+- Dashboard: lista de treinos salvos, cartões com resumo, indicadores rápidos (ex.: número de exercícios) e ação para editar/excluir treinos.
+- Formulário de Treino: criação/edição de treinos com blocos de exercício; cada bloco suporta modos `strength` (reps + peso) e `cardio` (duração), séries dinâmicas e autosave local (rascunho).
+- Visualização corporal: recurso decorativo/funcional que injeta um SVG de musculatura e destaca grupos musculares relacionados aos exercícios do treino.
+- Integração IA (demo): botão de demonstração que usa uma função serverless para chamar a API Gemini de forma segura (proxy), exibindo sugestões e conteúdos gerados.
 
-### 1. Clone o repositório
-```bash
-git clone <seu-repositorio>
-cd track2lift
+Arquitetura e principais tecnologias
+- Frontend: HTML estático + Tailwind CSS (CDN) + Vanilla JS.
+- Charts: Chart.js para visualizações de progresso (dashboard/hero).
+- Backend-as-a-Service: Supabase para autenticação e persistência (tabela `workouts`, campo `exercises` em JSONB).
+- Serverless: função proxy (ex.: Netlify Functions) usada para encapsular a Gemini API Key e evitar exposição no cliente.
+
+Principais pontos técnicos
+- Organização sem build: todos os arquivos são servidos estáticamente; `app.js` contém a lógica principal e é carregado com `defer`.
+- Gerenciamento de SVG: o SVG de musculatura (`assets/img/muscle.svg`) é carregado uma vez e cacheado em memória (`cachedMuscleSvg`). A função `getBodyWatermark(activeGroups, svgContent)` gera uma versão inline do SVG com grupos colorizados por `id`.
+- UX do formulário: cada exercício salva um `type` (`strength` ou `cardio`) e `sets` no formato apropriado — isso simplifica renderização e edição de treinos no dashboard.
+- Heurísticas de identificação: `identifyMuscleGroup(exerciseName)` mapeia nomes de exercícios para grupos usando um catálogo granular e palavras-chave.
+
+Conteúdo do repositório (diretório de alto nível)
+- `index.html` — landing page + mount points para o app
+- `assets/`
+   - `css/` — estilos locais e fallbacks (inclui `styles.css`, `hero-texture.css`)
+   - `js/`
+      - `tailwind-config.js` — define `window.tailwind.config` antes do CDN
+      - `app.js` — lógica principal (auth, UI, forms, charts, SVG painting, integração Gemini)
+      - `analytics.js` — GA4 helper (event tracking)
+   - `img/` — imagens e `muscle.svg` usado para a visualização corporal
+   - `fonts/` — fontes customizadas (logo)
+- `logo/` — assets da marca
+- `netlify/functions/` — funções serverless (proxy Gemini)
+
+Modelo de dados (resumo)
+O principal documento persistido é `workout`, com um campo `exercises` que contém um array de exercícios; cada exercício possui `name`, `type` e `sets`. Exemplo simplificado:
+
+```json
+{
+   "date": "2025-11-22",
+   "name": "Treino A",
+   "exercises": [
+      { "name": "Supino Reto", "type": "strength", "sets": [{ "reps": 8, "weight": 80 }] },
+      { "name": "Esteira", "type": "cardio", "sets": [{ "duration": 20 }] }
+   ]
+}
 ```
 
-### 2. Configure a API Key do Gemini (obrigatório para funcionalidade de IA)
+Segurança (visão resumida)
+- Chaves sensíveis não devem estar no repositório. Use um proxy serverless e variáveis de ambiente no provedor de hospedagem.
+- A chave do Supabase usada em frontend deve ser `anon`. Regras de Row-Level Security (RLS) devem ser configuradas para garantir isolamento entre usuários.
 
-#### Opção A: Primeiro uso
-1. Obtenha uma API Key gratuita em: https://aistudio.google.com/apikey
-2. Copie o arquivo de exemplo:
-   ```bash
-   cp assets/js/config.example.js assets/js/config.js
-   ```
-3. Edite `assets/js/config.js` e insira sua chave:
-   ```javascript
-   ### Atualizado: instruções de setup, Supabase e proxy serverless
-
-   # TRACK2LIFT
-
-   Site estático single-page para rastreamento de treinos, dieta e progresso com IA integrada.
-
-   ## 🚀 Como Rodar Localmente
-
-   ### 1. Pré-requisitos
-   - Um servidor web local (Python, Node.js, etc.)
-   - Uma conta gratuita no [Supabase](https://supabase.com) (para login e banco de dados)
-   - Uma API Key do [Google AI Studio](https://aistudio.google.com/apikey) (para o demo de IA)
-
-   ### 2. Configure o Banco de Dados (Supabase)
-   1. **Crie um Projeto** no Supabase.
-   2. **Guarde suas Chaves:** Vá em "Project Settings" > "API". Você precisará da **URL** e da chave **`anon (public)`**.
-   3. **Execute o Script SQL:** Vá em "SQL Editor", clique em "New query" e cole o script abaixo para criar as tabelas e ativar a segurança (Row Level Security):
-
-   ```sql
-   -- 1. Cria a tabela de WORKOUTS
-   CREATE TABLE workouts (
-      id BIGINT GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
-      user_id UUID REFERENCES auth.users(id) NOT NULL,
-      date DATE NOT NULL,
-      name TEXT,
-      created_at TIMESTAMPTZ DEFAULT NOW(),
-      exercises jsonb
-   );
-
-   -- 2. Ativa a Segurança (Row Level Security - RLS)
-   ALTER TABLE workouts ENABLE ROW LEVEL SECURITY;
-
-   -- 3. Define a regra de RLS
-   CREATE POLICY "Allow user to manage their own data"
-      ON workouts FOR ALL
-      USING (auth.uid() = user_id)
-      WITH CHECK (auth.uid() = user_id);
-   ```
-
-   > Observação: a estrutura acima usa uma única tabela `workouts` com `exercises` em JSONB para simplicidade. Caso prefira normalizar (exercises, sets), use o SQL avançado fornecido no repositório.
-
-   ### 3. Configure as Chaves de API Locais
-   1.  No repositório, copie o arquivo de exemplo:
-         ```powershell
-         cp assets/js/config.example.js assets/js/config.js
-         ```
-   2.  Abra o `assets/js/config.js` e preencha as chaves:
-         ```javascript
-         const CONFIG = {
-               // Cole sua chave do Google AI Studio aqui (apenas para testes locais)
-               GEMINI_API_KEY: "SUA_CHAVE_GEMINI_AQUI",
-
-               // Cole suas chaves do Supabase aqui
-               SUPABASE_URL: "https://SEU_PROJETO.supabase.co",
-               SUPABASE_KEY: "SUA_CHAVE_ANON_PUBLIC_AQUI"
-         };
-         ```
-         ⚠️ **Importante:** O arquivo `config.js` já está no `.gitignore` e NUNCA deve ser comitado.
-
-   ### 4. Inicie um servidor local
-
-   ```powershell
-   # Python 3
-   python -m http.server 8000
-
-   # Ou, se preferir Node.js
-   npx http-server -p 8000
-   ```
-
-   Abra: http://localhost:8000
-
-   ⚠️ **Importante**: Não use `file://` - o CORS bloqueará as chamadas à API.
-
-   ## 🔒 Segurança e Deploy
-
-   ### 1) Proxy Serverless (recomendado)
-   Para proteger chaves sensíveis (por exemplo, a Gemini API Key), use o proxy serverless incluso em `netlify/functions/gemini.js`. No Netlify, adicione a variável de ambiente `GEMINI_API_KEY` com sua chave e a function lerá essa variável em runtime.
-
-   ### 2) Variáveis de Ambiente no Netlify
-   No Netlify: Settings → Build & deploy → Environment → New variable
-   - `GEMINI_API_KEY` = <sua chave>
-
-   ### 3) Supabase
-   - A `SUPABASE_KEY` usada no frontend pode ser a `anon` (public). Não exponha chaves `service_role` no cliente.
-
-   ### Se você expôs chaves por accidente
-   - Roteie/rotacione a chave no painel do provedor (Supabase / Google) e gere uma nova.
-
-   ## 📁 Estrutura do Projeto (resumo)
-
-   ```
-   track2lift/
-   ├── index.html
-   ├── assets/
-   │   ├── js/
-   │   │   ├── tailwind-config.js
-   │   │   ├── config.js           # ⚠️ NÃO COMITAR
-   │   │   ├── config.example.js   # ✅ Template
-   │   │   └── app.js
-   │   └── css/
-   ├── netlify/functions/         # Serverless functions (proxy Gemini)
-   └── README.md
-   ```
-
-   ## 🛠️ Notas Técnicas Rápidas
-
-   - O app tenta inicializar o Supabase usando `assets/js/config.js`. Se as chaves estiverem ausentes ou inválidas, a tela de login exibirá uma mensagem de erro e o app não iniciará (proteção contra configuração incorreta).
-   - A integração com a Gemini é feita por um proxy (`/.netlify/functions/gemini`) que busca a chave do `process.env.GEMINI_API_KEY` no servidor.
-
-   ## 📄 Licença
-
-   Este projeto é para fins educacionais e de demonstração.
-
-   ## 🤝 Suporte
-
-   Se precisa de ajuda para configurar o Netlify, Supabase ou rotacionar chaves, abra uma issue ou me pergunte aqui.

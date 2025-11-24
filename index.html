@@ -30,8 +30,8 @@
     <script src="assets/js/config.js"></script>
 
     <!-- Configuração de fontes e estilos locais -->
-    <link rel="stylesheet" href="assets/css/styles.css">
-    <link rel="stylesheet" href="assets/css/hero-texture.css">
+    <link rel="stylesheet" href="assets/css/styles.css?v=3">
+    <link rel="stylesheet" href="assets/css/hero-texture.css?v=3">
 </head>
 
 <body class="bg-fundo text-texto antialiased">
@@ -39,18 +39,17 @@
     <!-- ===== Header ===== -->
     <header class="sticky top-0 z-50 bg-fundo shadow-lg shadow-black/20">
         <nav class="px-6 lg:px-8 xl:px-12 py-4">
-            <div class="flex md:grid md:grid-cols-3 items-center justify-between md:gap-8">
-                <!-- Logo (SVG) para o Header -->
-                <a href="#" class="inline-flex items-center justify-start" aria-label="TRACK2LIFT">
-                    <img id="siteLogo" src="logo/logo.svg" alt="TRACK2LIFT" class="h-5 md:h-6 lg:h-7 w-auto"
-                        onerror="this.style.display='none'" />
-                    <!-- Texto de fallback para leitores de tela / quando imagem não carregar -->
-                    <span class="sr-only">TRACK2LIFT</span>
-                </a>
+            <div class="w-full flex items-center justify-between md:gap-8 relative">
 
-                <!-- Menu Hamburguer (Mobile) -->
-                <button id="mobileMenuButton" class="md:hidden text-texto hover:text-destaque transition duration-300"
-                    aria-label="Menu">
+                <div class="flex-1 flex justify-start items-center">
+                    <a href="#" id="logoLink" class="inline-flex items-center" aria-label="TRACK2LIFT">
+                        <img id="siteLogo" src="logo/logo.svg" alt="TRACK2LIFT" class="h-5 md:h-6 lg:h-7 w-auto"
+                            onerror="this.style.display='none'" />
+                        <span class="sr-only">TRACK2LIFT</span>
+                    </a>
+                </div>
+
+                <button id="mobileMenuButton" class="md:hidden text-texto hover:text-destaque transition duration-300">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="3" y1="12" x2="21" y2="12"></line>
@@ -59,27 +58,73 @@
                     </svg>
                 </button>
 
-                <!-- Menu de Navegação (Desktop - Centralizado) -->
-                <div class="hidden md:flex items-center justify-center gap-8 nav-menu">
-                    <a href="#features" class="text-zinc-300 hover:text-destaque transition duration-300 font-medium">
-                        Recursos
-                    </a>
+                <div id="publicNavMenu"
+                    class="hidden md:flex items-center justify-center gap-8 nav-menu absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                    <a href="#features"
+                        class="text-zinc-300 hover:text-destaque transition duration-300 font-medium">Recursos</a>
                     <span class="text-destaque">|</span>
-                    <a href="#ai-demo" class="text-zinc-300 hover:text-destaque transition duration-300 font-medium">
-                        IA
-                    </a>
+                    <a href="#ai-demo"
+                        class="text-zinc-300 hover:text-destaque transition duration-300 font-medium">IA</a>
                     <span class="text-destaque">|</span>
-                    <a href="#progress" class="text-zinc-300 hover:text-destaque transition duration-300 font-medium">
-                        Progresso
-                    </a>
+                    <a href="#progress"
+                        class="text-zinc-300 hover:text-destaque transition duration-300 font-medium">Progresso</a>
                 </div>
 
-                <!-- Botão CTA (Alinhado à direita - escondido em mobile) -->
-                <div class="hidden md:flex justify-end">
-                    <a href="#download"
-                        class="cta-button cta-button-no-glow bg-destaque text-texto font-bold py-2 px-5 rounded-lg hover:bg-red-700 text-sm">
-                        Acessar Agora
-                    </a>
+                <div id="appNavMenu"
+                    class="hidden items-center justify-center gap-8 nav-menu absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                    <button data-tab="workouts"
+                        class="app-tab text-destaque font-bold transition duration-300 border-b-2 border-destaque pb-0.5">
+                        Treinos
+                    </button>
+                    <button data-tab="diet"
+                        class="app-tab text-zinc-400 hover:text-destaque transition duration-300 font-medium pb-0.5 border-b-2 border-transparent hover:border-destaque/50">
+                        Dieta
+                    </button>
+                    <button data-tab="progress"
+                        class="app-tab text-zinc-600 cursor-not-allowed font-medium pb-0.5 border-b-2 border-transparent"
+                        title="Em breve">
+                        Progresso
+                    </button>
+                </div>
+
+                <div class="flex-1 flex justify-end items-center">
+
+                    <div id="publicAuthButtons">
+                        <a href="#download"
+                            class="cta-access-btn cta-button cta-button-no-glow bg-destaque text-texto font-bold py-2 px-5 rounded-lg hover:bg-red-700 text-sm">
+                            Acessar Agora
+                        </a>
+                    </div>
+
+                    <div id="loggedUserMenu" class="hidden relative group">
+                        <button
+                            class="flex items-center gap-2 text-zinc-300 hover:text-destaque font-medium transition focus:outline-none py-2">
+                            <span id="userEmailDisplay">Minha Conta</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </button>
+
+                        <div
+                            class="absolute right-0 top-full mt-0 w-56 bg-zinc-900 border border-zinc-700 rounded-lg shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform group-hover:translate-y-0 translate-y-2 z-50 overflow-hidden">
+                            <a href="#" id="menuGoToApp"
+                                class="user-menu-item block px-5 py-4 text-sm text-zinc-300 border-b border-zinc-800">
+                                Ir para o App &rarr;
+                            </a>
+
+                            <button id="menuAccountSettings"
+                                class="user-menu-item w-full text-left block px-5 py-4 text-sm text-zinc-300 border-b border-zinc-800">
+                                Minha Conta
+                            </button>
+
+                            <button id="menuLogout"
+                                class="user-menu-item w-full text-left block px-5 py-4 text-sm text-zinc-300">
+                                Sair
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </nav>
@@ -119,7 +164,7 @@
             </div>
         </div>
 
-        <div class="relative max-w-md w-full space-y-8 bg-card p-8 rounded-2xl shadow-xl border border-zinc-700"
+        <div class="relative max-w-md w-full space-y-8 bg-zinc-900/95 p-8 rounded-2xl shadow-xl border border-zinc-700"
             style="z-index: 10;">
             <div>
                 <h2 class="text-center text-4xl font-extrabold logo-font" aria-label="TRACK2LIFT">
@@ -128,10 +173,32 @@
                 <p id="authMessage" class="mt-2 text-center text-sm text-zinc-400">
                     Acesse sua conta para continuar
                 </p>
+                <div id="authErrorMsg" class="text-center text-red-500 text-sm font-bold mt-2 min-h-[20px]"></div>
+            </div>
+
+            <div id="signupSuccessMessage" class="hidden text-center space-y-11">
+                <div class="bg-green-500/10 border border-green-500/50 p-3 rounded-xl flex flex-col items-center">
+                    <div class="bg-green-500 text-black p-4 rounded-full mb-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">Cadastro Realizado!</h3>
+                    <p class="text-zinc-300 text-sm">
+                        Enviamos um link de confirmação para o seu e-mail.
+                        <br><br>
+                        <strong class="text-white">Você precisa confirmar antes de entrar.</strong>
+                    </p>
+                </div>
+
+                <button id="backToLoginFromSuccess" class="text-zinc-400 hover:text-destaque transition text-sm">
+                    &larr; Voltar para o Login
+                </button>
             </div>
 
             <form id="loginForm" class="mt-8 space-y-6">
-                <input type="hidden" name="remember" value="true">
                 <div class="space-y-4">
                     <div>
                         <label for="login-email" class="sr-only">Email</label>
@@ -139,6 +206,7 @@
                             class="w-full bg-zinc-700 border border-zinc-600 rounded-lg px-4 py-3 text-texto focus:outline-none focus:border-destaque"
                             placeholder="Email">
                     </div>
+
                     <div>
                         <label for="login-password" class="sr-only">Senha</label>
                         <input id="login-password" name="password" type="password" autocomplete="current-password"
@@ -150,8 +218,15 @@
 
                 <div>
                     <button type="submit" id="loginButton"
-                        class="cta-button w-full bg-destaque text-texto font-bold py-3 px-10 rounded-lg text-lg">
+                        class="cta-button w-full bg-destaque text-texto font-bold py-3 px-10 rounded-lg text-lg hover:bg-red-700 shadow-lg transition-transform transform hover:scale-[1.02]">
                         Entrar
+                    </button>
+                </div>
+
+                <div class="text-center mt-4">
+                    <button type="button" id="forgotPasswordLink"
+                        class="text-sm text-zinc-400 hover:text-destaque transition duration-200">
+                        Esqueci minha senha
                     </button>
                 </div>
             </form>
@@ -159,11 +234,19 @@
             <form id="signupForm" class="hidden mt-8 space-y-6">
                 <div class="space-y-4">
                     <div>
+                        <label for="signup-name" class="sr-only">Nome</label>
+                        <input id="signup-name" name="name" type="text" required
+                            class="w-full bg-zinc-700 border border-zinc-600 rounded-lg px-4 py-3 text-texto focus:outline-none focus:border-destaque"
+                            placeholder="Seu Nome">
+                    </div>
+
+                    <div>
                         <label for="signup-email" class="sr-only">Email</label>
                         <input id="signup-email" name="email" type="email" required
                             class="w-full bg-zinc-700 border border-zinc-600 rounded-lg px-4 py-3 text-texto focus:outline-none focus:border-destaque"
                             placeholder="Email">
                     </div>
+
                     <div>
                         <label for="signup-password" class="sr-only">Senha</label>
                         <input id="signup-password" name="password" type="password" required
@@ -171,6 +254,7 @@
                             placeholder="Crie uma senha (mín. 6 caracteres)">
                     </div>
                 </div>
+
                 <div>
                     <button type="submit" id="signupButton"
                         class="cta-button w-full bg-destaque text-texto font-bold py-3 px-10 rounded-lg text-lg">
@@ -179,18 +263,173 @@
                 </div>
             </form>
 
-            <div class="text-center">
+            <form id="recoveryForm" class="hidden mt-8 space-y-6">
+                <div class="text-center mb-4">
+                    <h3 class="text-lg font-bold text-texto">Recuperar Acesso</h3>
+                    <p class="text-sm text-zinc-400">Digite seu e-mail para receber um link de redefinição.</p>
+                </div>
+                <div>
+                    <label for="recovery-email" class="sr-only">Email</label>
+                    <input id="recovery-email" name="email" type="email" required
+                        class="w-full bg-zinc-700 border border-zinc-600 rounded-lg px-4 py-3 text-texto focus:outline-none focus:border-destaque"
+                        placeholder="Seu e-mail cadastrado">
+                </div>
+                <div>
+                    <button type="submit" id="recoveryButton"
+                        class="cta-button w-full bg-destaque text-texto font-bold py-3 px-10 rounded-lg text-lg">Enviar
+                        Link</button>
+                </div>
+                <div class="text-center">
+                    <button type="button" id="backToLoginBtn"
+                        class="text-sm text-zinc-400 hover:text-destaque transition duration-200">&larr; Voltar para o
+                        Login</button>
+                </div>
+            </form>
+
+            <div id="authFooter" class="text-center">
                 <p class="text-sm text-zinc-300">
                     <span id="authToggleText">Não tem uma conta?</span>
-                    <button id="authToggleButton" class="font-medium text-destaque hover:text-red-500">
-                        Cadastre-se
-                    </button>
+                    <button id="authToggleButton"
+                        class="font-medium text-destaque hover:text-red-500">Cadastre-se</button>
                 </p>
             </div>
         </div>
     </div>
 
     <!-- ===== Hero Section ===== -->
+
+    <!-- Conta do Usuário / Configurações (substitui a antiga tela de alterar senha) -->
+    <div id="accountSettingsContainer"
+        class="hidden relative overflow-hidden min-h-screen flex items-center justify-center py-12 px-4">
+
+        <div class="relative max-w-2xl w-full bg-zinc-900 rounded-2xl shadow-2xl border border-zinc-700"
+            style="z-index: 10;">
+
+            <div class="bg-zinc-800 p-6 border-b border-zinc-700 flex justify-between items-center rounded-t-2xl">
+                <div>
+                    <h2 class="text-2xl font-bold text-texto">Minha Conta</h2>
+                    <p class="text-zinc-400 text-sm">Gerencie seus dados pessoais e segurança.</p>
+                </div>
+                <button id="closeSettingsBtn"
+                    class="text-zinc-400 hover:text-white transition p-2 rounded-full hover:bg-zinc-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="p-6 space-y-8 bg-zinc-900 rounded-b-2xl">
+
+                <section>
+                    <h3 class="text-lg font-bold text-destaque mb-4 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        Perfil
+                    </h3>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-zinc-300 mb-1.5">Nome Completo</label>
+                            <input type="text" id="settingsName" autocomplete="name"
+                                class="w-full bg-zinc-800 border border-zinc-600 rounded-lg px-4 py-2.5 text-texto focus:border-destaque focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-zinc-300 mb-1.5">E-mail</label>
+                            <input type="email" id="settingsEmail" autocomplete="email"
+                                class="w-full bg-zinc-800 border border-zinc-600 rounded-lg px-4 py-2.5 text-texto focus:border-destaque focus:outline-none">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-4 mt-4">
+                        <div>
+                            <label class="block text-sm font-medium text-zinc-300 mb-1.5">Idade</label>
+                            <input type="number" id="settingsAge" autocomplete="off"
+                                class="w-full bg-zinc-800 border border-zinc-600 rounded-lg px-4 py-2.5 text-texto focus:border-destaque focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-zinc-300 mb-1.5">Peso (kg)</label>
+                            <input type="number" id="settingsWeight" autocomplete="off" step="0.1"
+                                class="w-full bg-zinc-800 border border-zinc-600 rounded-lg px-4 py-2.5 text-texto focus:border-destaque focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-zinc-300 mb-1.5">Altura (cm)</label>
+                            <input type="number" id="settingsHeight" autocomplete="off"
+                                class="w-full bg-zinc-800 border border-zinc-600 rounded-lg px-4 py-2.5 text-texto focus:border-destaque focus:outline-none">
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <label class="block text-sm font-medium text-zinc-300 mb-1.5">Objetivo Atual</label>
+                        <select id="settingsGoal"
+                            class="w-full bg-zinc-800 border border-zinc-600 rounded-lg px-4 py-2.5 text-texto focus:border-destaque focus:outline-none">
+                            <option value="Emagrecimento">Emagrecimento</option>
+                            <option value="Hipertrofia">Hipertrofia</option>
+                            <option value="Manutenção">Manutenção</option>
+                        </select>
+                    </div>
+
+                    <p class="text-xs text-zinc-500 mt-2">*Alterar o e-mail exigirá uma nova confirmação.</p>
+                </section>
+
+                <hr class="border-zinc-700">
+
+                <section>
+                    <h3 class="text-lg font-bold text-destaque mb-4 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                        Alterar Senha
+                    </h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-zinc-300 mb-1.5">Nova Senha</label>
+                            <input type="password" id="settingsNewPassword" autocomplete="new-password"
+                                placeholder="Deixe em branco para não alterar"
+                                class="w-full bg-zinc-800 border border-zinc-600 rounded-lg px-4 py-2.5 text-texto focus:border-destaque focus:outline-none">
+                        </div>
+                    </div>
+                </section>
+
+                <div class="pt-2">
+                    <button id="saveSettingsBtn"
+                        class="cta-button w-full md:w-auto bg-white text-black hover:bg-gray-200 font-bold py-3 px-8 rounded-lg transition shadow-lg">
+                        Salvar Alterações
+                    </button>
+                    <p id="settingsMsg" class="mt-3 text-sm font-medium min-h-[20px]"></p>
+                </div>
+
+                <hr class="border-zinc-700">
+
+                <section class="bg-[#2a1515] border border-red-900/50 p-4 rounded-xl">
+                    <h3 class="text-red-500 font-bold mb-2 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path
+                                d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z">
+                            </path>
+                            <line x1="12" y1="9" x2="12" y2="13"></line>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg>
+                        Zona de Perigo
+                    </h3>
+                    <p class="text-zinc-400 text-sm mb-4">A exclusão da conta é permanente e apagará todos os seus
+                        treinos.</p>
+                    <button id="deleteAccountBtn"
+                        class="text-red-500 border border-red-900/50 hover:bg-red-900/20 font-medium py-2 px-4 rounded-lg transition text-sm bg-[#3b1a1a]">
+                        Excluir minha conta
+                    </button>
+                </section>
+
+            </div>
+        </div>
+    </div>
+
     <div id="landingPageContainer">
         <main>
             <section id="hero-section"
@@ -539,27 +778,266 @@
         </main>
     </div>
 
+    <!-- Onboarding: Primeiros Passos (substituído para cobertura full-screen) -->
+    <div id="onboardingContainer"
+        class="hidden fixed inset-0 z-[100] bg-fundo flex items-center justify-center p-4 overflow-hidden">
+        <div class="absolute inset-0 opacity-[0.05] pointer-events-none">
+            <div
+                class="absolute w-[600px] h-[600px] rounded-full bg-gradient-to-tr from-red-700 via-transparent to-transparent blur-[120px] bottom-0 right-0">
+            </div>
+        </div>
+
+        <div class="relative w-full max-w-lg bg-zinc-900 p-8 rounded-2xl shadow-2xl border border-zinc-700 z-10">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold logo-font mb-2 text-texto">Bem-vindo, <span id="onboardingName"
+                        class="text-destaque">Atleta</span>!</h2>
+                <p class="text-zinc-400">Para personalizar seus treinos, precisamos de alguns dados essenciais.</p>
+            </div>
+
+            <form id="onboardingForm" class="space-y-6">
+                <div class="grid grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-zinc-500 uppercase mb-1">Idade</label>
+                        <input type="number" id="obAge" required min="10" max="100"
+                            class="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 text-texto focus:border-destaque focus:outline-none"
+                            placeholder="Anos">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-zinc-500 uppercase mb-1">Peso (kg)</label>
+                        <input type="number" id="obWeight" required min="30" max="300" step="0.1"
+                            class="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 text-texto focus:border-destaque focus:outline-none"
+                            placeholder="kg">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-zinc-500 uppercase mb-1">Altura (cm)</label>
+                        <input type="number" id="obHeight" required min="100" max="250"
+                            class="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 text-texto focus:border-destaque focus:outline-none"
+                            placeholder="cm">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-zinc-500 uppercase mb-1">Objetivo Principal</label>
+                    <div class="grid grid-cols-1 gap-3">
+                        <label class="objective-card group cursor-pointer">
+                            <input type="radio" name="obGoal" value="Emagrecimento" class="hidden objetivo-radio"
+                                checked>
+                            <div
+                                class="objective-card-inner bg-zinc-800 border-2 border-zinc-700 rounded-lg p-4 flex items-center justify-between transition group-hover:border-zinc-500">
+                                <!-- Ícone Perder Peso (mesmo da seção IA) -->
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    class="text-zinc-400 group-hover:text-destaque transition-colors duration-300">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path
+                                        d="M18.918 8.174c2.56 4.982 .501 11.656 -5.38 12.626c-7.702 1.687 -12.84 -7.716 -7.054 -13.229c.309 -.305 1.161 -1.095 1.516 -1.349c0 .528 .27 3.475 1 3.167c3 0 4 -4.222 3.587 -7.389c2.7 1.411 4.987 3.376 6.331 6.174z" />
+                                </svg>
+                                <div class="flex-1 text-left ml-4">
+                                    <div class="font-bold text-texto">Emagrecimento</div>
+                                    <div class="text-xs text-zinc-400">Queimar gordura</div>
+                                </div>
+                            </div>
+                        </label>
+
+                        <label class="objective-card group cursor-pointer">
+                            <input type="radio" name="obGoal" value="Hipertrofia" class="hidden objetivo-radio">
+                            <div
+                                class="objective-card-inner bg-zinc-800 border-2 border-zinc-700 rounded-lg p-4 flex items-center justify-between transition group-hover:border-zinc-500">
+                                <!-- Ícone Ganhar Massa (mesmo da seção IA) -->
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    class="text-zinc-400 group-hover:text-destaque transition-colors duration-300">
+                                    <path
+                                        d="M2.017 20.305c1.13 1.614 6.042 2.882 8.362-.14c2.51 1.2 6.65.828 10.02-1.052c.468-.261.912-.591 1.183-1.054c.613-1.045.628-2.495-.49-4.634c-1.865-4.655-5.218-8.74-6.572-10.383c-.278-.254-2.052-.614-3.133-.96c-.478-.147-1.367-.246-2.431 1.156c-.505.665-2.796 2.297.111 3.395c.45.115.782.326 2.836-.05c.268-.046.936 0 1.407.827l.983 1.406a.96.96 0 0 1 .17.44c.172 1.5.166 3.376 1.002 4.326c-1.291-.933-4.664-2.042-7.206 1.113M2.001 12.94a6.714 6.714 0 0 1 8.416-.419" />
+                                </svg>
+                                <div class="flex-1 text-left ml-4">
+                                    <div class="font-bold text-texto">Hipertrofia</div>
+                                    <div class="text-xs text-zinc-400">Ganhar massa muscular</div>
+                                </div>
+                            </div>
+                        </label>
+
+                        <label class="objective-card group cursor-pointer">
+                            <input type="radio" name="obGoal" value="Manutenção" class="hidden objetivo-radio">
+                            <div
+                                class="objective-card-inner bg-zinc-800 border-2 border-zinc-700 rounded-lg p-4 flex items-center justify-between transition group-hover:border-zinc-500">
+                                <!-- Ícone Manter Peso (mesmo da seção IA) -->
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    class="text-zinc-400 group-hover:text-destaque transition-colors duration-300">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M7 20l10 0" />
+                                    <path d="M6 6l6 -1l6 1" />
+                                    <path d="M12 3l0 17" />
+                                    <path d="M9 12l-3 -6l-3 6a3 3 0 0 0 6 0" />
+                                    <path d="M21 12l-3 -6l-3 6a3 3 0 0 0 6 0" />
+                                </svg>
+                                <div class="flex-1 text-left ml-4">
+                                    <div class="font-bold text-texto">Manutenção</div>
+                                    <div class="text-xs text-zinc-400">Manter peso e saúde</div>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="pt-4 border-t border-zinc-700/50">
+                    <button type="submit" id="finishOnboardingBtn"
+                        class="cta-button w-full bg-destaque text-texto font-bold py-4 rounded-lg text-lg hover:bg-red-700 shadow-lg">
+                        Salvar e Começar
+                    </button>
+                    <p id="onboardingErrorMsg" class="text-center text-red-500 text-sm font-bold mt-2 min-h-[20px]"></p>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <div id="appContainer" class="hidden min-h-screen container mx-auto px-6 py-12">
 
         <div id="dashboardView">
-            <div class="flex justify-between items-center mb-8">
-                <h2 class="text-4xl font-bold logo-font">
-                    Seus <span class="text-destaque">Treinos</span>
-                </h2>
-                <button id="logoutButton" class="text-zinc-300 hover:text-destaque transition duration-300 font-medium">
-                    Sair &rarr;
-                </button>
+            <div class="flex justify-between items-center mb-8 pb-4 border-b border-zinc-700">
+                <div>
+                    <h2 class="text-3xl font-bold logo-font">
+                        Olá, <span id="userNameDisplay" class="text-destaque">Atleta</span>
+                    </h2>
+                    <p class="text-zinc-400 text-sm">Foco total no objetivo.</p>
+                </div>
             </div>
 
-            <button id="showWorkoutFormBtn"
-                class="w-full cta-button bg-destaque text-texto font-bold py-4 px-10 rounded-lg text-lg hover:bg-red-700 mb-8">
-                Registrar Novo Treino
-            </button>
+            <div id="tab-workouts" class="tab-content">
+                <div class="mb-8 flex justify-end">
+                    <button id="showWorkoutFormBtn"
+                        class="cta-button bg-destaque text-texto font-bold py-3 px-6 rounded-lg hover:bg-red-700 flex items-center gap-2 shadow-lg transition transform hover:scale-105">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        Registrar Novo Treino
+                    </button>
+                </div>
 
-            <h3 class="text-2xl font-bold mb-4 text-zinc-300">Histórico</h3>
-            <div id="savedWorkoutsList" class="space-y-4">
-                <p id="noWorkoutsMessage" class="text-zinc-400 text-center py-4">Você ainda não registrou nenhum treino.
-                </p>
+                <h3 class="text-xl font-bold mb-4 text-zinc-300 border-l-4 border-destaque pl-3">Histórico Recente</h3>
+
+                <div id="savedWorkoutsList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                    <p id="noWorkoutsMessage"
+                        class="text-zinc-400 col-span-full text-center py-8 bg-zinc-800/50 rounded-lg border border-zinc-700 border-dashed">
+                        Carregando seus treinos...
+                    </p>
+                </div>
+            </div>
+
+            <div id="tab-diet" class="tab-content hidden space-y-8">
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-zinc-900 border border-zinc-700 p-6 rounded-2xl relative overflow-hidden">
+                        <div class="absolute top-0 right-0 p-4 opacity-10">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="M12 5v14M5 12h14" />
+                            </svg>
+                        </div>
+                        <p class="text-zinc-400 text-sm font-medium mb-1">Meta Diária (<span
+                                id="dietGoalLabel">...</span>)</p>
+                        <h3 class="text-4xl font-extrabold text-white"><span id="dietTargetCal">0</span> <span
+                                class="text-lg text-zinc-500 font-normal">kcal</span></h3>
+                        <p class="text-xs text-zinc-500 mt-2">Basal: <span id="dietBMR">0</span> | TDEE: <span
+                                id="dietTDEE">0</span></p>
+                    </div>
+
+                    <div class="bg-zinc-900 border border-zinc-700 p-6 rounded-2xl">
+                        <p class="text-zinc-400 text-sm font-medium mb-1">Consumido Hoje</p>
+                        <h3 class="text-4xl font-extrabold text-destaque"><span id="dietConsumedCal">0</span> <span
+                                class="text-lg text-zinc-500 font-normal">kcal</span></h3>
+                        <div class="w-full bg-zinc-800 h-2 rounded-full mt-3 overflow-hidden">
+                            <div id="dietProgressBar" class="bg-destaque h-full rounded-full" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-zinc-900 border border-zinc-700 p-6 rounded-2xl flex flex-col justify-center gap-2">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-zinc-400">Proteína</span>
+                            <span class="font-bold text-white" id="dietConsumedProt">0g</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-zinc-400">Carboidratos</span>
+                            <span class="font-bold text-white" id="dietConsumedCarb">0g</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-zinc-400">Gorduras</span>
+                            <span class="font-bold text-white" id="dietConsumedFat">0g</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-card border border-zinc-700 rounded-2xl p-6">
+                    <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="#DC2626" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"
+                            class="transform -translate-y-0.5 inline-block">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path
+                                d="M12 3c1.918 0 3.52 1.35 3.91 3.151a4 4 0 0 1 2.09 7.723l0 7.126h-12v-7.126a4 4 0 1 1 2.092 -7.723a4 4 0 0 1 3.908 -3.151z" />
+                            <path d="M6.161 17.009l11.839 -.009" />
+                        </svg>
+                        Sugestão do Chef IA
+                    </h3>
+                    <div class="grid lg:grid-cols-2 gap-8">
+                        <div class="space-y-4">
+                            <p class="text-sm text-zinc-400">A IA usará sua meta calórica calculada para sugerir a
+                                refeição perfeita com o que você tem.</p>
+                            <textarea id="appDietIngredients" rows="2"
+                                class="w-full bg-zinc-900 border border-zinc-600 rounded-lg px-4 py-3 text-texto focus:outline-none focus:border-destaque"
+                                placeholder="Ingredientes disponíveis (ex: ovos, batata, frango)..."></textarea>
+                            <button id="generateDietBtn"
+                                class="cta-button w-full bg-white text-black hover:bg-gray-200 font-bold py-3 px-6 rounded-lg transition duration-300">
+                                Gerar Sugestão
+                            </button>
+                        </div>
+
+                        <div id="appDietResult"
+                            class="bg-zinc-900 p-4 rounded-xl border border-zinc-700 min-h-[150px] relative">
+                            <div id="dietPlaceholder" class="text-center opacity-30 py-10">A sugestão aparecerá aqui.
+                            </div>
+                            <div id="dietContent"
+                                class="hidden text-sm text-zinc-300 space-y-2 max-h-[300px] overflow-y-auto custom-scrollbar">
+                            </div>
+
+                            <button id="saveGeneratedMealBtn"
+                                class="hidden absolute bottom-4 right-4 bg-destaque text-white px-4 py-2 rounded-lg text-xs font-bold shadow-lg hover:bg-red-700 transition">
+                                + Registrar no Diário
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center border-b border-zinc-700 pb-2">
+                        <h3 class="text-xl font-bold text-zinc-200">Diário de Hoje</h3>
+                        <button id="addCustomMealBtn"
+                            class="text-sm text-destaque hover:text-white font-medium flex items-center gap-1 transition">
+                            + Adicionar Refeição Manual
+                        </button>
+                    </div>
+
+                    <div id="dietLogList" class="space-y-3">
+                        <p class="text-zinc-500 text-center py-4 italic text-sm">Nenhuma refeição registrada hoje.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-progress" class="tab-content hidden">
+                <div class="flex flex-col items-center justify-center py-20 text-center">
+                    <div class="bg-zinc-800 p-8 rounded-full mb-6">
+                        🚧
+                    </div>
+                    <h3 class="text-2xl font-bold mb-2">Em Construção</h3>
+                    <p class="text-zinc-400 max-w-md">Em breve você verá gráficos detalhados aqui.</p>
+                </div>
             </div>
         </div>
 
@@ -570,7 +1048,7 @@
                 </h2>
                 <button id="goBackToDashboardBtn"
                     class="text-zinc-300 hover:text-destaque transition duration-300 font-medium">
-                    &larr; Voltar ao Dashboard
+                    <span>&times; Cancelar Treino</span>
                 </button>
             </div>
 
@@ -630,7 +1108,7 @@
 
     <!-- ===== JavaScript externo ===== -->
     <script src="assets/js/analytics.js" defer></script>
-    <script src="assets/js/app.js" defer></script>
+    <script src="assets/js/app.js?v=3" defer></script>
 
 </body>
 

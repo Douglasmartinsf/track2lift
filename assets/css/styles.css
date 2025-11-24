@@ -1,7 +1,7 @@
-/* Estilos extraídos de index.html */
+/* 1. O IMPORT VEM PRIMEIRO (Linha 1) */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&display=swap');
 
-/* Fonte local Montserrat Alternates (inserida localmente em assets/fonts/) */
+/* 2. DEPOIS VEM O FONT-FACE */
 @font-face {
     font-family: 'MontserratAlt1';
     src: url('/assets/fonts/MontserratAlt1-ExtraBold.woff2') format('woff2'),
@@ -9,6 +9,15 @@
     font-weight: 800;
     font-style: normal;
     font-display: swap;
+}
+
+/* 3. AGORA SIM VEM A REGRA DO SCROLL (Abaixo das fontes) */
+html,
+body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    /* Isso remove a barra horizontal */
 }
 
 body {
@@ -134,16 +143,22 @@ input[type="text"] {
     outline: none;
 }
 
-/* Remove fundo branco do autocomplete do navegador */
-input[type="text"]:-webkit-autofill,
-input[type="text"]:-webkit-autofill:hover,
-input[type="text"]:-webkit-autofill:focus,
-input[type="text"]:-webkit-autofill:active {
+/* Remove fundo branco do autocomplete do navegador (Correção Global) */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    /* Força o fundo a ser cinza escuro (zinc-700 / #3f3f46) para combinar com o input */
     -webkit-box-shadow: 0 0 0 1000px #3f3f46 inset !important;
+
+    /* Força a cor do texto a ser branca/clara */
     -webkit-text-fill-color: #FCFCFC !important;
+
     box-shadow: 0 0 0 1000px #3f3f46 inset !important;
     background-color: #3f3f46 !important;
     transition: background-color 5000s ease-in-out 0s;
+    caret-color: #FCFCFC;
+    /* Garante que o cursor de digitação fique branco */
 }
 
 input[type="text"]:hover {
@@ -151,6 +166,34 @@ input[type="text"]:hover {
 }
 
 input[type="text"]:focus {
+    outline: none;
+    border-color: #DC2626 !important;
+}
+
+/* Aplica o mesmo efeito de contorno vermelho para email e password */
+input[type="email"],
+input[type="password"] {
+    transition: border-color 0.3s ease;
+    outline: none;
+}
+
+input[type="email"]:hover,
+input[type="password"]:hover {
+    border-color: #DC2626;
+}
+
+input[type="email"]:focus,
+input[type="password"]:focus {
+    outline: none;
+    border-color: #DC2626 !important;
+}
+
+/* Garantir contorno vermelho idêntico ao formulário de login
+   para todos os campos (inclui number, select, textarea e inputs genéricos) */
+input:focus,
+input[type="number"]:focus,
+select:focus,
+textarea:focus {
     outline: none;
     border-color: #DC2626 !important;
 }
@@ -399,6 +442,61 @@ header nav a.bg-destaque:hover {
     transform: translateY(-2px) scale(1.02);
 }
 
+/* === Estilo dos Itens do Menu de Usuário (fallback para hover:pl-8) === */
+.user-menu-item {
+    transition: all 0.3s ease;
+}
+
+.user-menu-item:hover {
+    background-color: #27272a;
+    /* zinco-800 */
+    color: #DC2626 !important;
+    /* destaque */
+    padding-left: 2rem !important;
+    /* efeito de deslizar */
+}
+
+/* === Customização Definitiva do Input de Data === */
+
+input[type="date"] {
+    /* Mantém o popup do calendário escuro */
+    color-scheme: dark;
+    position: relative;
+}
+
+/* Remove o ícone nativo padrão do sistema */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    background: transparent;
+    bottom: 0;
+    color: transparent;
+    cursor: pointer;
+    height: auto;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: auto;
+    z-index: 1;
+}
+
+/* Cria o nosso ícone customizado via background-image no próprio input */
+input[type="date"] {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2' ry='2'%3E%3C/rect%3E%3Cline x1='16' y1='2' x2='16' y2='6'%3E%3C/line%3E%3Cline x1='8' y1='2' x2='8' y2='6'%3E%3C/line%3E%3Cline x1='3' y1='10' x2='21' y2='10'%3E%3C/line%3E%3C/svg%3E");
+    background-position: right 1rem center;
+    background-repeat: no-repeat;
+    background-size: 1.2em;
+    /* Transição suave apenas para a cor de fundo do hover, não para o ícone */
+    transition: border-color 0.3s ease;
+}
+
+/* Ícone VERMELHO ao passar o mouse ou focar (troca a imagem de fundo) */
+input[type="date"]:hover,
+input[type="date"]:focus {
+    border-color: #DC2626;
+    /* Borda vermelha */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23DC2626' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2' ry='2'%3E%3C/rect%3E%3Cline x1='16' y1='2' x2='16' y2='6'%3E%3C/line%3E%3Cline x1='8' y1='2' x2='8' y2='6'%3E%3C/line%3E%3Cline x1='3' y1='10' x2='21' y2='10'%3E%3C/line%3E%3C/svg%3E");
+}
+
 /* Variante sem glow para botões do header */
 .cta-button-no-glow:hover::before {
     animation: draw-sides 0.3s ease-out forwards;
@@ -408,6 +506,20 @@ header nav a.bg-destaque:hover {
     animation: draw-top-bottom 0.3s ease-out forwards;
 }
 
+/* Remove animação de contorno especificamente para o botão CTA da landing (classe `cta-access-btn`) */
+.cta-access-btn::before,
+.cta-access-btn::after {
+    display: none !important;
+    animation: none !important;
+    opacity: 0 !important;
+}
+
+/* Garantia adicional: não aplicar sombra/transform no hover para esse botão */
+.cta-access-btn:hover {
+    transform: none !important;
+    box-shadow: none !important;
+}
+
 .cta-button-no-glow:hover {
     transform: translateY(-2px) scale(1.05);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
@@ -415,4 +527,103 @@ header nav a.bg-destaque:hover {
 
 .cta-button-no-glow:active {
     transform: translateY(-1px) scale(1.02);
+}
+
+/* === Scrollbar customizada para conteúdos longos (ex.: respostas da Dieta) === */
+.custom-scrollbar {
+    max-height: 48vh;
+    /* limita altura e permite rolagem interna */
+    overflow: auto;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    padding-right: 0.5rem;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgba(220, 38, 38, 0.18);
+    border-radius: 9999px;
+    border: 2px solid rgba(39, 39, 42, 0.9);
+}
+
+.custom-scrollbar:hover::-webkit-scrollbar-thumb {
+    background-color: rgba(220, 38, 38, 0.36);
+}
+
+/* Firefox */
+.custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(220, 38, 38, 0.18) transparent;
+}
+
+/* Ajuste para o container de Dieta (id usado em index.html -> #dietContent) */
+#dietContent {
+    box-sizing: border-box;
+    padding: 1rem;
+}
+
+/* Efeito sutil de hover para os cards do dashboard (inspirado nas features da landing page) */
+.card-hover-subtle {
+    position: relative;
+    transition: transform 0.28s cubic-bezier(0.2, 0.9, 0.2, 1), box-shadow 0.28s ease, border-color 0.28s ease;
+    will-change: transform, box-shadow;
+}
+
+.card-hover-subtle:hover {
+    transform: translateY(-3px) scale(1.01);
+    box-shadow: 0 16px 36px rgba(2, 6, 23, 0.48), 0 10px 28px rgba(220, 38, 38, 0.14);
+    border-color: rgba(220, 38, 38, 0.34);
+}
+
+.card-hover-subtle::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(120deg, rgba(220, 38, 38, 0.04) 0%, rgba(220, 38, 38, 0.00) 40%);
+    opacity: 0;
+    transition: opacity 0.22s ease;
+}
+
+.card-hover-subtle:hover::before {
+    opacity: 1;
+}
+
+/* (Removido) pseudo-elemento que tentava mascarar a borda vertical central.
+   A borda dos cards agora é removida diretamente no JS para evitar o traço. */
+
+
+/* Quando o conteúdo estiver vazio, mantém um placeholder vertical centrado */
+.diet-placeholder {
+    min-height: 12rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #a1a1aa;
+}
+
+/* Linha horizontal com extremidades visíveis e centro transparente */
+.card-sep {
+    position: relative;
+}
+
+.card-sep::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    pointer-events: none;
+    /* extremidades visíveis (~23%), centro transparente */
+    background: linear-gradient(to right, rgba(63, 63, 70, 0.5) 0% 23%, rgba(63, 63, 70, 0) 23% 77%, rgba(63, 63, 70, 0.5) 77% 100%);
+    z-index: 2;
 }
