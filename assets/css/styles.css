@@ -623,7 +623,14 @@ input[type="date"]:focus {
     right: 0;
     height: 1px;
     pointer-events: none;
-    /* extremidades visíveis (~23%), centro transparente */
-    background: linear-gradient(to right, rgba(63, 63, 70, 0.5) 0% 23%, rgba(63, 63, 70, 0) 23% 77%, rgba(63, 63, 70, 0.5) 77% 100%);
+    /* extremidades visíveis (ajustado) e centro transparente deslocado ligeiramente para a direita */
+    background: linear-gradient(to right, rgba(63, 63, 70, 0.5) 0% 35%, rgba(63, 63, 70, 0) 35% 85%, rgba(63, 63, 70, 0.5) 85% 100%);
     z-index: 2;
+}
+
+/* Make the actual border-top transparent so the pseudo-element's gradient
+   (with a transparent center) is visible. This creates the partial
+   transparent divider effect in the middle of cards. */
+.card-sep {
+    border-top-color: transparent !important;
 }

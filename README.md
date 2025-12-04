@@ -1,55 +1,196 @@
-# TRACK2LIFT — Visão Geral do Projeto
+# TRACK2LIFT — Aplicação de Rastreamento de Treinos e Dieta
 
-TRACK2LIFT é uma aplicação front-end estática (single-page) focada em rastreamento de treinos, registro de exercícios e visualização de progresso com integração experimental de IA. O repositório contém a landing page pública, a aplicação interna (login/dashboard), e recursos estáticos (CSS, imagens, SVGs, scripts) organizados para evitar processos de build.
+TRACK2LIFT é uma aplicação web moderna para rastreamento completo de treinos e dieta, com visualização de progresso e integração experimental de IA. Desenvolvida como uma SPA estática com foco em UX profissional e performance.
 
-Visão geral das funcionalidades
-- Landing Page: seção pública com hero, chamadas para ação e visual atrativo (textura tipográfica e gráficos decorativos). Serve como ponto de atração e introdução ao produto.
-- Autenticação: tela de login/cadastro integrada com Supabase; fluxos de sessão, alteração de senha e gerenciamento de conta estão implementados no front-end.
-- Dashboard: lista de treinos salvos, cartões com resumo, indicadores rápidos (ex.: número de exercícios) e ação para editar/excluir treinos.
-- Formulário de Treino: criação/edição de treinos com blocos de exercício; cada bloco suporta modos `strength` (reps + peso) e `cardio` (duração), séries dinâmicas e autosave local (rascunho).
-- Visualização corporal: recurso decorativo/funcional que injeta um SVG de musculatura e destaca grupos musculares relacionados aos exercícios do treino.
-- Integração IA (demo): botão de demonstração que usa uma função serverless para chamar a API Gemini de forma segura (proxy), exibindo sugestões e conteúdos gerados.
+## 🎯 Funcionalidades Principais
 
-Arquitetura e principais tecnologias
-- Frontend: HTML estático + Tailwind CSS (CDN) + Vanilla JS.
-- Charts: Chart.js para visualizações de progresso (dashboard/hero).
-- Backend-as-a-Service: Supabase para autenticação e persistência (tabela `workouts`, campo `exercises` em JSONB).
-- Serverless: função proxy (ex.: Netlify Functions) usada para encapsular a Gemini API Key e evitar exposição no cliente.
+### 💪 Gerenciamento de Treinos
+- **Dashboard de Treinos**: Visualização de treinos por data com cards interativos
+- **Criação/Edição**: Interface intuitiva para registrar exercícios de força e cardio
+- **Templates**: Salve e reutilize templates de treino
+- **Exercícios Personalizados**: Crie e gerencie seus próprios exercícios com persistência no Supabase
+- **Visualização Corporal**: SVG interativo que destaca grupos musculares trabalhados
+- **Autosave**: Rascunho local automático para não perder progresso
 
-Principais pontos técnicos
-- Organização sem build: todos os arquivos são servidos estáticamente; `app.js` contém a lógica principal e é carregado com `defer`.
-- Gerenciamento de SVG: o SVG de musculatura (`assets/img/muscle.svg`) é carregado uma vez e cacheado em memória (`cachedMuscleSvg`). A função `getBodyWatermark(activeGroups, svgContent)` gera uma versão inline do SVG com grupos colorizados por `id`.
-- UX do formulário: cada exercício salva um `type` (`strength` ou `cardio`) e `sets` no formato apropriado — isso simplifica renderização e edição de treinos no dashboard.
-- Heurísticas de identificação: `identifyMuscleGroup(exerciseName)` mapeia nomes de exercícios para grupos usando um catálogo granular e palavras-chave.
+### 🍎 Rastreamento de Dieta
+- **Registro de Refeições**: Tabela nutricional TBCA integrada com busca inteligente
+- **Refeições Salvas**: Salve suas refeições favoritas como templates
+- **Cálculo Automático**: Macros calculados automaticamente com base em peso/altura/objetivo
+- **Barra de Progresso**: Visualização em tempo real do consumo calórico e macros
+- **Histórico**: Visualize refeições por data
 
-Conteúdo do repositório (diretório de alto nível)
-- `index.html` — landing page + mount points para o app
-- `assets/`
-   - `css/` — estilos locais e fallbacks (inclui `styles.css`, `hero-texture.css`)
-   - `js/`
-      - `tailwind-config.js` — define `window.tailwind.config` antes do CDN
-      - `app.js` — lógica principal (auth, UI, forms, charts, SVG painting, integração Gemini)
-      - `analytics.js` — GA4 helper (event tracking)
-   - `img/` — imagens e `muscle.svg` usado para a visualização corporal
-   - `fonts/` — fontes customizadas (logo)
-- `logo/` — assets da marca
-- `netlify/functions/` — funções serverless (proxy Gemini)
+### 📊 Progresso e Análises
+- **Gráficos Interativos**: Chart.js para visualização de evolução
+- **Indicadores**: Volume total, grupos musculares mais trabalhados
+- **Histórico**: Navegação por datas com carregamento dinâmico
 
-Modelo de dados (resumo)
-O principal documento persistido é `workout`, com um campo `exercises` que contém um array de exercícios; cada exercício possui `name`, `type` e `sets`. Exemplo simplificado:
+### 🤖 IA Experimental
+- **Sugestões Gemini**: Integração com Google Gemini via proxy serverless
+- **Análise de Treinos**: Sugestões baseadas em seus treinos
 
+### 🎨 UX Profissional
+- **Sistema de Notificações Toast**: Feedback visual elegante para todas as ações
+- **Modais Customizados**: Confirmações e alertas com design consistente
+- **Sem Popups Nativos**: 100% da UI usa componentes customizados
+- **Animações Suaves**: Transições fluidas em toda a aplicação
+- **Responsivo**: Design otimizado para mobile e desktop
+
+## 🏗️ Arquitetura Técnica
+
+### Frontend
+- **HTML5 + Tailwind CSS** (CDN) - Design system customizado
+- **Vanilla JavaScript ES6 Modules** - Arquitetura modular limpa
+- **Chart.js** - Visualizações e gráficos
+- **Sem Build Process** - Deploy direto, sem webpack/vite
+
+### Backend & Serviços
+- **Supabase**
+  - Autenticação completa (login, signup, recuperação de senha, exclusão de conta)
+  - PostgreSQL com RLS (Row Level Security)
+  - Tabelas: `workouts`, `workout_templates`, `diet_logs`, `saved_meals`, `custom_exercises`
+- **Netlify Functions** - Proxy serverless para Gemini API
+- **Hospedagem**: Netlify com CDN global
+
+### Estrutura de Dados
+
+**Workout**:
 ```json
 {
-   "date": "2025-11-22",
-   "name": "Treino A",
-   "exercises": [
-      { "name": "Supino Reto", "type": "strength", "sets": [{ "reps": 8, "weight": 80 }] },
-      { "name": "Esteira", "type": "cardio", "sets": [{ "duration": 20 }] }
-   ]
+  "id": "uuid",
+  "user_id": "uuid",
+  "date": "2025-12-04",
+  "name": "Treino A",
+  "exercises": [
+    {
+      "name": "Supino Reto",
+      "type": "strength",
+      "muscleGroup": "Peito",
+      "sets": [
+        { "reps": 8, "weight": 80 },
+        { "reps": 8, "weight": 80 }
+      ]
+    },
+    {
+      "name": "Esteira",
+      "type": "cardio",
+      "sets": [{ "duration": 20 }]
+    }
+  ]
 }
 ```
 
-Segurança (visão resumida)
-- Chaves sensíveis não devem estar no repositório. Use um proxy serverless e variáveis de ambiente no provedor de hospedagem.
-- A chave do Supabase usada em frontend deve ser `anon`. Regras de Row-Level Security (RLS) devem ser configuradas para garantir isolamento entre usuários.
+**Diet Log**:
+```json
+{
+  "id": "uuid",
+  "user_id": "uuid",
+  "date": "2025-12-04",
+  "meal_name": "Almoço",
+  "calories": 650,
+  "protein": 45,
+  "carbs": 60,
+  "fats": 20,
+  "foods": [
+    { "name": "Arroz", "grams": "150", "macros": {...} },
+    { "name": "Frango", "grams": "200", "macros": {...} }
+  ]
+}
+```
+
+## 📁 Estrutura do Projeto
+
+```
+track2lift/
+├── index.html                    # Página única (landing + app)
+├── assets/
+│   ├── css/
+│   │   ├── styles.css           # Estilos customizados
+│   │   └── hero-texture.css     # Texturas da landing
+│   ├── js/
+│   │   ├── app.js               # Orquestrador principal
+│   │   ├── tailwind-config.js   # Config do Tailwind
+│   │   ├── analytics.js         # Tracking de eventos
+│   │   ├── lib/
+│   │   │   ├── supabaseClient.js
+│   │   │   ├── exercises.js     # Catálogo de exercícios
+│   │   │   └── ui-utils.js      # Sistema de toast/modais
+│   │   └── modules/
+│   │       ├── auth.js          # Autenticação
+│   │       ├── workout.js       # Lógica de treinos
+│   │       └── diet.js          # Lógica de dieta
+│   ├── img/
+│   │   └── muscle.svg           # SVG de visualização corporal
+│   └── fonts/                   # Fontes customizadas
+├── netlify/
+│   └── functions/
+│       └── gemini.js            # Proxy para Gemini API
+└── logo/                        # Assets da marca
+```
+
+## 🚀 Deploy e Configuração
+
+### Variáveis de Ambiente (Netlify)
+```
+SUPABASE_URL=your_supabase_url
+SUPABASE_ANON_KEY=your_anon_key
+GEMINI_API_KEY=your_gemini_key
+```
+
+### Tabelas Supabase
+Execute os scripts SQL em `supabase_*.sql` para criar as tabelas necessárias com RLS configurado.
+
+### Deploy
+```bash
+# Fazer push para GitHub
+git add .
+git commit -m "Update"
+git push origin main
+
+# Netlify faz deploy automático
+```
+
+## 🔒 Segurança
+
+- ✅ Row Level Security (RLS) em todas as tabelas
+- ✅ API Keys protegidas via serverless functions
+- ✅ Função RPC para exclusão segura de conta (`delete_own_user`)
+- ✅ Validação client-side e server-side
+- ✅ HTTPS obrigatório via Netlify
+
+## 🎨 Design System
+
+### Paleta de Cores
+- **Primary**: `#DC2626` (destaque/vermelho)
+- **Background**: `#18181b` (zinc-900)
+- **Cards**: `#27272a` (zinc-800)
+- **Text**: `#e4e4e7` (zinc-200)
+- **Borders**: `#3f3f46` (zinc-700)
+
+### Componentes Reutilizáveis
+- **Toast Notifications**: success, error, warning, info
+- **Confirm Dialogs**: warning, danger, info
+- **Loading States**: spinners e estados de carregamento
+- **Form Validations**: feedback inline e mensagens
+
+## 📊 Métricas e Analytics
+
+- Google Analytics 4 integrado
+- Tracking de eventos customizados
+- Monitoramento de conversões (signups, treinos criados)
+
+## 🤝 Contribuindo
+
+1. Reporte bugs: [GitHub Issues](https://github.com/Douglasmartinsf/track2lift/issues/new?template=bug_report.md)
+2. Sugira features: [Feature Request](https://github.com/Douglasmartinsf/track2lift/issues/new?template=feature_request.md)
+
+## 📝 Licença
+
+Projeto proprietário - Todos os direitos reservados
+
+## 🙏 Agradecimentos
+
+- **Supabase** - Backend as a Service
+- **Tailwind CSS** - Framework CSS
+- **Chart.js** - Biblioteca de gráficos
+- **Google Gemini** - IA experimental
 

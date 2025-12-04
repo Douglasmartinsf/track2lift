@@ -23,8 +23,6 @@
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <!-- Supabase CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <!-- Configuração da API (deve carregar ANTES de app.js) -->
     <script src="assets/js/config.js"></script>
@@ -43,8 +41,14 @@
 
                 <div class="flex-1 flex justify-start items-center">
                     <a href="#" id="logoLink" class="inline-flex items-center" aria-label="TRACK2LIFT">
-                        <img id="siteLogo" src="logo/logo.svg" alt="TRACK2LIFT" class="h-5 md:h-6 lg:h-7 w-auto"
-                            onerror="this.style.display='none'" />
+                        <!-- Mobile logo: shown only on small screens -->
+                        <img id="siteLogoMobile" src="logo/logo_mobile.svg" alt="TRACK2LIFT"
+                            class="h-8 w-auto md:hidden" onerror="this.style.display='none'" />
+
+                        <!-- Desktop logo: kept as #siteLogo for existing JS references -->
+                        <img id="siteLogo" src="logo/logo.svg" alt="TRACK2LIFT"
+                            class="hidden md:block h-5 md:h-6 lg:h-7 w-auto" onerror="this.style.display='none'" />
+
                         <span class="sr-only">TRACK2LIFT</span>
                     </a>
                 </div>
@@ -76,10 +80,12 @@
                         class="app-tab text-destaque font-bold transition duration-300 border-b-2 border-destaque pb-0.5">
                         Treinos
                     </button>
+                    <span class="text-destaque">|</span>
                     <button data-tab="diet"
                         class="app-tab text-zinc-400 hover:text-destaque transition duration-300 font-medium pb-0.5 border-b-2 border-transparent hover:border-destaque/50">
                         Dieta
                     </button>
+                    <span class="text-destaque">|</span>
                     <button data-tab="progress"
                         class="app-tab text-zinc-600 cursor-not-allowed font-medium pb-0.5 border-b-2 border-transparent"
                         title="Em breve">
@@ -99,28 +105,99 @@
                     <div id="loggedUserMenu" class="hidden relative group">
                         <button
                             class="flex items-center gap-2 text-zinc-300 hover:text-destaque font-medium transition focus:outline-none py-2">
-                            <span id="userEmailDisplay">Minha Conta</span>
+                            <!-- Mobile: user icon (replaces name) -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round"
+                                class="icon icon-tabler icons-tabler-outline icon-tabler-user-circle block md:hidden h-8 w-8 text-zinc-300">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
+                                <path d="M12 10m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
+                                <path d="M6.168 18.849a4 4 0 0 1 3.832 -2.849h4a4 4 0 0 1 3.834 2.855" />
+                            </svg>
+
+                            <!-- Desktop: keep text for JS and display -->
+                            <span id="userEmailDisplay" class="hidden md:inline">Minha Conta</span>
+
+                            <!-- Chevron: show on desktop next to name -->
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round">
+                                stroke-linejoin="round" class="hidden md:inline">
                                 <polyline points="6 9 12 15 18 9"></polyline>
                             </svg>
                         </button>
 
                         <div
                             class="absolute right-0 top-full mt-0 w-56 bg-zinc-900 border border-zinc-700 rounded-lg shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform group-hover:translate-y-0 translate-y-2 z-50 overflow-hidden">
-                            <a href="#" id="menuGoToApp"
-                                class="user-menu-item block px-5 py-4 text-sm text-zinc-300 border-b border-zinc-800">
-                                Ir para o App &rarr;
-                            </a>
+                            <button id="menuGoToApp"
+                                class="user-menu-item w-full text-left flex items-center gap-2 px-5 py-4 text-sm text-zinc-300 border-b border-zinc-800">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                                </svg>
+                                Ir para o App
+                            </button>
 
                             <button id="menuAccountSettings"
-                                class="user-menu-item w-full text-left block px-5 py-4 text-sm text-zinc-300 border-b border-zinc-800">
+                                class="user-menu-item w-full text-left flex items-center gap-2 px-5 py-4 text-sm text-zinc-300 border-b border-zinc-800">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
                                 Minha Conta
                             </button>
 
+                            <button id="menuReportBug"
+                                class="user-menu-item w-full text-left flex items-center gap-2 px-5 py-4 text-sm text-zinc-300 border-b border-zinc-800">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="m8 2 1.88 1.88"></path>
+                                    <path d="M14.12 3.88 16 2"></path>
+                                    <path d="M9 7.13v-1a3.003 3.003 0 1 1 6 0v1"></path>
+                                    <path
+                                        d="M12 20c-3.3 0-6-2.7-6-6v-3a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v3c0 3.3-2.7 6-6 6">
+                                    </path>
+                                    <path d="M12 20v-9"></path>
+                                    <path d="M6.53 9C4.6 8.8 3 7.1 3 5"></path>
+                                    <path d="M6 13H2"></path>
+                                    <path d="M3 21c0-2.1 1.7-3.9 3.8-4"></path>
+                                    <path d="M20.97 5c0 2.1-1.6 3.8-3.5 4"></path>
+                                    <path d="M22 13h-4"></path>
+                                    <path d="M17.2 17c2.1.1 3.8 1.9 3.8 4"></path>
+                                </svg>
+                                Relatar Bug
+                            </button>
+
+                            <button id="menuSuggestions"
+                                class="user-menu-item w-full text-left flex items-center gap-2 px-5 py-4 text-sm text-zinc-300 border-b border-zinc-800">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M12 2a10 10 0 0 1 7.38 16.75"></path>
+                                    <path d="M12 8v8"></path>
+                                    <path d="M16 12H8"></path>
+                                    <path d="M2.5 8.875a10 10 0 0 0-.5 3"></path>
+                                    <path d="M2.83 16a10 10 0 0 0 2.43 3.4"></path>
+                                    <path d="M4.636 5.235a10 10 0 0 1 .891-.857"></path>
+                                    <path d="M8.644 21.42a10 10 0 0 0 7.631-.38"></path>
+                                </svg>
+                                Dar Sugestão
+                            </button>
+
                             <button id="menuLogout"
-                                class="user-menu-item w-full text-left block px-5 py-4 text-sm text-zinc-300">
+                                class="user-menu-item w-full text-left flex items-center gap-2 px-5 py-4 text-sm text-zinc-300">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                    <polyline points="16 17 21 12 16 7"></polyline>
+                                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                                </svg>
                                 Sair
                             </button>
                         </div>
@@ -145,7 +222,7 @@
                     Progresso
                 </a>
                 <a href="#download"
-                    class="block bg-destaque text-texto font-bold py-3 px-5 rounded-lg hover:bg-red-700 text-center mt-4">
+                    class="block bg-destaque text-texto font-bold py-3 px-5 rounded-lg hover:bg-red-700 text-center mt-4 transition duration-300 transform hover:scale-105">
                     Acessar Agora
                 </a>
             </div>
@@ -166,6 +243,20 @@
 
         <div class="relative max-w-md w-full space-y-8 bg-zinc-900/95 p-8 rounded-2xl shadow-xl border border-zinc-700"
             style="z-index: 10;">
+
+            <!-- Botão de voltar no topo -->
+            <div class="absolute top-4 left-4">
+                <button id="backToLandingBtn" type="button"
+                    class="inline-flex items-center gap-2 text-sm text-zinc-500 hover:text-destaque transition duration-200 p-2 rounded-lg hover:bg-zinc-800/50">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                    <span class="hidden sm:inline">Voltar</span>
+                </button>
+            </div>
+
             <div>
                 <h2 class="text-center text-4xl font-extrabold logo-font" aria-label="TRACK2LIFT">
                     <span>TRACK</span><span class="text-destaque">2</span><span>LIFT</span>
@@ -905,26 +996,47 @@
                     </h2>
                     <p class="text-zinc-400 text-sm">Foco total no objetivo.</p>
                 </div>
+
+                <div class="flex items-center gap-3" id="workoutActions">
+                    <!-- Botões de ação serão adicionados dinamicamente pelo JS -->
+                </div>
             </div>
 
             <div id="tab-workouts" class="tab-content">
-                <div class="mb-8 flex justify-end">
-                    <button id="showWorkoutFormBtn"
-                        class="cta-button bg-destaque text-texto font-bold py-3 px-6 rounded-lg hover:bg-red-700 flex items-center gap-2 shadow-lg transition transform hover:scale-105">
+
+
+
+
+                <div
+                    class="flex items-center justify-between mb-8 bg-zinc-900/50 p-2 rounded-lg border border-zinc-800">
+                    <button id="prevWorkoutDateBtn"
+                        class="p-2 text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-md transition"
+                        title="Dia Anterior">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="12" y1="5" x2="12" y2="19"></line>
-                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <path d="M15 18l-6-6 6-6" />
                         </svg>
-                        Registrar Novo Treino
+                    </button>
+
+                    <div class="flex flex-col items-center">
+                        <span id="currentWorkoutDateDisplay"
+                            class="text-sm font-bold text-white tracking-wide">Hoje</span>
+                        <span id="currentWorkoutWeekDay" class="text-[10px] text-zinc-500 uppercase font-bold">--</span>
+                    </div>
+
+                    <button id="nextWorkoutDateBtn"
+                        class="p-2 text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-md transition"
+                        title="Próximo Dia">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 18l6-6-6-6" />
+                        </svg>
                     </button>
                 </div>
 
-                <h3 class="text-xl font-bold mb-4 text-zinc-300 border-l-4 border-destaque pl-3">Histórico Recente</h3>
-
-                <div id="savedWorkoutsList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                <div id="savedWorkoutsList" class="w-full flex flex-col gap-8">
                     <p id="noWorkoutsMessage"
-                        class="text-zinc-400 col-span-full text-center py-8 bg-zinc-800/50 rounded-lg border border-zinc-700 border-dashed">
+                        class="text-zinc-400 text-center py-8 bg-zinc-800/50 rounded-lg border border-zinc-700 border-dashed">
                         Carregando seus treinos...
                     </p>
                 </div>
@@ -934,13 +1046,6 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div class="bg-zinc-900 border border-zinc-700 p-6 rounded-2xl relative overflow-hidden">
-                        <div class="absolute top-0 right-0 p-4 opacity-10">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round">
-                                <path d="M12 5v14M5 12h14" />
-                            </svg>
-                        </div>
                         <p class="text-zinc-400 text-sm font-medium mb-1">Meta Diária (<span
                                 id="dietGoalLabel">...</span>)</p>
                         <h3 class="text-4xl font-extrabold text-white"><span id="dietTargetCal">0</span> <span
@@ -948,7 +1053,6 @@
                         <p class="text-xs text-zinc-500 mt-2">Basal: <span id="dietBMR">0</span> | TDEE: <span
                                 id="dietTDEE">0</span></p>
                     </div>
-
                     <div class="bg-zinc-900 border border-zinc-700 p-6 rounded-2xl">
                         <p class="text-zinc-400 text-sm font-medium mb-1">Consumido Hoje</p>
                         <h3 class="text-4xl font-extrabold text-destaque"><span id="dietConsumedCal">0</span> <span
@@ -957,76 +1061,47 @@
                             <div id="dietProgressBar" class="bg-destaque h-full rounded-full" style="width: 0%"></div>
                         </div>
                     </div>
-
                     <div class="bg-zinc-900 border border-zinc-700 p-6 rounded-2xl flex flex-col justify-center gap-2">
-                        <div class="flex justify-between text-sm">
-                            <span class="text-zinc-400">Proteína</span>
-                            <span class="font-bold text-white" id="dietConsumedProt">0g</span>
-                        </div>
-                        <div class="flex justify-between text-sm">
-                            <span class="text-zinc-400">Carboidratos</span>
-                            <span class="font-bold text-white" id="dietConsumedCarb">0g</span>
-                        </div>
-                        <div class="flex justify-between text-sm">
-                            <span class="text-zinc-400">Gorduras</span>
-                            <span class="font-bold text-white" id="dietConsumedFat">0g</span>
-                        </div>
+                        <div class="flex justify-between text-sm"><span class="text-zinc-400">Proteína</span><span
+                                class="font-bold text-white" id="dietConsumedProt">0g</span></div>
+                        <div class="flex justify-between text-sm"><span class="text-zinc-400">Carboidratos</span><span
+                                class="font-bold text-white" id="dietConsumedCarb">0g</span></div>
+                        <div class="flex justify-between text-sm"><span class="text-zinc-400">Gorduras</span><span
+                                class="font-bold text-white" id="dietConsumedFat">0g</span></div>
                     </div>
                 </div>
 
-                <div class="bg-card border border-zinc-700 rounded-2xl p-6">
-                    <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                            stroke="#DC2626" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"
-                            class="transform -translate-y-0.5 inline-block">
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                            <path
-                                d="M12 3c1.918 0 3.52 1.35 3.91 3.151a4 4 0 0 1 2.09 7.723l0 7.126h-12v-7.126a4 4 0 1 1 2.092 -7.723a4 4 0 0 1 3.908 -3.151z" />
-                            <path d="M6.161 17.009l11.839 -.009" />
+                <div class="flex justify-between items-center">
+                    <h3 class="text-2xl font-bold text-white">Diário Alimentar</h3>
+                </div>
+
+                <div
+                    class="flex items-center justify-between mb-4 bg-zinc-900/50 p-2 rounded-lg border border-zinc-800">
+                    <button id="prevDietDateBtn"
+                        class="p-2 text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-md transition"
+                        title="Dia Anterior">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M15 18l-6-6 6-6" />
                         </svg>
-                        Sugestão do Chef IA
-                    </h3>
-                    <div class="grid lg:grid-cols-2 gap-8">
-                        <div class="space-y-4">
-                            <p class="text-sm text-zinc-400">A IA usará sua meta calórica calculada para sugerir a
-                                refeição perfeita com o que você tem.</p>
-                            <textarea id="appDietIngredients" rows="2"
-                                class="w-full bg-zinc-900 border border-zinc-600 rounded-lg px-4 py-3 text-texto focus:outline-none focus:border-destaque"
-                                placeholder="Ingredientes disponíveis (ex: ovos, batata, frango)..."></textarea>
-                            <button id="generateDietBtn"
-                                class="cta-button w-full bg-white text-black hover:bg-gray-200 font-bold py-3 px-6 rounded-lg transition duration-300">
-                                Gerar Sugestão
-                            </button>
-                        </div>
+                    </button>
 
-                        <div id="appDietResult"
-                            class="bg-zinc-900 p-4 rounded-xl border border-zinc-700 min-h-[150px] relative">
-                            <div id="dietPlaceholder" class="text-center opacity-30 py-10">A sugestão aparecerá aqui.
-                            </div>
-                            <div id="dietContent"
-                                class="hidden text-sm text-zinc-300 space-y-2 max-h-[300px] overflow-y-auto custom-scrollbar">
-                            </div>
-
-                            <button id="saveGeneratedMealBtn"
-                                class="hidden absolute bottom-4 right-4 bg-destaque text-white px-4 py-2 rounded-lg text-xs font-bold shadow-lg hover:bg-red-700 transition">
-                                + Registrar no Diário
-                            </button>
-                        </div>
+                    <div class="flex flex-col items-center">
+                        <span id="currentDietDateDisplay" class="text-sm font-bold text-white tracking-wide">Hoje</span>
+                        <span id="currentDietWeekDay" class="text-[10px] text-zinc-500 uppercase font-bold">--</span>
                     </div>
+
+                    <button id="nextDietDateBtn"
+                        class="p-2 text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-md transition"
+                        title="Próximo Dia">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 18l6-6-6-6" />
+                        </svg>
+                    </button>
                 </div>
 
-                <div class="space-y-4">
-                    <div class="flex justify-between items-center border-b border-zinc-700 pb-2">
-                        <h3 class="text-xl font-bold text-zinc-200">Diário de Hoje</h3>
-                        <button id="addCustomMealBtn"
-                            class="text-sm text-destaque hover:text-white font-medium flex items-center gap-1 transition">
-                            + Adicionar Refeição Manual
-                        </button>
-                    </div>
-
-                    <div id="dietLogList" class="space-y-3">
-                        <p class="text-zinc-500 text-center py-4 italic text-sm">Nenhuma refeição registrada hoje.</p>
-                    </div>
+                <div id="dietLogList" class="space-y-3">
                 </div>
             </div>
 
@@ -1041,53 +1116,57 @@
             </div>
         </div>
 
-        <div id="workoutFormView" class="hidden">
-            <div class="flex justify-between items-center mb-8">
-                <h2 class="text-4xl font-bold logo-font">
-                    Registrar <span class="text-destaque">Treino</span>
-                </h2>
-                <button id="goBackToDashboardBtn"
-                    class="text-zinc-300 hover:text-destaque transition duration-300 font-medium">
-                    <span>&times; Cancelar Treino</span>
-                </button>
-            </div>
+        <div id="workoutFormView"
+            class="hidden fixed inset-0 z-[60] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+            <div
+                class="bg-zinc-900 w-full max-w-2xl rounded-2xl border border-zinc-700 shadow-2xl flex flex-col max-h-[90vh]">
 
-            <div class="bg-card p-6 md:p-8 rounded-2xl shadow-xl border border-zinc-700">
-                <div class="grid md:grid-cols-2 gap-6 mb-6">
-                    <div>
-                        <label for="workoutDate" class="block text-sm font-medium text-zinc-200 mb-2">Data</label>
-                        <input type="date" id="workoutDate"
-                            class="w-full bg-zinc-700 border border-zinc-600 rounded-lg px-4 py-3 text-texto focus:outline-none focus:border-destaque">
-                    </div>
-                    <div>
-                        <label for="workoutName" class="block text-sm font-medium text-zinc-200 mb-2">Nome do Treino
-                            (Opcional)</label>
-                        <input type="text" id="workoutName"
-                            class="w-full bg-zinc-700 border border-zinc-600 rounded-lg px-4 py-3 text-texto focus:outline-none focus:border-destaque"
-                            placeholder="Ex: Treino A - Peito/Tríceps">
-                    </div>
+                <div class="p-6 border-b border-zinc-800 flex justify-between items-center">
+                    <h3 id="workoutModalTitle" class="text-xl font-bold text-white">Novo Treino</h3>
+                    <button id="goBackToDashboardBtn" class="text-zinc-400 hover:text-white">&times;</button>
                 </div>
 
-                <hr class="border-zinc-700 my-6">
+                <div class="p-6 overflow-y-auto custom-scrollbar flex-1 space-y-6">
+                    <div class="grid md:grid-cols-2 gap-6 mb-0">
+                        <div>
+                            <label for="workoutDate" class="block text-sm font-medium text-zinc-200 mb-2">Data</label>
+                            <input type="date" id="workoutDate"
+                                class="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 text-texto focus:border-destaque focus:outline-none">
+                        </div>
+                        <div>
+                            <label for="workoutName" class="block text-sm font-medium text-zinc-200 mb-2">Nome do Treino
+                                (Opcional)</label>
+                            <input type="text" id="workoutName" placeholder="Ex: Treino A - Peito/Tríceps"
+                                class="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 text-texto focus:border-destaque focus:outline-none">
+                        </div>
+                    </div>
 
-                <div id="exerciseListContainer" class="space-y-6">
+                    <hr class="border-zinc-700 my-2">
+
+                    <div id="exerciseListContainer" class="space-y-6"></div>
                 </div>
 
-                <div class="flex flex-col md:flex-row justify-between items-center mt-8 gap-4">
-                    <button id="addExerciseBtn"
-                        class="w-full md:w-auto bg-zinc-700 hover:bg-zinc-600 text-texto font-bold py-3 px-6 rounded-lg transition duration-300 flex items-center justify-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="12" y1="5" x2="12" y2="19"></line>
-                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                        </svg>
-                        Adicionar Exercício
-                    </button>
+                <div class="p-6 border-t border-zinc-800 flex justify-between items-center bg-zinc-900/50">
+                    <div>
+                        <button id="addExerciseBtn" class="text-sm text-destaque hover:underline font-bold">+ Adicionar
+                            Exercício</button>
+                    </div>
 
-                    <button id="saveWorkoutBtn"
-                        class="w-full md:w-auto cta-button cta-button-no-glow bg-destaque text-texto font-bold py-3 px-6 rounded-lg hover:bg-red-700 text-lg">
-                        Salvar Treino
-                    </button>
+                    <div class="flex items-center">
+                        <button id="deleteWorkoutBtn" class="hidden text-red-500 mr-4" title="Excluir Treino">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path
+                                    d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
+                                </path>
+                            </svg>
+                        </button>
+
+                        <button id="saveWorkoutBtn"
+                            class="bg-destaque text-white px-8 py-2.5 rounded-lg font-bold hover:bg-red-700 shadow-lg">Salvar</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1106,10 +1185,405 @@
         </div>
     </footer>
 
+    <!-- Meal Modal -->
+    <div id="mealModal"
+        class="hidden fixed inset-0 z-[60] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div
+            class="bg-zinc-900 w-full max-w-2xl rounded-2xl border border-zinc-700 shadow-2xl flex flex-col max-h-[90vh]">
+
+            <div class="p-6 border-b border-zinc-800 flex justify-between items-center">
+                <h3 class="text-xl font-bold text-white">Nova Refeição</h3>
+                <button id="closeMealModalBtn" class="text-zinc-400 hover:text-white">&times;</button>
+            </div>
+
+            <div class="p-6 overflow-y-auto custom-scrollbar flex-1 space-y-6">
+
+                <button id="openSavedMealsBtn"
+                    class="w-full bg-zinc-800 border border-zinc-700 hover:border-destaque rounded-lg px-4 py-3 text-sm text-white hover:text-destaque transition-all flex items-center justify-between group">
+                    <div class="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+                            <polyline points="17 21 17 13 7 13 7 21" />
+                            <polyline points="7 3 7 8 15 8" />
+                        </svg>
+                        <span class="font-medium">Usar Refeição Salva</span>
+                    </div>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="text-zinc-500 group-hover:text-destaque transition">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M9 6l6 6l-6 6" />
+                    </svg>
+                </button>
+
+                <hr class="border-zinc-800">
+
+
+                <div>
+                    <label class="block text-xs font-bold text-zinc-500 uppercase mb-2">Nome da Refeição</label>
+                    <input type="text" id="mealNameInput" placeholder="Ex: Café da manhã"
+                        class="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 text-texto focus:border-destaque focus:outline-none">
+                </div>
+
+                <div>
+                    <div class="mb-2">
+                        <label class="block text-xs font-bold text-zinc-500 uppercase">Alimentos</label>
+                    </div>
+
+                    <div id="foodRowsContainer" class="space-y-3">
+                    </div>
+                </div>
+
+                <div class="mt-6 bg-zinc-950/50 border border-zinc-800 rounded-xl p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <h4 class="text-xs font-bold text-zinc-400 uppercase tracking-wider">Total Estimado</h4>
+                        <div class="text-[10px] text-zinc-600 bg-zinc-900 px-2 py-1 rounded border border-zinc-800">
+                            Macro/Refeição</div>
+                    </div>
+
+                    <div class="grid grid-cols-4 gap-2">
+                        <div
+                            class="bg-zinc-900/80 rounded-lg p-2 text-center border border-zinc-800/50 relative overflow-hidden group">
+                            <div class="relative z-10">
+                                <span id="modalTotalCal"
+                                    class="block text-xl md:text-2xl font-black text-destaque tracking-tight">0</span>
+                                <span class="text-[10px] font-bold text-zinc-500 uppercase tracking-wide">Kcal</span>
+                            </div>
+                        </div>
+
+                        <div class="bg-zinc-900/50 rounded-lg p-2 text-center border border-zinc-800/50">
+                            <span id="modalTotalProt" class="block text-lg font-bold text-white">0</span>
+                            <span class="text-[10px] text-zinc-500 uppercase">Prot (g)</span>
+                        </div>
+
+                        <div class="bg-zinc-900/50 rounded-lg p-2 text-center border border-zinc-800/50">
+                            <span id="modalTotalCarb" class="block text-lg font-bold text-white">0</span>
+                            <span class="text-[10px] text-zinc-500 uppercase">Carb (g)</span>
+                        </div>
+
+                        <div class="bg-zinc-900/50 rounded-lg p-2 text-center border border-zinc-800/50">
+                            <span id="modalTotalFat" class="block text-lg font-bold text-white">0</span>
+                            <span class="text-[10px] text-zinc-500 uppercase">Gord (g)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-6 border-t border-zinc-800 flex justify-between items-center bg-zinc-900/50">
+                <div class="flex items-center">
+                    <button id="addFoodRowBtn"
+                        class="text-zinc-400 hover:text-destaque transition px-2 py-1 flex items-center gap-2"
+                        title="Adicionar Alimento">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M12 5l0 14" />
+                            <path d="M5 12l14 0" />
+                        </svg>
+                        <span class="text-sm font-medium">Adicionar Alimento</span>
+                    </button>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button id="confirmMealBtn"
+                        class="bg-destaque text-white px-8 py-2 rounded-lg font-bold hover:bg-red-700 transition shadow-lg">Registrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Workout Setup Modal -->
+    <div id="workoutSetupModal"
+        class="hidden fixed inset-0 z-[65] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div
+            class="bg-zinc-900 w-full max-w-md rounded-2xl border border-zinc-700 shadow-2xl flex flex-col overflow-hidden">
+            <div class="p-5 border-b border-zinc-800 flex justify-between items-center">
+                <h3 class="text-lg font-bold text-white">Iniciar Treino</h3>
+                <button id="closeWorkoutSetupModalBtn" class="text-zinc-400 hover:text-white">&times;</button>
+            </div>
+
+            <div class="p-5">
+                <div class="flex flex-col gap-3">
+                    <div class="flex items-center justify-between gap-4">
+                        <button id="createFromScratchBtn"
+                            class="w-1/2 bg-destaque text-white py-3 rounded-lg font-bold">Criar do Zero</button>
+                        <button id="useSavedTemplateBtn" class="w-1/2 bg-zinc-800 text-zinc-300 py-3 rounded-lg">Usar
+                            Modelo Salvo</button>
+                    </div>
+
+                    <div id="createFromScratchForm" class="hidden space-y-3">
+                        <label class="block text-sm text-zinc-400">Nome do Treino</label>
+                        <input id="newWorkoutNameInput" type="text" placeholder="Treino A"
+                            class="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-texto focus:outline-none focus:border-destaque">
+                        <button id="confirmCreateWorkoutBtn"
+                            class="w-full bg-destaque text-white py-2.5 rounded-lg font-bold hover:bg-red-700 transition">Criar
+                            Treino</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Workout Name Modal -->
+    <div id="editWorkoutNameModal"
+        class="hidden fixed inset-0 z-[66] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div
+            class="bg-zinc-900 w-full max-w-md rounded-2xl border border-zinc-700 shadow-2xl flex flex-col overflow-hidden">
+            <div class="p-5 border-b border-zinc-800 flex justify-between items-center">
+                <h3 class="text-lg font-bold text-white">Editar Nome do Treino</h3>
+                <button id="closeEditWorkoutNameModalBtn" class="text-zinc-400 hover:text-white">&times;</button>
+            </div>
+            <div class="p-5">
+                <label class="block text-sm text-zinc-400 mb-2">Nome do Treino</label>
+                <input id="editWorkoutNameInput" type="text"
+                    class="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-texto focus:outline-none focus:border-destaque">
+            </div>
+            <div class="p-5 border-t border-zinc-800 flex justify-end bg-zinc-900/50">
+                <button id="editWorkoutNameSaveBtn"
+                    class="bg-destaque text-white px-4 py-2 rounded-lg font-bold">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Select Template Modal -->
+    <div id="selectTemplateModal"
+        class="hidden fixed inset-0 z-[67] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div
+            class="bg-zinc-900 w-full max-w-md rounded-2xl border border-zinc-700 shadow-2xl flex flex-col max-h-[80vh]">
+            <div class="p-5 border-b border-zinc-800 flex justify-between items-center">
+                <h3 class="text-lg font-bold text-white">Escolher Template</h3>
+                <button id="closeSelectTemplateModalBtn" class="text-zinc-400 hover:text-white">&times;</button>
+            </div>
+            <div class="p-5 overflow-y-auto custom-scrollbar flex-1">
+                <div id="templateListContainer" class="space-y-2">
+                    <!-- Templates serão inseridos aqui dinamicamente -->
+                </div>
+                <div id="noTemplatesMessage" class="hidden text-center text-zinc-500 py-8">
+                    <p class="mb-2">Você ainda não tem templates salvos.</p>
+                    <p class="text-sm">Crie um treino e salve-o como template para reutilizá-lo.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Name Workout from Template Modal -->
+    <div id="nameWorkoutFromTemplateModal"
+        class="hidden fixed inset-0 z-[68] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div
+            class="bg-zinc-900 w-full max-w-md rounded-2xl border border-zinc-700 shadow-2xl flex flex-col overflow-hidden">
+            <div class="p-5 border-b border-zinc-800 flex justify-between items-center">
+                <h3 class="text-lg font-bold text-white">Nome do Treino</h3>
+                <button id="closeNameWorkoutFromTemplateModalBtn"
+                    class="text-zinc-400 hover:text-white">&times;</button>
+            </div>
+            <div class="p-5">
+                <label class="block text-sm text-zinc-400 mb-2">Digite o nome para o novo treino</label>
+                <input id="nameWorkoutFromTemplateInput" type="text" placeholder="Treino A"
+                    class="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-texto focus:outline-none focus:border-destaque">
+            </div>
+            <div class="p-5 border-t border-zinc-800 flex justify-end gap-2 bg-zinc-900/50">
+                <button id="cancelNameWorkoutFromTemplateBtn"
+                    class="px-4 py-2 rounded-lg text-zinc-400 hover:text-white text-sm font-medium transition">Cancelar</button>
+                <button id="confirmNameWorkoutFromTemplateBtn"
+                    class="bg-destaque text-white px-6 py-2 rounded-lg text-sm font-bold hover:bg-red-700 transition shadow-lg">Criar
+                    Treino</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Select Saved Meal Modal -->
+    <div id="selectSavedMealModal"
+        class="hidden fixed inset-0 z-[67] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div
+            class="bg-zinc-900 w-full max-w-md rounded-2xl border border-zinc-700 shadow-2xl flex flex-col max-h-[80vh]">
+            <div class="p-5 border-b border-zinc-800 flex justify-between items-center">
+                <h3 class="text-lg font-bold text-white">Refeições Salvas</h3>
+                <button id="closeSelectSavedMealModalBtn" class="text-zinc-400 hover:text-white">&times;</button>
+            </div>
+            <div class="p-5 overflow-y-auto custom-scrollbar flex-1">
+                <div id="savedMealListContainer" class="space-y-2">
+                    <!-- Refeições salvas serão inseridas aqui dinamicamente -->
+                </div>
+                <div id="noSavedMealsMessage" class="hidden text-center text-zinc-500 py-8">
+                    <p class="mb-2">Você ainda não tem refeições salvas.</p>
+                    <p class="text-sm">Registre uma refeição e salve-a como template para reutilizá-la.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Save Meal Template Modal -->
+    <div id="saveMealTemplateModal"
+        class="hidden fixed inset-0 z-[68] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div
+            class="bg-zinc-900 w-full max-w-md rounded-2xl border border-zinc-700 shadow-2xl flex flex-col overflow-hidden">
+            <div class="p-5 border-b border-zinc-800 flex justify-between items-center">
+                <h3 class="text-lg font-bold text-white">Salvar Refeição</h3>
+                <button id="closeSaveMealTemplateModalBtn" class="text-zinc-400 hover:text-white">&times;</button>
+            </div>
+            <div class="p-5">
+                <label class="block text-sm text-zinc-400 mb-2">Digite o nome da refeição</label>
+                <input id="saveMealTemplateNameInput" type="text" placeholder="Minha Refeição"
+                    class="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-texto focus:outline-none focus:border-destaque">
+                <p class="text-xs text-zinc-500 mt-2">Esta refeição salva poderá ser reutilizada rapidamente.</p>
+            </div>
+            <div class="p-5 border-t border-zinc-800 flex justify-end gap-2 bg-zinc-900/50">
+                <button id="cancelSaveMealTemplateBtn"
+                    class="px-4 py-2 rounded-lg text-zinc-400 hover:text-white text-sm font-medium transition">Cancelar</button>
+                <button id="confirmSaveMealTemplateBtn"
+                    class="bg-destaque text-white px-6 py-2 rounded-lg text-sm font-bold hover:bg-red-700 transition shadow-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="inline-block mr-1">
+                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+                        <polyline points="17 21 17 13 7 13 7 21" />
+                        <polyline points="7 3 7 8 15 8" />
+                    </svg>
+                    Salvar Refeição
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Save Template Modal -->
+    <div id="saveTemplateModal"
+        class="hidden fixed inset-0 z-[68] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div
+            class="bg-zinc-900 w-full max-w-md rounded-2xl border border-zinc-700 shadow-2xl flex flex-col overflow-hidden">
+            <div class="p-5 border-b border-zinc-800 flex justify-between items-center">
+                <h3 class="text-lg font-bold text-white">Salvar Template</h3>
+                <button id="closeSaveTemplateModalBtn" class="text-zinc-400 hover:text-white">&times;</button>
+            </div>
+            <div class="p-5">
+                <label class="block text-sm text-zinc-400 mb-2">Digite o nome do template</label>
+                <input id="saveTemplateNameInput" type="text" placeholder="Treino A (Template)"
+                    class="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-texto focus:outline-none focus:border-destaque">
+                <p class="text-xs text-zinc-500 mt-2">Este template poderá ser reutilizado para criar novos treinos
+                    rapidamente.</p>
+            </div>
+            <div class="p-5 border-t border-zinc-800 flex justify-end gap-2 bg-zinc-900/50">
+                <button id="cancelSaveTemplateBtn"
+                    class="px-4 py-2 rounded-lg text-zinc-400 hover:text-white text-sm font-medium transition">Cancelar</button>
+                <button id="confirmSaveTemplateBtn"
+                    class="bg-destaque text-white px-6 py-2 rounded-lg text-sm font-bold hover:bg-red-700 transition shadow-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="inline-block mr-1">
+                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+                        <polyline points="17 21 17 13 7 13 7 21" />
+                        <polyline points="7 3 7 8 15 8" />
+                    </svg>
+                    Salvar Template
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- ===== JavaScript externo ===== -->
     <script src="assets/js/analytics.js" defer></script>
-    <script src="assets/js/app.js?v=3" defer></script>
+    <script type="module" src="assets/js/app.js?v=3" defer></script>
 
 </body>
 
 </html>
+
+<!-- Exercise Modal (inserido automaticamente) -->
+<div id="exerciseModal"
+    class="hidden fixed inset-0 z-[70] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-zinc-900 w-full max-w-md rounded-2xl border border-zinc-700 shadow-2xl flex flex-col max-h-[90vh]">
+
+        <div class="p-5 border-b border-zinc-800 flex justify-between items-center">
+            <h3 class="text-lg font-bold text-white" id="exerciseModalTitle">Editar Exercício</h3>
+            <button id="closeExerciseModalBtn" class="text-zinc-400 hover:text-white">&times;</button>
+        </div>
+
+        <div class="p-5 overflow-y-auto custom-scrollbar flex-1 space-y-5">
+            <div>
+                <div class="flex items-center justify-between mb-2">
+                    <label class="block text-xs font-bold text-zinc-500 uppercase">Exercício</label>
+                    <button id="manageExercisesBtn" type="button"
+                        class="text-xs text-zinc-400 hover:text-red-400 transition flex items-center gap-1"
+                        title="Gerenciar exercícios salvos">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="icon icon-tabler icons-tabler-outline icon-tabler-settings">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path
+                                d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z" />
+                            <path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" />
+                        </svg>
+                        Gerenciar
+                    </button>
+                </div>
+                <!-- container para injetar select de Grupo Muscular dinamicamente -->
+                <div id="muscleGroupSelectionContainer" class="mb-3"></div>
+                <select id="modalExerciseSelect"
+                    class="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2.5 text-texto outline-none focus:border-destaque">
+                </select>
+            </div>
+
+            <div>
+                <div class="mb-2">
+                    <label class="block text-xs font-bold text-zinc-500 uppercase">Séries</label>
+                </div>
+                <div id="modalSetsContainer" class="space-y-2">
+                </div>
+            </div>
+        </div>
+
+        <div class="p-5 border-t border-zinc-800 flex justify-between items-center bg-zinc-900/50">
+            <div class="flex items-center">
+                <button id="modalAddSetBtn"
+                    class="text-zinc-400 hover:text-destaque transition px-2 py-1 flex items-center gap-2"
+                    title="Adicionar Série">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M12 5l0 14" />
+                        <path d="M5 12l14 0" />
+                    </svg>
+                    <span class="text-sm font-medium">Adicionar Série</span>
+                </button>
+            </div>
+            <div class="flex items-center gap-3">
+                <button id="modalDeleteExerciseBtn" class="text-red-500 hover:text-red-400 transition p-2"
+                    title="Excluir Exercício">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M4 7l16 0" />
+                        <path d="M10 11l0 6" />
+                        <path d="M14 11l0 6" />
+                        <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
+                        <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
+                    </svg>
+                </button>
+                <button id="modalSaveBtn"
+                    class="bg-destaque text-white px-6 py-2 rounded-lg text-sm font-bold hover:bg-red-700 transition shadow-lg">Salvar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Gerenciar Exercícios Salvos -->
+<div id="manageExercisesModal"
+    class="hidden fixed inset-0 z-[71] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-zinc-900 w-full max-w-lg rounded-2xl border border-zinc-700 shadow-2xl flex flex-col max-h-[80vh]">
+        <div class="p-5 border-b border-zinc-800">
+            <div class="flex justify-between items-center mb-3">
+                <h3 class="text-lg font-bold text-white">Gerenciar Exercícios Salvos</h3>
+                <button id="closeManageExercisesBtn" class="text-zinc-400 hover:text-white text-2xl">&times;</button>
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-zinc-500 uppercase mb-2">Filtrar por Musculatura</label>
+                <select id="manageExercisesFilter"
+                    class="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-texto outline-none focus:border-destaque transition">
+                    <option value="all">Todas as Musculaturas</option>
+                </select>
+            </div>
+        </div>
+        <div class="p-5 overflow-y-auto custom-scrollbar flex-1" id="manageExercisesContent">
+            <p class="text-zinc-400 text-sm text-center py-8">Carregando...</p>
+        </div>
+    </div>
+</div>
