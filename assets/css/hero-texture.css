@@ -1,0 +1,171 @@
+/* assets/css/hero-texture.css - Versão Final Completa */
+
+/* 1. Container Principal (Posição Absoluta) */
+#animated-words-container,
+#auth-words-container,
+#pw-words-container,
+#settings-words-container,
+#onboarding-words-container {
+    /* <--- NOVO ID ADICIONADO AQUI */
+    position: absolute;
+    left: -10%;
+    right: -10%;
+    top: 0;
+    bottom: 0;
+    font-weight: bold;
+    font-size: 1rem;
+    line-height: 2;
+    word-wrap: break-word;
+    white-space: normal;
+    pointer-events: none;
+    user-select: none;
+    overflow: hidden;
+    z-index: 0;
+}
+
+/* 2. Responsivo (Font Size) */
+@media (min-width: 640px) {
+
+    #animated-words-container,
+    #auth-words-container,
+    #pw-words-container,
+    #settings-words-container,
+    #onboarding-words-container {
+        /* <--- AQUI */
+        font-size: 1.25rem;
+        line-height: 2.25;
+    }
+}
+
+@media (min-width: 768px) {
+
+    #animated-words-container,
+    #auth-words-container,
+    #pw-words-container,
+    #settings-words-container,
+    #onboarding-words-container {
+        /* <--- AQUI */
+        font-size: 1.5rem;
+        line-height: 2.5;
+    }
+}
+
+/* 3. Estilo das Palavras (Opacidade e Cor) */
+#animated-words-container span,
+#auth-words-container span,
+#pw-words-container span,
+#settings-words-container span,
+#onboarding-words-container span {
+    /* <--- AQUI */
+    display: inline-block;
+    margin-right: 1.5rem;
+    color: #a1a1aa;
+    opacity: 0.036;
+    transition: color 0.6s ease, opacity 0.6s ease, transform 0.4s ease, -webkit-text-stroke 0.4s ease;
+    -webkit-text-stroke: 0px transparent;
+    text-stroke: 0px transparent;
+}
+
+@media (min-width: 768px) {
+
+    #animated-words-container span,
+    #auth-words-container span,
+    #pw-words-container span,
+    #settings-words-container span,
+    #onboarding-words-container span {
+        /* <--- AQUI */
+        margin-right: 2rem;
+    }
+}
+
+/* 4. Palavra Destacada (Vermelho) */
+#animated-words-container span.word-highlight,
+#auth-words-container span.word-highlight,
+#pw-words-container span.word-highlight,
+#settings-words-container span.word-highlight,
+#onboarding-words-container span.word-highlight {
+    /* <--- AQUI */
+    color: #EF4444 !important;
+    opacity: 0.35 !important;
+    animation: text-stroke-draw 1.2s ease-out forwards;
+}
+
+/* 5. Palavra sendo Removida */
+#animated-words-container span.word-removing,
+#auth-words-container span.word-removing,
+#pw-words-container span.word-removing,
+#settings-words-container span.word-removing,
+#onboarding-words-container span.word-removing {
+    /* <--- AQUI */
+    animation: text-stroke-remove 0.8s ease-in forwards;
+}
+
+/* 6. Estado Normal (Reset) */
+#animated-words-container span:not(.word-highlight):not(.word-removing),
+#auth-words-container span:not(.word-highlight):not(.word-removing),
+#pw-words-container span:not(.word-highlight):not(.word-removing),
+#settings-words-container span:not(.word-highlight):not(.word-removing),
+#onboarding-words-container span:not(.word-highlight):not(.word-removing) {
+    /* <--- AQUI */
+    animation: none;
+    -webkit-text-stroke: 0px transparent;
+    text-shadow: none;
+}
+
+/* Mantenha os @keyframes e o resto do arquivo abaixo como estavam... */
+@keyframes text-stroke-draw {
+    0% {
+        -webkit-text-stroke: 2px rgba(255, 255, 255, 0);
+        text-shadow: none;
+    }
+
+    25% {
+        -webkit-text-stroke: 2px rgba(255, 255, 255, 0.2);
+        text-shadow: 0 0 2px rgba(255, 255, 255, 0.3), 1px 0 0 rgba(255, 255, 255, 0.1);
+    }
+
+    50% {
+        -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.4);
+        text-shadow: 0 0 4px rgba(255, 255, 255, 0.4), 1px 0 0 rgba(255, 255, 255, 0.2), -1px 0 0 rgba(255, 255, 255, 0.2), 0 1px 0 rgba(255, 255, 255, 0.2);
+    }
+
+    75% {
+        -webkit-text-stroke: 1px rgba(255, 255, 255, 0.5);
+        text-shadow: 0 0 6px rgba(255, 255, 255, 0.5), 1px 0 0 rgba(255, 255, 255, 0.3), -1px 0 0 rgba(255, 255, 255, 0.3), 0 1px 0 rgba(255, 255, 255, 0.3), 0 -1px 0 rgba(255, 255, 255, 0.3);
+    }
+
+    100% {
+        -webkit-text-stroke: 1px rgba(255, 255, 255, 0.6);
+        text-shadow: 0 0 8px rgba(255, 255, 255, 0.4), 1px 0 0 rgba(255, 255, 255, 0.4), -1px 0 0 rgba(255, 255, 255, 0.4), 0 1px 0 rgba(255, 255, 255, 0.4), 0 -1px 0 rgba(255, 255, 255, 0.4), 1px 1px 0 rgba(255, 255, 255, 0.3), -1px -1px 0 rgba(255, 255, 255, 0.3);
+    }
+}
+
+@keyframes text-stroke-remove {
+    0% {
+        -webkit-text-stroke: 1px rgba(255, 255, 255, 0.6);
+        text-shadow: 0 0 8px rgba(255, 255, 255, 0.4), 1px 0 0 rgba(255, 255, 255, 0.4), -1px 0 0 rgba(255, 255, 255, 0.4), 0 1px 0 rgba(255, 255, 255, 0.4), 0 -1px 0 rgba(255, 255, 255, 0.4), 1px 1px 0 rgba(255, 255, 255, 0.3), -1px -1px 0 rgba(255, 255, 255, 0.3);
+    }
+
+    50% {
+        -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3);
+        text-shadow: 0 0 4px rgba(255, 255, 255, 0.2), 1px 0 0 rgba(255, 255, 255, 0.2), -1px 0 0 rgba(255, 255, 255, 0.2), 0 1px 0 rgba(255, 255, 255, 0.2);
+    }
+
+    100% {
+        -webkit-text-stroke: 0px transparent;
+        text-shadow: none;
+    }
+}
+
+#hero-section::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 50%, rgba(24, 24, 24, 0.5) 0%, rgba(24, 24, 24, 0.3) 50%, transparent 80%);
+    pointer-events: none;
+    z-index: 3;
+}
+
+#heroProgressChart {
+    isolation: isolate;
+}
