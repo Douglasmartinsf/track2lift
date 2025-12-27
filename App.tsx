@@ -135,7 +135,7 @@ function App() {
   const showHeader = view !== ViewState.AUTH;
 
   return (
-    <div className="min-h-screen bg-fundo text-texto font-sans flex flex-col">
+    <div className="h-[100dvh] bg-fundo text-texto font-sans flex flex-col overflow-hidden">
       {showHeader && (
         <Header 
             view={view} 
@@ -147,8 +147,8 @@ function App() {
         />
       )}
       
-      {/* Removed overflow-x-hidden here to allow sticky position to work correctly in children */}
-      <main className="flex-1 w-full max-w-full relative">
+      {/* The scroll must occur inside this main element */}
+      <main className="flex-1 w-full overflow-y-auto no-scrollbar relative">
         {view === ViewState.AUTH && <AuthView onSuccess={() => setView(ViewState.DASHBOARD)} />}
         {view === ViewState.ONBOARDING && <OnboardingView onComplete={handleOnboardingComplete} />}
         {view === ViewState.DASHBOARD && user && (

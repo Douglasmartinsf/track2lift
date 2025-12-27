@@ -1,6 +1,6 @@
 {
-  "name": "TRACK2LIFT",
-  "short_name": "TRACK2LIFT",
+  "name": "Track2Lift - Treino & Dieta",
+  "short_name": "Track2Lift",
   "description": "Seu treino, sua dieta, um app.",
   "start_url": "/",
   "display": "standalone",
