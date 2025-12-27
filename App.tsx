@@ -4,6 +4,7 @@ import { supabase } from './services/supabaseClient';
 import { ViewState, DashboardTab, UserProfile } from './types';
 import Header from './components/Header';
 import BottomNav from './components/BottomNav';
+import InstallPrompt from './components/InstallPrompt';
 import AuthView from './views/Auth';
 import DashboardView from './views/Dashboard';
 import SettingsView from './views/Settings';
@@ -169,6 +170,7 @@ function App() {
       {isDashboard && (
           <BottomNav activeTab={activeTab} setActiveTab={setActiveTab} />
       )}
+      <InstallPrompt />
     </div>
   );
 }
