@@ -1,53 +1,68 @@
 
+
 # Track2Lift — t2l_mobile
 
-Aplicativo SPA em React + Vite + TypeScript focado em treinos, dieta e um coach AI simples.
+> SPA React + Vite + TypeScript projetada para gerenciamento de treinos, controle de dieta e visualização de progresso. Este README é focado em apresentar o projeto tecnicamente para fins de portfólio.
 
-## Começando (Desenvolvimento)
+Resumo rápido
+- Projeto single-page com UI responsiva para criar/editar treinos, registrar refeições e acompanhar progresso.
+- Implementado com foco em estrutura modular: componentes reutilizáveis, serviços para lógica de domínio e integração com Supabase para autenticação/armazenamento.
 
-Pré-requisitos: `Node.js` (v16+ recomendado)
+Stack técnico
+- Frontend: `React` + `TypeScript` + `Vite`
+- UI: CSS + `framer-motion` para animações leves
+- Gráficos: `recharts`
+- Autenticação / persistência: `@supabase/supabase-js`
+- Outras: `lucide-react` (ícones)
 
-- Instalar dependências:
+Estrutura do repositório
+- `components/` — componentes visuais e mapas interativos (ex.: `MuscleMap.tsx`).
+- `views/` — páginas principais (Dashboard, Onboarding, Settings, Auth).
+- `views/tabs/` — abas usadas no dashboard (Workouts, Diet, Progress, etc.).
+- `services/` — lógica de domínio (gestão de treinos e dieta, cliente Supabase).
+- `modals/` e `settings/` — gerência de rotinas, refeições e preferências.
+
+Destaques técnicos (para mostrar em portfólio)
+- Mapeamento interativo de músculos com SVG: `components/MuscleMap.tsx`.
+- Lógica de catálogo/identificação de exercícios e persistência de preferências: `services/workoutService.ts`.
+- Helpers de nutrição e integração com APIs externas em `services/dietService.ts`.
+- Estrutura modular pensada para ser facilmente expandida para backend microservices.
+
+Executando localmente
+
+1. Instale dependências:
 
 ```bash
 npm install
 ```
 
-- Criar um arquivo `.env.local` a partir de exemplo e adicionar chaves necessárias (não comitar):
+2. Crie um arquivo `.env.local` com as variáveis necessárias (ex.: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`).
 
-```
-GEMINI_API_KEY=seu_token_gemini
-VITE_SUPABASE_URL=https://...
-VITE_SUPABASE_ANON_KEY=...
-```
-
-- Rodar em modo desenvolvimento:
+3. Rode em modo desenvolvimento:
 
 ```bash
 npm run dev
 ```
 
-## Build e Preview
+Build para produção
 
 ```bash
 npm run build
 npm run preview
 ```
 
-## Principais pontos
+Observações para portfólio
+- Inclua imagens ou GIFs do app no README do repositório do portfólio para mostrar as telas-chave (Dashboard, visualização de treino e gráficos de progresso).
+- No resumo do projeto (ex.: página do portfólio), destaque decisões arquiteturais (por que `Supabase`, escolha do Vite/TS, modularidade dos `services`).
 
-- Arquitetura: `components/`, `views/`, `services/`.
-- Integrações: Supabase (auth + metadata) e GenAI (cliente usado no frontend — para produção mover para backend).
-- Mensagens e prompts do coach AI estão em `views/tabs/AICoach.tsx`.
+Arquivos-chave para revisar
+- `components/MuscleMap.tsx` — mapa de músculos e interação SVG
+- `services/workoutService.ts` — catálogo de exercícios e lógica de treino
+- `services/dietService.ts` — cálculos nutricionais e fetchers
+- `services/supabaseClient.ts` — configuração do cliente Supabase
 
-## Segurança
-
-- Nunca comite chaves privadas. Use `.env.local` e um backend para proteger chaves de APIs de terceiros.
-
-## Contribuição rápida
-
-- Rodar `npm install` e `npm run dev`.
-- Testar fluxos de autenticação Supabase e a aba do AI Coach localmente.
+Contato / Demo
+- Se este repositório for usado em um portfólio público, adicione um link de demo ou screenshots no topo do README.
 
 ---
-Arquivo de instruções do assistente e detalhes adicionais estão em `.github/copilot-instructions.md`.
+Este README foi escrito para ser direto e técnico — se quiser que eu gere uma versão em inglês ou com imagens e GIFs embutidos, posso criar os assets e atualizar o arquivo.
