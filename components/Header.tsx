@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { ViewState, UserProfile } from '../types';
 import { LogOut, User, Activity, Utensils, BarChart2 } from 'lucide-react';
@@ -32,19 +33,26 @@ const Header: React.FC<HeaderProps> = ({ view, user, setView, activeTab, setActi
                             >
                                 <Activity size={18} /> Treinos
                             </button>
-                            <span className="text-zinc-700">|</span>
+                            <span className="text-zinc-800">|</span>
+                            
                             <button 
-                                onClick={() => setActiveTab && setActiveTab('DIET')}
-                                className={`flex items-center gap-2 font-medium transition ${activeTab === 'DIET' ? 'text-destaque border-b-2 border-destaque' : 'text-zinc-400 hover:text-white'}`}
+                                disabled
+                                className="flex items-center gap-2 font-medium text-zinc-600 cursor-not-allowed transition-opacity opacity-70"
                             >
-                                <Utensils size={18} /> Dieta
+                                <Utensils size={18} /> 
+                                <span>Dieta</span>
+                                <span className="ml-1 text-[9px] uppercase font-bold bg-zinc-800 text-zinc-500 px-1.5 py-0.5 rounded border border-zinc-700/50">Em breve</span>
                             </button>
-                            <span className="text-zinc-700">|</span>
+                            
+                            <span className="text-zinc-800">|</span>
+                            
                             <button 
-                                onClick={() => setActiveTab && setActiveTab('PROGRESS')}
-                                className={`flex items-center gap-2 font-medium transition ${activeTab === 'PROGRESS' ? 'text-destaque border-b-2 border-destaque' : 'text-zinc-400 hover:text-white'}`}
+                                disabled
+                                className="flex items-center gap-2 font-medium text-zinc-600 cursor-not-allowed transition-opacity opacity-70"
                             >
-                                <BarChart2 size={18} /> Progresso
+                                <BarChart2 size={18} /> 
+                                <span>Progresso</span>
+                                <span className="ml-1 text-[9px] uppercase font-bold bg-zinc-800 text-zinc-500 px-1.5 py-0.5 rounded border border-zinc-700/50">Em breve</span>
                             </button>
                         </div>
                     )}
