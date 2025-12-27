@@ -129,8 +129,11 @@ const WorkoutModal: React.FC<WorkoutModalProps> = ({ onClose, onSave, initialDat
             // For cardio, ensure duration exists and is > 0
             return sets.every(s => s.duration !== undefined && s.duration > 0);
         } else {
-            // For strength, ensure reps exists and is > 0
-            return sets.every(s => s.reps !== undefined && s.reps > 0);
+            // For strength, ensure reps AND weight exist and are > 0
+            return sets.every(s => 
+                s.reps !== undefined && s.reps > 0 && 
+                s.weight !== undefined && s.weight > 0
+            );
         }
     }, [exerciseName, sets, isCardio]);
 
@@ -169,6 +172,12 @@ const WorkoutModal: React.FC<WorkoutModalProps> = ({ onClose, onSave, initialDat
         if (!exerciseName) return '';
         return 'outro'; // Fallback
     }, [isCustomInput, availableExercises, exerciseName]);
+
+    const blockInvalidChar = (e: React.KeyboardEvent) => {
+        if (['e', 'E', '+', '-'].includes(e.key)) {
+            e.preventDefault();
+        }
+    };
 
     if (!user) return null;
 
@@ -286,7 +295,8 @@ const WorkoutModal: React.FC<WorkoutModalProps> = ({ onClose, onSave, initialDat
                                                 <div className="relative">
                                                     <input 
                                                         type="number"
-                                                        min="0" 
+                                                        min="0"
+                                                        onKeyDown={blockInvalidChar}
                                                         className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2.5 text-center font-bold text-white focus:border-destaque outline-none transition-colors" 
                                                         placeholder="0" 
                                                         value={set.duration || ''} 
@@ -310,7 +320,8 @@ const WorkoutModal: React.FC<WorkoutModalProps> = ({ onClose, onSave, initialDat
                                                     <div className="relative">
                                                         <input 
                                                             type="number"
-                                                            min="0" 
+                                                            min="0"
+                                                            onKeyDown={blockInvalidChar}
                                                             className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2.5 text-center font-bold text-white focus:border-destaque outline-none transition-colors" 
                                                             placeholder="0" 
                                                             value={set.reps || ''} 
@@ -326,6 +337,7 @@ const WorkoutModal: React.FC<WorkoutModalProps> = ({ onClose, onSave, initialDat
                                                         <input 
                                                             type="number" 
                                                             min="0"
+                                                            onKeyDown={blockInvalidChar}
                                                             className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2.5 text-center font-bold text-white focus:border-destaque outline-none transition-colors" 
                                                             placeholder="0" 
                                                             value={set.weight || ''} 

@@ -30,6 +30,7 @@ export interface Workout {
   date: string; // YYYY-MM-DD
   name: string;
   exercises: Exercise[];
+  source_routine_name?: string; // New field for persistence
   created_at?: string;
 }
 

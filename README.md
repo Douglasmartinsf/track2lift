@@ -1,53 +1,20 @@
+<div align="center">
+<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+</div>
 
-# Track2Lift — t2l_mobile
+# Run and deploy your AI Studio app
 
-Aplicativo SPA em React + Vite + TypeScript focado em treinos, dieta e um coach AI simples.
+This contains everything you need to run your app locally.
 
-## Começando (Desenvolvimento)
+View your app in AI Studio: https://ai.studio/apps/drive/1H-SvgycvKgNUMEW-1Cwn-zbE_dzB_U7O
 
-Pré-requisitos: `Node.js` (v16+ recomendado)
+## Run Locally
 
-- Instalar dependências:
+**Prerequisites:**  Node.js
 
-```bash
-npm install
-```
 
-- Criar um arquivo `.env.local` a partir de exemplo e adicionar chaves necessárias (não comitar):
-
-```
-GEMINI_API_KEY=seu_token_gemini
-VITE_SUPABASE_URL=https://...
-VITE_SUPABASE_ANON_KEY=...
-```
-
-- Rodar em modo desenvolvimento:
-
-```bash
-npm run dev
-```
-
-## Build e Preview
-
-```bash
-npm run build
-npm run preview
-```
-
-## Principais pontos
-
-- Arquitetura: `components/`, `views/`, `services/`.
-- Integrações: Supabase (auth + metadata) e GenAI (cliente usado no frontend — para produção mover para backend).
-- Mensagens e prompts do coach AI estão em `views/tabs/AICoach.tsx`.
-
-## Segurança
-
-- Nunca comite chaves privadas. Use `.env.local` e um backend para proteger chaves de APIs de terceiros.
-
-## Contribuição rápida
-
-- Rodar `npm install` e `npm run dev`.
-- Testar fluxos de autenticação Supabase e a aba do AI Coach localmente.
-
----
-Arquivo de instruções do assistente e detalhes adicionais estão em `.github/copilot-instructions.md`.
+1. Install dependencies:
+   `npm install`
+2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
+3. Run the app:
+   `npm run dev`
