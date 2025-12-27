@@ -1,0 +1,14 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[context.production.environment]
+# Defina variáveis de ambiente de produção aqui, por exemplo:
+# VITE_SUPABASE_URL = "https://..."
+# VITE_SUPABASE_ANON_KEY = "..."
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  force = true
