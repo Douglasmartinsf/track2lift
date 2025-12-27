@@ -2,7 +2,7 @@
 
 # Track2Lift — t2l_mobile
 
-> SPA React + Vite + TypeScript projetada para gerenciamento de treinos, controle de dieta e visualização de progresso. Este README é focado em apresentar o projeto tecnicamente para fins de portfólio.
+> SPA React + Vite + TypeScript projetada para gerenciamento de treinos, controle de dieta e visualização de progresso. 
 
 Resumo rápido
 - Projeto single-page com UI responsiva para criar/editar treinos, registrar refeições e acompanhar progresso.
@@ -22,7 +22,7 @@ Estrutura do repositório
 - `services/` — lógica de domínio (gestão de treinos e dieta, cliente Supabase).
 - `modals/` e `settings/` — gerência de rotinas, refeições e preferências.
 
-Destaques técnicos (para mostrar em portfólio)
+Destaques técnicos
 - Mapeamento interativo de músculos com SVG: `components/MuscleMap.tsx`.
 - Lógica de catálogo/identificação de exercícios e persistência de preferências: `services/workoutService.ts`.
 - Helpers de nutrição e integração com APIs externas em `services/dietService.ts`.
@@ -50,19 +50,3 @@ Build para produção
 npm run build
 npm run preview
 ```
-
-Observações para portfólio
-- Inclua imagens ou GIFs do app no README do repositório do portfólio para mostrar as telas-chave (Dashboard, visualização de treino e gráficos de progresso).
-- No resumo do projeto (ex.: página do portfólio), destaque decisões arquiteturais (por que `Supabase`, escolha do Vite/TS, modularidade dos `services`).
-
-Arquivos-chave para revisar
-- `components/MuscleMap.tsx` — mapa de músculos e interação SVG
-- `services/workoutService.ts` — catálogo de exercícios e lógica de treino
-- `services/dietService.ts` — cálculos nutricionais e fetchers
-- `services/supabaseClient.ts` — configuração do cliente Supabase
-
-Contato / Demo
-- Se este repositório for usado em um portfólio público, adicione um link de demo ou screenshots no topo do README.
-
----
-Este README foi escrito para ser direto e técnico — se quiser que eu gere uma versão em inglês ou com imagens e GIFs embutidos, posso criar os assets e atualizar o arquivo.
