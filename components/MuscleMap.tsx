@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect, useId } from 'react';
+import React, { useMemo, useState, useEffect, useId, useRef } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 
 // --- CONFIGURAÇÃO ROBUSTA DE MAPEAMENTO ---
@@ -26,13 +26,14 @@ interface MuscleViewConfig {
     view: 'front' | 'back' | 'full'; // Qual zoom aplicar
 }
 
-// Função auxiliar para normalizar chaves (remove acentos, espaços e lowerCase)
+// Função auxiliar para normalizar chaves (remove acentos, espaços, hyphens e non-alphanum -> underscore)
 const normalizeKey = (key: string): string => {
     return key
         .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .replace(/\s+/g, "_");
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9]+/g, '_')
+        .replace(/^_+|_+$/g, '');
 };
 
 // Mapeamento Central: Chave Normalizada -> Configuração (SVG)
@@ -40,9 +41,10 @@ const normalizeKey = (key: string): string => {
 const MUSCLE_MAP: Record<string, MuscleViewConfig> = {
     'peito':              { svgIds: ['peito'], view: 'front' },
     'costas':             { svgIds: ['costas'], view: 'back' },
-    'deltoide_anterior':  { svgIds: ['deltoide_anterior'], view: 'front' },
-    'deltoide_lateral':   { svgIds: ['deltoide_lateral'], view: 'back' },
-    'deltoide_posterior': { svgIds: ['deltoide_posterior'], view: 'back' },
+    'deltoide_anterior':  { svgIds: ['deltoide_anterior', 'Deltoide-anterior-lateral'], view: 'front' },
+    'deltoide_lateral':   { svgIds: ['deltoide_lateral', 'Deltoide-lateral'], view: 'back' },
+    // Support both inline (lowercase_underscore) and external SVG (Capitalized-hyphen) IDs
+    'deltoide_posterior': { svgIds: ['deltoide_posterior', 'Deltoide-posterior'], view: 'back' },
     'biceps':             { svgIds: ['biceps'], view: 'front' },
     'triceps':            { svgIds: ['triceps'], view: 'back' },
     'antebraco':          { svgIds: ['antebraco'], view: 'front' },
@@ -123,9 +125,31 @@ const MuscleMap: React.FC<MuscleMapProps> = ({
         back: { scale: 2.1, x: '-50%', y: `${5 + offsetY}%`, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } }
     }), [offsetY]);
 
-    // Helper: Identifica quais IDs do SVG devem ser destacados com base na prop `activeMuscles`
+    // Ref para o SVG renderizado — usaremos para descobrir IDs reais presentes no DOM
+    const svgRef = useRef<SVGSVGElement | null>(null);
+
+    // Lista dinâmica de ids encontrados no SVG (strings originais)
+    const [svgElementIds, setSvgElementIds] = useState<string[]>([]);
+
+    // Ao montar / atualizar SVG, coleciona todos os elementos com `id` dentro do SVG
+    useEffect(() => {
+        const svgEl = svgRef.current;
+        if (!svgEl) return;
+        const elementsWithId = Array.from(svgEl.querySelectorAll('[id]')) as Element[];
+        const ids = elementsWithId.map(e => e.id).filter(Boolean);
+        setSvgElementIds(ids);
+    }, []);
+
+    // Helper: Identifica quais IDs do SVG devem ser destacados com base na prop `activeMuscles`.
+    // Lógica:
+    // 1) Usa o mapeamento em `MUSCLE_MAP` quando presente (prioritário).
+    // 2) Também procura dinamicamente por qualquer elemento no SVG cujo id normalizado contenha
+    //    a chave normalizada (tratando subgrupos como parte do grupo). Isso garante que IDs como
+    //    `Deltoide-posterior_inner` ou `deltoide-posterior` sejam considerados parte de `deltoide_posterior`.
     const activeSvgIds = useMemo(() => {
         const ids = new Set<string>();
+
+        // Add explicit mappings first
         activeMuscles.forEach(muscleName => {
             const normalized = normalizeKey(muscleName);
             const config = MUSCLE_MAP[normalized];
@@ -133,8 +157,34 @@ const MuscleMap: React.FC<MuscleMapProps> = ({
                 config.svgIds.forEach(id => ids.add(id));
             }
         });
+
+        // Dynamic matching against SVG element ids (normalize both sides)
+        if (svgElementIds && svgElementIds.length > 0) {
+            const normalizedSvgIdMap = svgElementIds.reduce<Record<string,string>>((acc, original) => {
+                acc[original] = normalizeKey(original);
+                return acc;
+            }, {});
+
+            activeMuscles.forEach(muscleName => {
+                const target = normalizeKey(muscleName);
+                Object.entries(normalizedSvgIdMap).forEach(([original, normalized]) => {
+                    // Strict matching rules to avoid merging different groups:
+                    // - exact match
+                    // - svg id startsWith target (covers subgroup suffixes like "deltoide_posterior_inner")
+                    // We avoid broad `includes` checks which caused `posterior` and `deltoide_posterior` to merge.
+                    if (
+                        normalized === target ||
+                        normalized.startsWith(target + '_') ||
+                        normalized.startsWith(target)
+                    ) {
+                        ids.add(original);
+                    }
+                });
+            });
+        }
+
         return ids;
-    }, [activeMuscles]);
+    }, [activeMuscles, svgElementIds]);
 
     const getFill = (svgId: string) => {
         if (svgId === 'contorno') return '#18181b';
@@ -180,6 +230,7 @@ const MuscleMap: React.FC<MuscleMapProps> = ({
         <div className="w-full h-full overflow-hidden relative">
             <motion.svg 
                 viewBox="0 0 2464 2352" 
+                ref={svgRef}
                 className="w-full h-full drop-shadow-[0_0_15px_rgba(0,0,0,0.5)]"
                 xmlns="http://www.w3.org/2000/svg"
                 variants={variants}
