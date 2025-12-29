@@ -42,8 +42,8 @@ const ExerciseCard = ({ workout, onEdit, onDelete, userCatalog }: { workout: Wor
                     </div>
                 </div>
 
-                <div className="flex-1 min-w-0 flex flex-col justify-center">
-                    <h5 className="font-display font-black text-base text-white truncate tracking-tight mb-1">
+                <div className="flex-1 min-w-0 flex flex-col justify-center pr-12">
+                    <h5 className="font-display font-black text-base text-white truncate block w-full tracking-tight mb-1">
                         {workout.exercises[0]?.name || workout.name}
                     </h5>
 
@@ -57,7 +57,7 @@ const ExerciseCard = ({ workout, onEdit, onDelete, userCatalog }: { workout: Wor
 
                         <div className="min-w-0 flex items-center gap-1 border border-zinc-800 px-2 py-0.5 rounded-md">
                             <div className="w-1.5 h-1.5 rounded-full bg-destaque shrink-0" />
-                            <span className="text-[10px] font-bold text-zinc-300 uppercase tracking-wide truncate">
+                            <span className="text-[10px] font-bold text-zinc-300 uppercase tracking-wide truncate max-w-[100px]">
                                 {muscleGroup || 'Geral'}
                             </span>
                         </div>
@@ -90,6 +90,8 @@ const WorkoutsTab: React.FC<{ user: UserProfile }> = ({ user }) => {
     const [isLoading, setIsLoading] = useState(true);
     const [showDeleteAllModal, setShowDeleteAllModal] = useState(false);
     const [isDeletingLoading, setIsDeletingLoading] = useState(false);
+    const [workoutToDelete, setWorkoutToDelete] = useState<Workout | null>(null);
+    const [isDeletingSingleLoading, setIsDeletingSingleLoading] = useState(false);
     const [showOverwriteModal, setShowOverwriteModal] = useState(false);
     const [pendingTemplate, setPendingTemplate] = useState<WorkoutTemplate | null>(null);
     const [routineMode, setRoutineMode] = useState<'SAVE' | 'LOAD' | null>(null);
@@ -209,6 +211,20 @@ const WorkoutsTab: React.FC<{ user: UserProfile }> = ({ user }) => {
     const handleDelete = async (id: string) => {
         await supabase.from('workouts').delete().eq('id', id);
         fetchWorkouts();
+    };
+
+    const handleConfirmSingleDelete = async () => {
+        if (!workoutToDelete) return;
+        setIsDeletingSingleLoading(true);
+        try {
+            await supabase.from('workouts').delete().eq('id', workoutToDelete.id);
+            setWorkoutToDelete(null);
+            await fetchWorkouts();
+        } catch (err) {
+            console.error('Error deleting workout', err);
+        } finally {
+            setIsDeletingSingleLoading(false);
+        }
     };
 
     const confirmDeleteAll = async () => {
@@ -548,7 +564,7 @@ const WorkoutsTab: React.FC<{ user: UserProfile }> = ({ user }) => {
                         ) : (
                             workouts.map((w) => (
                                 <motion.div layout key={w.id} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, scale: 0.9 }} transition={{ type: "spring", stiffness: 500, damping: 35 }}>
-                                    <ExerciseCard workout={w} userCatalog={userCatalog} onEdit={() => { setEditingWorkout(w); setIsModalOpen(true); }} onDelete={() => handleDelete(w.id)} />
+                                    <ExerciseCard workout={w} userCatalog={userCatalog} onEdit={() => { setEditingWorkout(w); setIsModalOpen(true); }} onDelete={() => setWorkoutToDelete(w)} />
                                 </motion.div>
                             ))
                         )}
@@ -558,6 +574,20 @@ const WorkoutsTab: React.FC<{ user: UserProfile }> = ({ user }) => {
 
             {isModalOpen && <WorkoutModal onClose={() => { setIsModalOpen(false); setEditingWorkout(undefined); }} onSave={handleSave} initialData={editingWorkout} date={dateStr} user={user} />}
             <AnimatePresence>{routineMode && <RoutineManager mode={routineMode} user={user} currentWorkouts={workouts} onClose={() => setRoutineMode(null)} onLoadRoutine={handleLoadRoutine} onRoutineSaved={fetchWorkouts} />}</AnimatePresence>
+            <AnimatePresence>{workoutToDelete && (
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+                    <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 w-full max-w-sm shadow-2xl relative overflow-hidden">
+                        <div className="flex flex-col items-center text-center gap-4 relative z-10">
+                            <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center text-red-500 mb-2 border border-red-500/20"><Trash2 size={28} /></div>
+                            <div><h3 className="text-xl font-display font-bold text-white mb-2 uppercase">Excluir Exercício?</h3><p className="text-sm text-zinc-400">Deseja remover "{workoutToDelete?.exercises[0]?.name}"?</p></div>
+                            <div className="flex gap-3 w-full mt-4">
+                                <button onClick={() => setWorkoutToDelete(null)} className="flex-1 py-3.5 bg-zinc-800 text-zinc-300 rounded-xl font-bold">Cancelar</button>
+                                <button onClick={handleConfirmSingleDelete} className="flex-1 py-3.5 bg-red-600 text-white rounded-xl font-bold">{isDeletingSingleLoading ? <Loader2 size={18} className="animate-spin" /> : 'Confirmar'}</button>
+                            </div>
+                        </div>
+                    </motion.div>
+                </motion.div>
+            )}</AnimatePresence>
             <AnimatePresence>{showDeleteAllModal && (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
                     <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 w-full max-w-sm shadow-2xl relative overflow-hidden">
