@@ -91,7 +91,7 @@ const ExerciseCard = ({ workout, onEdit, onDelete, onLongPress, userCatalog }: {
                         </svg>
                         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                             <div className="absolute w-full h-full rounded-full" style={{ background: 'rgba(239,68,68,0.0)', pointerEvents: 'none' }} />
-                            <Trash2 size={18} className="text-red-400" style={{ opacity: Math.min(1, pressProgress / 100) }} />
+                            <Trash2 size={18} className="text-red-600" style={{ opacity: Math.min(1, pressProgress / 100) }} />
                         </div>
                     </div>
                 </div>

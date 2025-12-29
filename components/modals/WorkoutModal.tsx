@@ -154,8 +154,27 @@ const WorkoutModal: React.FC<WorkoutModalProps> = ({ onClose, onSave, initialDat
         }
 
         const nameChanged = exerciseName !== (initialEx.name || '');
-        const setsChanged = JSON.stringify(sets || []) !== JSON.stringify(initialEx.sets || []);
         const groupChanged = selectedGroup !== initialGroup;
+
+        // Compare sets more robustly: length or any per-set field differs
+        const initialSets = initialEx.sets || [];
+        const currentSets = sets || [];
+        let setsChanged = false;
+        if (initialSets.length !== currentSets.length) {
+            setsChanged = true;
+        } else {
+            for (let i = 0; i < currentSets.length; i++) {
+                const a: any = initialSets[i] || {};
+                const b: any = currentSets[i] || {};
+                // cardio uses duration; strength uses reps and weight
+                if (a.duration !== undefined || b.duration !== undefined) {
+                    if (Number(a.duration || 0) !== Number(b.duration || 0)) { setsChanged = true; break; }
+                } else {
+                    if (Number(a.reps || 0) !== Number(b.reps || 0)) { setsChanged = true; break; }
+                    if (Number(a.weight || 0) !== Number(b.weight || 0)) { setsChanged = true; break; }
+                }
+            }
+        }
 
         return nameChanged || setsChanged || groupChanged;
     }, [initialData, exerciseName, sets, selectedGroup, user]);
