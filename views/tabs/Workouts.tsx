@@ -73,10 +73,10 @@ const ExerciseCard = ({ workout, onEdit, onDelete, onLongPress, userCatalog }: {
 
     return (
         <motion.div layout className="relative overflow-hidden rounded-2xl bg-zinc-900/40 backdrop-blur-md border border-white/5 mb-3 touch-pan-y flex items-center gap-3 p-3 cursor-pointer select-none" onPointerDown={startPress} onPointerUp={handlePointerUp} onPointerCancel={clearPress} onPointerLeave={handlePointerLeave} whileTap={{ scale: 0.995 }}
-            animate={pressProgress > 0 && pressProgress < 100 ? { x: [0, -3, 3, -3, 3, 0] } : { x: 0 }}
-            transition={pressProgress > 0 && pressProgress < 100 ? { duration: 0.35, repeat: Infinity, repeatType: 'loop' } : {}}
+            animate={pressProgress > 0 && pressProgress < 100 ? { x: [0, -1, 1, -1, 1, 0] } : { x: 0 }}
+            transition={pressProgress > 0 && pressProgress < 100 ? { duration: 0.2, repeat: Infinity, repeatType: 'loop' } : {}}
         >
-                <div className="w-14 h-14 bg-zinc-950 rounded-full border border-zinc-800 shadow-[0_6px_18px_rgba(0,0,0,0.4)] relative shrink-0 overflow-hidden flex items-center justify-center">
+                <div className="w-14 h-14 bg-zinc-950 rounded-full border border-zinc-800 shadow-[0_6px_18px_rgba(0,0,0,0.4)] relative shrink-0 overflow-visible flex items-center justify-center">
                     <div className="absolute inset-0 bg-gradient-to-br from-black to-red-950/20 opacity-40" />
                     <div className="relative w-full h-full p-1 flex items-center justify-center">
                         <MuscleMap activeMuscles={muscleGroup ? [muscleGroup] : []} offsetY={yOffset} />
@@ -96,7 +96,7 @@ const ExerciseCard = ({ workout, onEdit, onDelete, onLongPress, userCatalog }: {
                     </div>
                 </div>
 
-                <div className="flex-1 min-w-0 flex flex-col justify-center pr-12">
+                <div className="flex-1 min-w-0 flex flex-col justify-center">
                     <h5 className="font-display font-black text-base text-white truncate block w-full tracking-tight mb-1">
                         {workout.exercises[0]?.name || workout.name}
                     </h5>
@@ -117,7 +117,7 @@ const ExerciseCard = ({ workout, onEdit, onDelete, onLongPress, userCatalog }: {
                             </div>
                     </div>
                 </div>
-                <div className="text-zinc-400 ml-3 shrink-0"><ChevronRight size={18} /></div>
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400"><ChevronRight size={18} /></div>
             </motion.div>
     );
 };
