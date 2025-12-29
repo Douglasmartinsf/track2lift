@@ -69,7 +69,7 @@ const ExerciseCard = ({ workout, onEdit, onDelete, onLongPress, userCatalog }: {
     }
 
     return (
-        <div className="relative overflow-hidden rounded-2xl bg-zinc-900/40 backdrop-blur-md border border-white/5 mb-3 touch-pan-y">
+        <motion.div layout className="relative overflow-hidden rounded-2xl bg-zinc-900/40 backdrop-blur-md border border-white/5 mb-3 touch-pan-y flex items-center gap-3 p-3 cursor-pointer" onPointerDown={startPress} onPointerUp={handlePointerUp} onPointerCancel={clearPress} onPointerLeave={handlePointerLeave} whileTap={{ scale: 0.995 }}>
                 <div className="w-14 h-14 bg-zinc-950 rounded-full border border-zinc-800 shadow-[0_6px_18px_rgba(0,0,0,0.4)] relative shrink-0 overflow-hidden flex items-center justify-center">
                     <div className="absolute inset-0 bg-gradient-to-br from-black to-red-950/20 opacity-40" />
                     <div className="relative w-full h-full p-1">
@@ -99,7 +99,7 @@ const ExerciseCard = ({ workout, onEdit, onDelete, onLongPress, userCatalog }: {
                     </div>
                 </div>
                 <div className="text-zinc-400 ml-3 shrink-0"><ChevronRight size={18} /></div>
-        </div>
+            </motion.div>
     );
 };
 
