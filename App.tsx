@@ -136,19 +136,19 @@ function App() {
 
   return (
     <div className="h-[100dvh] bg-fundo text-texto font-sans flex flex-col overflow-hidden">
-      {showHeader && (
-        <Header 
-            view={view} 
-            user={user} 
-            setView={setView} 
-            activeTab={activeTab}
-            setActiveTab={setActiveTab}
-            onLogout={handleLogout}
-        />
-      )}
-      
-      {/* The scroll must occur inside this main element */}
+      {/* The scroll must occur inside this main element. Header moved inside to allow it to scroll with content. */}
       <main className="flex-1 w-full overflow-y-auto no-scrollbar relative">
+        {showHeader && (
+          <Header 
+              view={view} 
+              user={user} 
+              setView={setView} 
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+              onLogout={handleLogout}
+          />
+        )}
+
         {view === ViewState.AUTH && <AuthView onSuccess={() => setView(ViewState.DASHBOARD)} />}
         {view === ViewState.ONBOARDING && <OnboardingView onComplete={handleOnboardingComplete} />}
         {view === ViewState.DASHBOARD && user && (

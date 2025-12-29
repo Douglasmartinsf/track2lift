@@ -186,17 +186,12 @@ const WorkoutsTab: React.FC<{ user: UserProfile }> = ({ user }) => {
 
     useEffect(() => {
         const observer = new IntersectionObserver(([entry]) => {
-            // threshold 0 is more reliable for detecting exit from the top
+            // Detect if sentinel exited past the top of the visible scroll area
             setIsStuck(entry.boundingClientRect.top < 0);
-        }, { threshold: [0], rootMargin: '-1px 0px 0px 0px' });
+        }, { threshold: [0], rootMargin: '0px 0px 0px 0px' });
 
-        if (sentinelRef.current) {
-            observer.observe(sentinelRef.current);
-        }
-
-        return () => {
-            if (sentinelRef.current) observer.unobserve(sentinelRef.current);
-        };
+        if (sentinelRef.current) observer.observe(sentinelRef.current);
+        return () => { if (sentinelRef.current) observer.unobserve(sentinelRef.current); };
     }, []);
 
     const dateStr = date.toISOString().split('T')[0];
@@ -421,11 +416,11 @@ const WorkoutsTab: React.FC<{ user: UserProfile }> = ({ user }) => {
         <div className="relative pb-24 w-full min-h-screen px-4">
             <div ref={sentinelRef} className="absolute top-0 left-0 right-0 h-px pointer-events-none opacity-0" />
 
-                <div className={`sticky top-0 z-[100] -mx-4 px-4 flex items-center justify-between gap-2 transition-all duration-300 ease-in-out ${
-                    isStuck 
-                    ? 'pt-6 pb-4 bg-fundo/98 backdrop-blur-md border-b border-zinc-800/50 shadow-xl' 
-                    : 'pt-2 pb-2 bg-transparent'
-                }`}>
+            <div className={`sticky top-0 z-[100] -mx-4 px-4 flex items-center justify-between gap-3 transition-all duration-300 ease-in-out ${
+                isStuck 
+                ? 'pt-6 pb-4 bg-zinc-950 shadow-2xl border-b border-zinc-800' 
+                : 'pt-2 pb-2 bg-transparent border-b border-transparent'
+            }`}>
                     <div className="flex items-center gap-2 sm:gap-4 shrink-0">
                         <button onClick={() => setDate(new Date(date.setDate(date.getDate() - 1)))} className="p-2 hover:bg-zinc-800 rounded-full transition text-zinc-400 hover:text-white"><ChevronLeft size={18}/></button>
                         <div className="min-w-[65px] text-center">
@@ -447,10 +442,10 @@ const WorkoutsTab: React.FC<{ user: UserProfile }> = ({ user }) => {
                         <motion.button 
                             whileTap={{ scale: 0.95 }}
                             onClick={() => { setEditingWorkout(undefined); setIsModalOpen(true); }}
-                            className="bg-gradient-to-br from-destaque to-red-800 text-white h-10 sm:h-12 px-3 sm:px-6 rounded-xl shadow-lg border border-white/10 flex items-center gap-2"
+                            className="bg-gradient-to-br from-destaque to-red-800 text-white h-11 px-4 rounded-xl shadow-lg border border-white/10 flex items-center gap-2 shrink-0"
                         >
                             <Plus size={18} strokeWidth={3} />
-                            <span className="font-bold text-xs sm:text-sm uppercase tracking-wider hidden sm:inline">Adicionar</span>
+                            <span className="font-bold text-xs sm:text-sm uppercase tracking-wider hidden sm:inline">Novo</span>
                         </motion.button>
                     </div>
                 </div>
