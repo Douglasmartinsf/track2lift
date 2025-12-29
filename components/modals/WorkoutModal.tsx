@@ -137,6 +137,29 @@ const WorkoutModal: React.FC<WorkoutModalProps> = ({ onClose, onSave, initialDat
         }
     }, [exerciseName, sets, isCardio]);
 
+    // Detect if any meaningful change was made compared to initial data
+    const hasChanges = useMemo(() => {
+        if (!initialData) return true; // creating new => allow save when valid
+        const initialEx = initialData.exercises?.[0] || { name: '', sets: [] };
+        // compute initial group if possible
+        let initialGroup = '';
+        if (user && initialEx.name) {
+            try {
+                const fullCatalog = getExerciseCatalog(user);
+                const id = identifyMuscleGroup(initialEx.name, fullCatalog);
+                initialGroup = id?.group || '';
+            } catch (e) {
+                initialGroup = '';
+            }
+        }
+
+        const nameChanged = exerciseName !== (initialEx.name || '');
+        const setsChanged = JSON.stringify(sets || []) !== JSON.stringify(initialEx.sets || []);
+        const groupChanged = selectedGroup !== initialGroup;
+
+        return nameChanged || setsChanged || groupChanged;
+    }, [initialData, exerciseName, sets, selectedGroup, user]);
+
     const handleSave = async () => {
         if (!isValid) return;
         setSaving(true);
@@ -375,7 +398,7 @@ const WorkoutModal: React.FC<WorkoutModalProps> = ({ onClose, onSave, initialDat
                 <div className="p-6 border-t border-zinc-800 bg-zinc-900/95 shrink-0">
                     <button 
                         onClick={handleSave} 
-                        disabled={saving || !isValid} 
+                        disabled={saving || !isValid || !hasChanges} 
                         className="w-full bg-destaque text-white py-4 rounded-xl font-bold uppercase tracking-wider hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-destaque/20 flex items-center justify-center gap-2"
                     >
                         {saving ? 'Salvando...' : <><Save size={18} /> {initialData ? 'Salvar Alterações' : 'Salvar Exercício'}</>}
