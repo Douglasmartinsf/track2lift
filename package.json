@@ -6,8 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview",
-    "pwa:preview": "node ./scripts/pwa-preview.js"
+    "preview": "vite preview"
   },
   "dependencies": {
     "@google/genai": "^1.34.0",
