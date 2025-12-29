@@ -7,42 +7,9 @@ import MuscleMap from '../../components/MuscleMap';
 import { Plus, ChevronLeft, ChevronRight, Edit2, Trash2, Dumbbell, TrendingUp, ChevronDown, X, Check, Loader2, AlertTriangle, Layers, Timer, Weight, Bookmark, Save, RefreshCw, PenTool } from 'lucide-react';
 import WorkoutModal from '../../components/modals/WorkoutModal';
 import RoutineManager from '../../components/modals/RoutineManager';
-import { motion, AnimatePresence, useMotionValue, useTransform, useAnimation } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const ExerciseCard = ({ workout, onEdit, onDelete, userCatalog }: { workout: Workout, onEdit: () => void, onDelete: () => void, userCatalog: Record<string, string[]> }) => {
-    const [isConfirming, setIsConfirming] = useState(false);
-    const controls = useAnimation();
-    const x = useMotionValue(0);
-    
-    const opacity = useTransform(x, [-100, -50, 0], [1, 0.5, 0]);
-    const scaleIcon = useTransform(x, [-100, 0], [1.2, 0.5]);
-    const backgroundColor = useTransform(x, [-100, -80], ["#ef4444", "#dc2626"]);
-
-    const handleDragEnd = (_: any, info: any) => {
-        // Logic for snap:
-        // Open if dragged more than 60px OR fast swipe to left
-        const shouldOpen = info.offset.x < -60 || info.velocity.x < -500;
-        
-        if (shouldOpen) {
-            setIsConfirming(true);
-            controls.start({ x: -100 });
-        } else {
-            setIsConfirming(false);
-            controls.start({ x: 0 });
-        }
-    };
-
-    const handleTap = () => {
-        if (isConfirming) {
-            // If tap while open, close
-            setIsConfirming(false);
-            controls.start({ x: 0 });
-        } else if (Math.abs(x.get()) < 5) {
-            // Tap without dragging triggers edit
-            onEdit();
-        }
-    };
-
     const muscleGroup = workout.exercises[0] ? identifyMuscleGroup(workout.exercises[0].name, userCatalog)?.group : null;
 
     const getMuscleOffset = (group: string | null | undefined) => {
@@ -56,98 +23,47 @@ const ExerciseCard = ({ workout, onEdit, onDelete, userCatalog }: { workout: Wor
 
     const yOffset = getMuscleOffset(muscleGroup);
 
+    const handleDelete = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (window.confirm('Excluir este exercício?')) onDelete();
+    }
+
     return (
-        <div className="relative overflow-hidden rounded-[2rem] bg-zinc-950 mb-3 touch-pan-y">
-            <motion.div 
-                style={{ opacity, backgroundColor }}
-                className="absolute inset-0 flex items-center justify-end px-8"
-            >
-                <motion.div style={{ scale: scaleIcon }} className="text-white">
-                    <Trash2 size={24} />
-                </motion.div>
-            </motion.div>
+        <div className="relative overflow-hidden rounded-2xl bg-zinc-900/40 backdrop-blur-md border border-white/5 mb-3 touch-pan-y">
+            <button aria-label="Excluir exercício" onClick={handleDelete} className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/20 hover:bg-red-600/20 text-red-400 z-20">
+                <Trash2 size={18} />
+            </button>
 
-            <motion.div
-                drag="x"
-                dragConstraints={{ left: -100, right: 0 }}
-                dragElastic={{ right: 0.05, left: 0.1 }}
-                dragMomentum={false} // CRITICAL: Removes inertia for immediate snap
-                onDragEnd={handleDragEnd}
-                animate={controls}
-                initial={{ x: 0 }}
-                transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                style={{ x }}
-                onTap={handleTap}
-                className="relative z-10 bg-zinc-900 border border-zinc-800 hover:border-red-500/30 transition-colors shadow-lg flex items-center justify-between touch-pan-y cursor-pointer select-none rounded-[2rem] overflow-hidden h-[100px]"
-            >
-                <div className="absolute -left-4 -top-10 w-24 h-32 bg-red-600/10 blur-2xl pointer-events-none rounded-full" />
-                <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-gradient-to-b from-transparent via-red-900/50 to-transparent opacity-50" />
-
-                <div className="flex items-center gap-5 p-5 w-full h-full relative z-10">
-                    <div className="w-14 h-14 bg-zinc-950 rounded-full border border-zinc-800 shadow-[0_0_15px_rgba(220,38,38,0.15)] relative shrink-0 overflow-hidden flex items-center justify-center">
-                         <div className="absolute inset-0 bg-gradient-to-br from-black to-red-950/20 opacity-50" />
-                         <div className="relative w-full h-full p-1">
-                            <MuscleMap activeMuscles={muscleGroup ? [muscleGroup] : []} offsetY={yOffset} />
-                         </div>
+            <div onClick={onEdit} className="relative z-10 flex items-center gap-5 p-5 h-[100px] cursor-pointer select-none hover:bg-zinc-800/60 transition-colors duration-150">
+                <div className="w-14 h-14 bg-zinc-950 rounded-full border border-zinc-800 shadow-[0_6px_18px_rgba(0,0,0,0.4)] relative shrink-0 overflow-hidden flex items-center justify-center">
+                    <div className="absolute inset-0 bg-gradient-to-br from-black to-red-950/20 opacity-40" />
+                    <div className="relative w-full h-full p-1">
+                        <MuscleMap activeMuscles={muscleGroup ? [muscleGroup] : []} offsetY={yOffset} />
                     </div>
+                </div>
 
-                    <div className="flex-1 min-w-0 flex flex-col justify-center">
-                        <h5 className="font-display font-black text-lg text-white uppercase truncate tracking-tight mb-1.5">
-                            {workout.exercises[0]?.name || workout.name}
-                        </h5>
-                        
-                        <div className="flex items-center gap-2">
-                            <div className="shrink-0 flex items-center gap-1.5 bg-zinc-950/50 border border-zinc-800/50 px-2.5 py-1 rounded-md">
-                                <Layers size={10} className="text-zinc-500" />
-                                <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wide">
-                                    {workout.exercises[0]?.sets.length} séries
-                                </span>
-                            </div>
+                <div className="flex-1 min-w-0 flex flex-col justify-center">
+                    <h5 className="font-display font-black text-base text-white truncate tracking-tight mb-1">
+                        {workout.exercises[0]?.name || workout.name}
+                    </h5>
 
-                            <div className="min-w-0 flex items-center gap-1.5 bg-zinc-950/50 border border-zinc-800/50 px-2.5 py-1 rounded-md">
-                                <div className="w-1.5 h-1.5 rounded-full bg-destaque shrink-0 shadow-[0_0_5px_rgba(220,38,38,0.5)]" />
-                                <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wide truncate">
-                                    {muscleGroup || 'Geral'}
-                                </span>
-                            </div>
+                    <div className="flex items-center gap-2">
+                        <div className="shrink-0 flex items-center gap-1 border border-zinc-800 px-2 py-0.5 rounded-md">
+                            <Layers size={10} className="text-zinc-400" />
+                            <span className="text-[10px] font-bold text-zinc-300 uppercase tracking-wide">
+                                {workout.exercises[0]?.sets.length} séries
+                            </span>
+                        </div>
+
+                        <div className="min-w-0 flex items-center gap-1 border border-zinc-800 px-2 py-0.5 rounded-md">
+                            <div className="w-1.5 h-1.5 rounded-full bg-destaque shrink-0" />
+                            <span className="text-[10px] font-bold text-zinc-300 uppercase tracking-wide truncate">
+                                {muscleGroup || 'Geral'}
+                            </span>
                         </div>
                     </div>
                 </div>
-            </motion.div>
-
-            <AnimatePresence>
-                {isConfirming && (
-                    <motion.div 
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: 20 }}
-                        className="absolute inset-0 z-30 bg-red-600 flex items-center justify-between px-6 rounded-[2rem]"
-                    >
-                        <div className="flex items-center gap-3 text-white">
-                            <Trash2 size={20} className="animate-bounce" />
-                            <span className="font-display font-black text-xs uppercase tracking-widest">Excluir?</span>
-                        </div>
-                        <div className="flex gap-2">
-                            <button 
-                                onClick={(e) => { 
-                                    e.stopPropagation(); 
-                                    setIsConfirming(false); 
-                                    controls.start({ x: 0 });
-                                }}
-                                className="p-3 bg-black/20 hover:bg-black/40 rounded-full text-white transition-colors active:scale-90"
-                            >
-                                <X size={20} />
-                            </button>
-                            <button 
-                                onClick={(e) => { e.stopPropagation(); onDelete(); }}
-                                className="p-3 bg-white text-red-600 rounded-full shadow-2xl hover:bg-zinc-100 transition-colors active:scale-90"
-                            >
-                                <Check size={20} strokeWidth={4} />
-                            </button>
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+            </div>
         </div>
     );
 };
