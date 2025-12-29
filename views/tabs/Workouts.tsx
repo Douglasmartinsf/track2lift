@@ -655,7 +655,6 @@ const WorkoutsTab: React.FC<{ user: UserProfile }> = ({ user }) => {
             {workouts.length > 0 && (
                 <div className="mt-4 text-center text-[12px] text-zinc-500">Toque para editar, segure para excluir.</div>
             )}
-            <AnimatePresence>{routineMode && <RoutineManager mode={routineMode} user={user} currentWorkouts={workouts} onClose={() => setRoutineMode(null)} onLoadRoutine={handleLoadRoutine} onRoutineSaved={fetchWorkouts} />}</AnimatePresence>
             <AnimatePresence>{routineMode && <RoutineManager mode={routineMode} user={user} currentWorkouts={workouts} onClose={() => setRoutineMode(null)} onLoadRoutine={handleLoadRoutine} onRoutineSaved={fetchWorkouts} onRequestDelete={handleRequestDeleteRoutine} />}</AnimatePresence>
             <AnimatePresence>{workoutToDelete && (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
