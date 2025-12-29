@@ -14,6 +14,7 @@ interface RoutineManagerProps {
     onClose: () => void;
     onLoadRoutine?: (template: WorkoutTemplate) => void;
     onRoutineSaved?: (name: string) => void;
+    onRequestDelete?: (template: WorkoutTemplate) => void;
 }
 
 const RoutineManager: React.FC<RoutineManagerProps> = ({ mode, user, currentWorkouts, onClose, onLoadRoutine, onRoutineSaved }) => {
@@ -237,7 +238,7 @@ const RoutineManager: React.FC<RoutineManagerProps> = ({ mode, user, currentWork
                                         {/* Área de Ações */}
                                         <div className="flex items-center gap-2">
                                             <button 
-                                                onClick={(e) => { e.stopPropagation(); setTemplateToDelete(template); }}
+                                                onClick={(e) => { e.stopPropagation(); if (onRequestDelete) { onRequestDelete(template); } else { setTemplateToDelete(template); } }}
                                                 className="w-10 h-10 flex items-center justify-center text-zinc-600 hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-colors"
                                                 title="Excluir"
                                             >

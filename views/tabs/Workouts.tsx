@@ -148,6 +148,8 @@ const WorkoutsTab: React.FC<{ user: UserProfile }> = ({ user }) => {
     const [isDeletingSingleLoading, setIsDeletingSingleLoading] = useState(false);
     const [showOverwriteModal, setShowOverwriteModal] = useState(false);
     const [pendingTemplate, setPendingTemplate] = useState<WorkoutTemplate | null>(null);
+    const [routineToDelete, setRoutineToDelete] = useState<WorkoutTemplate | null>(null);
+    const [isDeletingRoutine, setIsDeletingRoutine] = useState(false);
     const [routineMode, setRoutineMode] = useState<'SAVE' | 'LOAD' | null>(null);
     const [activeRoutineName, setActiveRoutineName] = useState<string | null>(null);
     const [isRoutineModified, setIsRoutineModified] = useState(false);
@@ -337,6 +339,28 @@ const WorkoutsTab: React.FC<{ user: UserProfile }> = ({ user }) => {
             setShowOverwriteModal(true);
         } else {
             applyRoutine(template);
+        }
+    };
+
+    const handleRequestDeleteRoutine = (template: WorkoutTemplate) => {
+        // Close the RoutineManager and open a central confirmation
+        setRoutineMode(null);
+        setRoutineToDelete(template);
+    };
+
+    const confirmDeleteRoutine = async () => {
+        if (!routineToDelete) return;
+        setIsDeletingRoutine(true);
+        const id = routineToDelete.id;
+        try {
+            const { error } = await supabase.from('workout_templates').delete().eq('id', id).eq('user_id', user.id);
+            if (error) throw error;
+            setRoutineToDelete(null);
+        } catch (err) {
+            console.error('Error deleting routine', err);
+            alert('Erro ao excluir rotina. Tente novamente.');
+        } finally {
+            setIsDeletingRoutine(false);
         }
     };
 
@@ -629,9 +653,10 @@ const WorkoutsTab: React.FC<{ user: UserProfile }> = ({ user }) => {
             {isModalOpen && <WorkoutModal onClose={() => { setIsModalOpen(false); setEditingWorkout(undefined); }} onSave={handleSave} initialData={editingWorkout} date={dateStr} user={user} />}
 
             {workouts.length > 0 && (
-                <div className="mt-4 text-center text-[12px] text-zinc-500">Toque em um card para editar; segure por ~600ms para excluir (uma barra de progresso indica a exclusão).</div>
+                <div className="mt-4 text-center text-[12px] text-zinc-500">Toque para editar, segure para excluir.</div>
             )}
             <AnimatePresence>{routineMode && <RoutineManager mode={routineMode} user={user} currentWorkouts={workouts} onClose={() => setRoutineMode(null)} onLoadRoutine={handleLoadRoutine} onRoutineSaved={fetchWorkouts} />}</AnimatePresence>
+            <AnimatePresence>{routineMode && <RoutineManager mode={routineMode} user={user} currentWorkouts={workouts} onClose={() => setRoutineMode(null)} onLoadRoutine={handleLoadRoutine} onRoutineSaved={fetchWorkouts} onRequestDelete={handleRequestDeleteRoutine} />}</AnimatePresence>
             <AnimatePresence>{workoutToDelete && (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
                     <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 w-full max-w-sm shadow-2xl relative overflow-hidden">
@@ -641,6 +666,20 @@ const WorkoutsTab: React.FC<{ user: UserProfile }> = ({ user }) => {
                             <div className="flex gap-3 w-full mt-4">
                                 <button onClick={() => setWorkoutToDelete(null)} className="flex-1 py-3.5 bg-zinc-800 text-zinc-300 rounded-xl font-bold">Cancelar</button>
                                 <button onClick={handleConfirmSingleDelete} className="flex-1 py-3.5 bg-red-600 text-white rounded-xl font-bold">{isDeletingSingleLoading ? <Loader2 size={18} className="animate-spin" /> : 'Confirmar'}</button>
+                            </div>
+                        </div>
+                    </motion.div>
+                </motion.div>
+            )}</AnimatePresence>
+            <AnimatePresence>{routineToDelete && (
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+                    <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 w-full max-w-sm shadow-2xl relative overflow-hidden">
+                        <div className="flex flex-col items-center text-center gap-4 relative z-10">
+                            <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center text-red-500 mb-2 border border-red-500/20"><Trash2 size={28} /></div>
+                            <div><h3 className="text-xl font-display font-bold text-white mb-2 uppercase">Excluir Rotina?</h3><p className="text-sm text-zinc-400">Deseja remover "{routineToDelete?.name}"?</p></div>
+                            <div className="flex gap-3 w-full mt-4">
+                                <button onClick={() => setRoutineToDelete(null)} className="flex-1 py-3.5 bg-zinc-800 text-zinc-300 rounded-xl font-bold">Cancelar</button>
+                                <button onClick={confirmDeleteRoutine} className="flex-1 py-3.5 bg-red-600 text-white rounded-xl font-bold">{isDeletingRoutine ? <Loader2 size={18} className="animate-spin" /> : 'Confirmar'}</button>
                             </div>
                         </div>
                     </motion.div>
