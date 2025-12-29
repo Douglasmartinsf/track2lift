@@ -99,7 +99,6 @@ const ExerciseCard = ({ workout, onEdit, onDelete, onLongPress, userCatalog }: {
                     </div>
                 </div>
                 <div className="text-zinc-400 ml-3 shrink-0"><ChevronRight size={18} /></div>
-            </motion.div>
         </div>
     );
 };
