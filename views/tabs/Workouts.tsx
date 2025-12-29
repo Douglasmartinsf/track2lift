@@ -31,7 +31,7 @@ const ExerciseCard = ({ workout, onEdit, onDelete, onLongPress, userCatalog }: {
 
     const LONG_PRESS_MS = 600;
 
-    const PROG_R = 16; // SVG circle radius used for progress indicator
+    const PROG_R = 12; // SVG circle radius used for progress indicator (reduced to avoid clipping)
     const PROG_CIRC = 2 * Math.PI * PROG_R;
     const clearPress = () => {
         if (timerRef.current) { window.clearTimeout(timerRef.current); timerRef.current = null; }
@@ -78,16 +78,17 @@ const ExerciseCard = ({ workout, onEdit, onDelete, onLongPress, userCatalog }: {
                     <div className="relative w-full h-full p-1 flex items-center justify-center">
                         <MuscleMap activeMuscles={muscleGroup ? [muscleGroup] : []} offsetY={yOffset} />
                         <svg className="absolute inset-0 w-full h-full p-1 pointer-events-none" viewBox="0 0 36 36" aria-hidden>
-                            <circle cx="18" cy="18" r="16" strokeWidth="3" stroke="rgba(255,255,255,0.05)" fill="none" />
-                            <circle cx="18" cy="18" r="16" strokeWidth="3" stroke="#ef4444" fill="none"
+                            <circle cx="18" cy="18" r="12" strokeWidth="2.5" stroke="rgba(255,255,255,0.06)" fill="none" />
+                            <circle cx="18" cy="18" r="12" strokeWidth="2.5" stroke="#ef4444" fill="none"
                                 strokeDasharray={`${PROG_CIRC}`}
                                 strokeDashoffset={`${PROG_CIRC * (1 - pressProgress / 100)}`}
+                                strokeLinecap="round"
                                 style={{ transition: 'stroke-dashoffset 50ms linear', transform: 'rotate(-90deg)', transformOrigin: '50% 50%' }}
                             />
                         </svg>
                         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                            <div className="absolute inset-0 rounded-full bg-red-600" style={{ opacity: pressProgress / 220 }} />
-                            <Trash2 size={18} className="text-white" style={{ opacity: pressProgress / 100 }} />
+                            <div className="absolute inset-0 rounded-full bg-red-600" style={{ opacity: Math.min(0.6, pressProgress / 160) }} />
+                            <Trash2 size={18} className="text-white" style={{ opacity: Math.min(1, pressProgress / 100) }} />
                         </div>
                     </div>
                 </div>
@@ -105,9 +106,9 @@ const ExerciseCard = ({ workout, onEdit, onDelete, onLongPress, userCatalog }: {
                             </span>
                         </div>
 
-                        <div className="min-w-0 flex items-center gap-1 border border-zinc-800 px-2 py-0.5 rounded-md">
+                            <div className="min-w-0 flex items-center gap-1 border border-zinc-800 px-2 py-0.5 rounded-md">
                             <div className="w-1.5 h-1.5 rounded-full bg-destaque shrink-0" />
-                            <span className="text-[10px] font-bold text-zinc-300 uppercase tracking-wide truncate max-w-[160px]">
+                            <span className="text-[10px] font-bold text-zinc-300 uppercase tracking-wide truncate max-w-[220px]">
                                 {muscleGroup || 'Geral'}
                             </span>
                         </div>
