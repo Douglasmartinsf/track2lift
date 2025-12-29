@@ -599,7 +599,7 @@ const WorkoutsTab: React.FC<{ user: UserProfile }> = ({ user }) => {
                         ) : (
                             workouts.map((w) => (
                                 <motion.div layout key={w.id} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, scale: 0.9 }} transition={{ type: "spring", stiffness: 500, damping: 35 }}>
-                                    <ExerciseCard workout={w} userCatalog={userCatalog} onEdit={() => { setEditingWorkout(w); setIsModalOpen(true); }} onDelete={() => setWorkoutToDelete(w)} />
+                                    <ExerciseCard workout={w} userCatalog={userCatalog} onEdit={() => { setEditingWorkout(w); setIsModalOpen(true); }} onDelete={() => setWorkoutToDelete(w)} onLongPress={() => setWorkoutToDelete(w)} />
                                 </motion.div>
                             ))
                         )}
