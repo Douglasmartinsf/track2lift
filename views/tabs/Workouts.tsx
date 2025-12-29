@@ -31,7 +31,7 @@ const ExerciseCard = ({ workout, onEdit, onDelete, onLongPress, userCatalog }: {
 
     const LONG_PRESS_MS = 600;
 
-    const PROG_R = 18; // SVG circle radius used for progress indicator (match avatar outer radius)
+    const PROG_R = 16; // SVG circle radius used for progress indicator (align with avatar)
     const PROG_CIRC = 2 * Math.PI * PROG_R;
     const clearPress = () => {
         if (timerRef.current) { window.clearTimeout(timerRef.current); timerRef.current = null; }
@@ -76,24 +76,22 @@ const ExerciseCard = ({ workout, onEdit, onDelete, onLongPress, userCatalog }: {
             animate={pressProgress > 0 && pressProgress < 100 ? { x: [0, -1, 1, -1, 1, 0] } : { x: 0 }}
             transition={pressProgress > 0 && pressProgress < 100 ? { duration: 0.2, repeat: Infinity, repeatType: 'loop' } : {}}
         >
-                <div className="w-14 h-14 bg-zinc-950 rounded-full border border-zinc-800 shadow-[0_6px_18px_rgba(0,0,0,0.4)] relative shrink-0 overflow-visible flex items-center justify-center">
+                <div className="w-14 h-14 bg-zinc-950 rounded-full border border-zinc-800 shadow-[0_6px_18px_rgba(0,0,0,0.4)] relative shrink-0 overflow-hidden flex items-center justify-center">
                     <div className="absolute inset-0 bg-gradient-to-br from-black to-red-950/20 opacity-40" />
                     <div className="relative w-full h-full p-1 flex items-center justify-center">
                         <MuscleMap activeMuscles={muscleGroup ? [muscleGroup] : []} offsetY={yOffset} />
+                        <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 36 36" aria-hidden>
+                            <circle cx="18" cy="18" r="16" strokeWidth="2.5" stroke="rgba(255,255,255,0.06)" fill="none" />
+                            <circle cx="18" cy="18" r="16" strokeWidth="2.5" stroke="#ef4444" fill="none"
+                                strokeDasharray={`${PROG_CIRC}`}
+                                strokeDashoffset={`${PROG_CIRC * (1 - pressProgress / 100)}`}
+                                strokeLinecap="round"
+                                style={{ transition: 'stroke-dashoffset 50ms linear', transform: 'rotate(-90deg)', transformOrigin: '50% 50%' }}
+                            />
+                        </svg>
                         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                            <div className="w-16 h-16 rounded-full overflow-hidden relative flex items-center justify-center">
-                                <svg className="w-full h-full" viewBox="0 0 40 40" aria-hidden>
-                                    <circle cx="20" cy="20" r="18" strokeWidth="2.5" stroke="rgba(255,255,255,0.06)" fill="none" />
-                                    <circle cx="20" cy="20" r="18" strokeWidth="2.5" stroke="#ef4444" fill="none"
-                                        strokeDasharray={`${PROG_CIRC}`}
-                                        strokeDashoffset={`${PROG_CIRC * (1 - pressProgress / 100)}`}
-                                        strokeLinecap="round"
-                                        style={{ transition: 'stroke-dashoffset 50ms linear', transform: 'rotate(-90deg)', transformOrigin: '50% 50%' }}
-                                    />
-                                </svg>
-                                <div className="absolute inset-0 rounded-full bg-red-600" style={{ opacity: Math.min(0.6, pressProgress / 160) }} />
-                                <Trash2 size={18} className="text-white relative" style={{ opacity: Math.min(1, pressProgress / 100) }} />
-                            </div>
+                            <div className="absolute w-full h-full rounded-full" style={{ background: 'rgba(239,68,68,0.0)', pointerEvents: 'none' }} />
+                            <Trash2 size={18} className="text-white" style={{ opacity: Math.min(1, pressProgress / 100) }} />
                         </div>
                     </div>
                 </div>
