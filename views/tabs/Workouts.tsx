@@ -51,7 +51,7 @@ const ExerciseCard = ({ workout, onEdit, onDelete, onLongPress, userCatalog }: {
         timerRef.current = window.setTimeout(() => {
             setLongPressed(true);
             clearPress();
-            if (typeof navigator !== 'undefined' && 'vibrate' in navigator) (navigator as any).vibrate?.(50);
+            if (typeof navigator !== 'undefined' && 'vibrate' in navigator) (navigator as any).vibrate?.(30);
             if (onLongPress) onLongPress();
         }, LONG_PRESS_MS);
     }
@@ -80,24 +80,26 @@ const ExerciseCard = ({ workout, onEdit, onDelete, onLongPress, userCatalog }: {
                     <div className="absolute inset-0 bg-gradient-to-br from-black to-red-950/20 opacity-40" />
                     <div className="relative w-full h-full p-1 flex items-center justify-center">
                         <MuscleMap activeMuscles={muscleGroup ? [muscleGroup] : []} offsetY={yOffset} />
-                        <svg className="absolute -inset-2 w-[calc(56px+16px)] h-[calc(56px+16px)] pointer-events-none" viewBox="0 0 40 40" aria-hidden>
-                            <circle cx="20" cy="20" r="18" strokeWidth="2.5" stroke="rgba(255,255,255,0.06)" fill="none" />
-                            <circle cx="20" cy="20" r="18" strokeWidth="2.5" stroke="#ef4444" fill="none"
-                                strokeDasharray={`${PROG_CIRC}`}
-                                strokeDashoffset={`${PROG_CIRC * (1 - pressProgress / 100)}`}
-                                strokeLinecap="round"
-                                style={{ transition: 'stroke-dashoffset 50ms linear', transform: 'rotate(-90deg)', transformOrigin: '50% 50%' }}
-                            />
-                        </svg>
                         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                            <div className="absolute inset-0 rounded-full bg-red-600" style={{ opacity: Math.min(0.6, pressProgress / 160) }} />
-                            <Trash2 size={18} className="text-white" style={{ opacity: Math.min(1, pressProgress / 100) }} />
+                            <div className="w-16 h-16 rounded-full overflow-hidden relative flex items-center justify-center">
+                                <svg className="w-full h-full" viewBox="0 0 40 40" aria-hidden>
+                                    <circle cx="20" cy="20" r="18" strokeWidth="2.5" stroke="rgba(255,255,255,0.06)" fill="none" />
+                                    <circle cx="20" cy="20" r="18" strokeWidth="2.5" stroke="#ef4444" fill="none"
+                                        strokeDasharray={`${PROG_CIRC}`}
+                                        strokeDashoffset={`${PROG_CIRC * (1 - pressProgress / 100)}`}
+                                        strokeLinecap="round"
+                                        style={{ transition: 'stroke-dashoffset 50ms linear', transform: 'rotate(-90deg)', transformOrigin: '50% 50%' }}
+                                    />
+                                </svg>
+                                <div className="absolute inset-0 rounded-full bg-red-600" style={{ opacity: Math.min(0.6, pressProgress / 160) }} />
+                                <Trash2 size={18} className="text-white relative" style={{ opacity: Math.min(1, pressProgress / 100) }} />
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <div className="flex-1 min-w-0 flex flex-col justify-center">
-                    <h5 className="font-display font-black text-base text-white truncate block w-full tracking-tight mb-1">
+                    <h5 className="flex-1 min-w-0 font-display font-black text-base text-white truncate tracking-tight mb-1">
                         {workout.exercises[0]?.name || workout.name}
                     </h5>
 
