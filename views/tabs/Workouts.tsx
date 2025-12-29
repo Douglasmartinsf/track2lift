@@ -420,7 +420,7 @@ const WorkoutsTab: React.FC<{ user: UserProfile }> = ({ user }) => {
         <div className="relative pb-24 w-full min-h-screen">
             <div ref={sentinelRef} className="absolute top-0 left-0 right-0 h-px -translate-y-full pointer-events-none opacity-0" />
 
-            <div className={`sticky top-0 z-[100] -mx-4 px-4 mb-6 flex items-center justify-between transition-all duration-300 ease-in-out ${
+            <div className={`sticky top-0 left-0 z-[100] w-full px-4 mb-6 transition-all duration-300 ease-in-out ${
                 isStuck 
                 ? 'pt-6 pb-4 bg-fundo/95 backdrop-blur-md border-b border-zinc-800/50 shadow-2xl shadow-black/40' 
                 : 'pt-2 pb-2 bg-transparent border-b border-transparent shadow-none'
