@@ -100,14 +100,6 @@ const ExerciseCard = ({ workout, onEdit, onDelete, onLongPress, userCatalog }: {
                     <h5 className="flex-1 min-w-0 font-display font-black text-base text-white truncate tracking-tight mb-1">
                         {workout.exercises[0]?.name || workout.name}
                     </h5>
-                    <p className="text-[11px] text-zinc-500 mt-1 select-none">Toque: editar · Segure: excluir</p>
-
-                    <div className={`absolute left-20 top-1/2 -translate-y-1/2 z-20 pointer-events-none transition-opacity ${pressProgress > 0 ? 'opacity-100' : 'opacity-0'}`}>
-                        <div className="bg-zinc-900/80 border border-zinc-800 text-white text-xs px-2 py-1 rounded-full flex items-center gap-2">
-                            <Trash2 size={12} className="text-red-400" />
-                            <span>Segure para excluir</span>
-                        </div>
-                    </div>
 
                     <div className="flex items-center gap-2">
                         <div className="shrink-0 flex items-center gap-1 border border-zinc-800 px-2 py-0.5 rounded-md">
@@ -635,6 +627,10 @@ const WorkoutsTab: React.FC<{ user: UserProfile }> = ({ user }) => {
             </div>
 
             {isModalOpen && <WorkoutModal onClose={() => { setIsModalOpen(false); setEditingWorkout(undefined); }} onSave={handleSave} initialData={editingWorkout} date={dateStr} user={user} />}
+
+            {workouts.length > 0 && (
+                <div className="mt-4 text-center text-[12px] text-zinc-500">Toque em um card para editar; segure por ~600ms para excluir (uma barra de progresso indica a exclusão).</div>
+            )}
             <AnimatePresence>{routineMode && <RoutineManager mode={routineMode} user={user} currentWorkouts={workouts} onClose={() => setRoutineMode(null)} onLoadRoutine={handleLoadRoutine} onRoutineSaved={fetchWorkouts} />}</AnimatePresence>
             <AnimatePresence>{workoutToDelete && (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
