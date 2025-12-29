@@ -28,7 +28,11 @@ const variants = {
         zIndex: 1,
         x: 0,
         opacity: 1,
-        filter: 'blur(0px)',
+        filter: 'none',
+        transitionEnd: {
+            transform: 'none',
+            filter: 'none'
+        }
     },
     exit: (direction: number) => ({
         zIndex: 0,
@@ -63,7 +67,7 @@ const DashboardView: React.FC<DashboardViewProps> = ({ user, activeTab }) => {
     };
 
     return (
-        <div className="w-full min-h-full px-4 py-6 overflow-x-hidden">
+        <div className="w-full min-h-full py-6">
             <AnimatePresence mode="wait" custom={direction}>
                 <motion.div
                     key={activeTab}

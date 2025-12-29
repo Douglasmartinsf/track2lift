@@ -417,15 +417,15 @@ const WorkoutsTab: React.FC<{ user: UserProfile }> = ({ user }) => {
     }, [isMapExpanded, isFocusedView]);
 
     return (
-        <div className="relative pb-24 w-full min-h-screen">
+        <div className="relative pb-24 w-full min-h-screen px-4">
             <div ref={sentinelRef} className="absolute top-0 left-0 right-0 h-px -translate-y-full pointer-events-none opacity-0" />
-
-            <div className={`sticky top-0 left-0 z-[100] w-full px-4 mb-6 transition-all duration-300 ease-in-out ${
+            {/* Cabeçalho Sticky: restaurado o -mx-4 para preencher a largura total se necessário */}
+            <div className={`sticky top-0 z-[100] -mx-4 px-4 flex items-center justify-between flex-nowrap transition-all duration-300 ease-in-out ${
                 isStuck 
                 ? 'pt-6 pb-4 bg-fundo/95 backdrop-blur-md border-b border-zinc-800/50 shadow-2xl shadow-black/40' 
-                : 'pt-2 pb-2 bg-transparent border-b border-transparent shadow-none'
+                : 'pt-2 pb-2 bg-transparent'
             }`}>
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-4 flex-nowrap shrink-0">
                     <button onClick={() => setDate(new Date(date.setDate(date.getDate() - 1)))} className="p-2 hover:bg-zinc-800 rounded-full transition text-zinc-400 hover:text-white"><ChevronLeft size={20}/></button>
                     <div className="min-w-[70px]">
                         <h2 className="font-display font-black text-lg leading-none">{isToday ? 'HOJE' : date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })}</h2>
