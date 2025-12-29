@@ -31,6 +31,8 @@ const ExerciseCard = ({ workout, onEdit, onDelete, onLongPress, userCatalog }: {
 
     const LONG_PRESS_MS = 600;
 
+    const PROG_R = 16; // SVG circle radius used for progress indicator
+    const PROG_CIRC = 2 * Math.PI * PROG_R;
     const clearPress = () => {
         if (timerRef.current) { window.clearTimeout(timerRef.current); timerRef.current = null; }
         if (intervalRef.current) { window.clearInterval(intervalRef.current); intervalRef.current = null; }
@@ -49,6 +51,7 @@ const ExerciseCard = ({ workout, onEdit, onDelete, onLongPress, userCatalog }: {
         timerRef.current = window.setTimeout(() => {
             setLongPressed(true);
             clearPress();
+            if (typeof navigator !== 'undefined' && 'vibrate' in navigator) (navigator as any).vibrate?.(50);
             if (onLongPress) onLongPress();
         }, LONG_PRESS_MS);
     }
@@ -72,8 +75,16 @@ const ExerciseCard = ({ workout, onEdit, onDelete, onLongPress, userCatalog }: {
         <motion.div layout className="relative overflow-hidden rounded-2xl bg-zinc-900/40 backdrop-blur-md border border-white/5 mb-3 touch-pan-y flex items-center gap-3 p-3 cursor-pointer" onPointerDown={startPress} onPointerUp={handlePointerUp} onPointerCancel={clearPress} onPointerLeave={handlePointerLeave} whileTap={{ scale: 0.995 }}>
                 <div className="w-14 h-14 bg-zinc-950 rounded-full border border-zinc-800 shadow-[0_6px_18px_rgba(0,0,0,0.4)] relative shrink-0 overflow-hidden flex items-center justify-center">
                     <div className="absolute inset-0 bg-gradient-to-br from-black to-red-950/20 opacity-40" />
-                    <div className="relative w-full h-full p-1">
+                    <div className="relative w-full h-full p-1 flex items-center justify-center">
                         <MuscleMap activeMuscles={muscleGroup ? [muscleGroup] : []} offsetY={yOffset} />
+                        <svg className="absolute inset-0 w-full h-full p-1 pointer-events-none" viewBox="0 0 36 36" aria-hidden>
+                            <circle cx="18" cy="18" r="16" strokeWidth="3" stroke="rgba(255,255,255,0.05)" fill="none" />
+                            <circle cx="18" cy="18" r="16" strokeWidth="3" stroke="#f97316" fill="none"
+                                strokeDasharray={`${PROG_CIRC}`}
+                                strokeDashoffset={`${PROG_CIRC * (1 - pressProgress / 100)}`}
+                                style={{ transition: 'stroke-dashoffset 50ms linear', transform: 'rotate(-90deg)', transformOrigin: '50% 50%' }}
+                            />
+                        </svg>
                     </div>
                 </div>
 
