@@ -664,7 +664,7 @@ const WorkoutsTab: React.FC<{ user: UserProfile }> = ({ user }) => {
                             <div><h3 className="text-xl font-display font-bold text-white mb-2 uppercase">Excluir Exercício?</h3><p className="text-sm text-zinc-400">Deseja remover "{workoutToDelete?.exercises[0]?.name}"?</p></div>
                             <div className="flex gap-3 w-full mt-4">
                                 <button onClick={() => setWorkoutToDelete(null)} className="flex-1 py-3.5 bg-zinc-800 text-zinc-300 rounded-xl font-bold">Cancelar</button>
-                                <button onClick={handleConfirmSingleDelete} className="flex-1 py-3.5 bg-red-600 text-white rounded-xl font-bold">{isDeletingSingleLoading ? <Loader2 size={18} className="animate-spin" /> : 'Confirmar'}</button>
+                                <button onClick={handleConfirmSingleDelete} className="flex-1 py-3.5 bg-red-600 text-white rounded-xl font-bold flex items-center justify-center">{isDeletingSingleLoading ? <Loader2 size={18} className="animate-spin" /> : 'Confirmar'}</button>
                             </div>
                         </div>
                     </motion.div>
@@ -678,7 +678,7 @@ const WorkoutsTab: React.FC<{ user: UserProfile }> = ({ user }) => {
                             <div><h3 className="text-xl font-display font-bold text-white mb-2 uppercase">Excluir Rotina?</h3><p className="text-sm text-zinc-400">Deseja remover "{routineToDelete?.name}"?</p></div>
                             <div className="flex gap-3 w-full mt-4">
                                 <button onClick={() => setRoutineToDelete(null)} className="flex-1 py-3.5 bg-zinc-800 text-zinc-300 rounded-xl font-bold">Cancelar</button>
-                                <button onClick={confirmDeleteRoutine} className="flex-1 py-3.5 bg-red-600 text-white rounded-xl font-bold">{isDeletingRoutine ? <Loader2 size={18} className="animate-spin" /> : 'Confirmar'}</button>
+                                <button onClick={confirmDeleteRoutine} className="flex-1 py-3.5 bg-red-600 text-white rounded-xl font-bold flex items-center justify-center">{isDeletingRoutine ? <Loader2 size={18} className="animate-spin" /> : 'Confirmar'}</button>
                             </div>
                         </div>
                     </motion.div>
@@ -692,7 +692,7 @@ const WorkoutsTab: React.FC<{ user: UserProfile }> = ({ user }) => {
                             <div><h3 className="text-xl font-display font-bold text-white mb-2 uppercase">Limpar dia?</h3><p className="text-sm text-zinc-400">Isso removerá {workouts.length} exercícios.</p></div>
                             <div className="flex gap-3 w-full mt-4">
                                 <button onClick={() => setShowDeleteAllModal(false)} className="flex-1 py-3.5 bg-zinc-800 text-zinc-300 rounded-xl font-bold">Cancelar</button>
-                                <button onClick={confirmDeleteAll} className="flex-1 py-3.5 bg-red-600 text-white rounded-xl font-bold">{isDeletingLoading ? <Loader2 size={18} className="animate-spin" /> : 'Confirmar'}</button>
+                                <button onClick={confirmDeleteAll} className="flex-1 py-3.5 bg-red-600 text-white rounded-xl font-bold flex items-center justify-center">{isDeletingLoading ? <Loader2 size={18} className="animate-spin" /> : 'Confirmar'}</button>
                             </div>
                         </div>
                     </motion.div>

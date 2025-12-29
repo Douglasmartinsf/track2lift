@@ -293,7 +293,7 @@ const RoutineManager: React.FC<RoutineManagerProps> = ({ mode, user, currentWork
                                     </button>
                                     <button 
                                         onClick={confirmDelete}
-                                        className="flex-1 py-3 bg-red-600 text-white rounded-xl font-bold text-sm hover:bg-red-700 transition-colors shadow-lg shadow-red-900/30"
+                                        className="flex-1 py-3 bg-red-600 text-white rounded-xl font-bold text-sm hover:bg-red-700 transition-colors shadow-lg shadow-red-900/30 flex items-center justify-center"
                                     >
                                         Excluir
                                     </button>
