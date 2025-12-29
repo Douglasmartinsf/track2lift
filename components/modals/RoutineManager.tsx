@@ -17,7 +17,7 @@ interface RoutineManagerProps {
     onRequestDelete?: (template: WorkoutTemplate) => void;
 }
 
-const RoutineManager: React.FC<RoutineManagerProps> = ({ mode, user, currentWorkouts, onClose, onLoadRoutine, onRoutineSaved }) => {
+const RoutineManager: React.FC<RoutineManagerProps> = ({ mode, user, currentWorkouts, onClose, onLoadRoutine, onRoutineSaved, onRequestDelete }) => {
     const [routineName, setRoutineName] = useState('');
     const [templates, setTemplates] = useState<WorkoutTemplate[]>([]);
     const [isLoading, setIsLoading] = useState(false);
