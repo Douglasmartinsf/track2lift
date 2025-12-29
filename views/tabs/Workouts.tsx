@@ -31,7 +31,7 @@ const ExerciseCard = ({ workout, onEdit, onDelete, onLongPress, userCatalog }: {
 
     const LONG_PRESS_MS = 600;
 
-    const PROG_R = 12; // SVG circle radius used for progress indicator (reduced to avoid clipping)
+    const PROG_R = 18; // SVG circle radius used for progress indicator (match avatar outer radius)
     const PROG_CIRC = 2 * Math.PI * PROG_R;
     const clearPress = () => {
         if (timerRef.current) { window.clearTimeout(timerRef.current); timerRef.current = null; }
@@ -72,14 +72,17 @@ const ExerciseCard = ({ workout, onEdit, onDelete, onLongPress, userCatalog }: {
     }
 
     return (
-        <motion.div layout className="relative overflow-hidden rounded-2xl bg-zinc-900/40 backdrop-blur-md border border-white/5 mb-3 touch-pan-y flex items-center gap-3 p-3 cursor-pointer" onPointerDown={startPress} onPointerUp={handlePointerUp} onPointerCancel={clearPress} onPointerLeave={handlePointerLeave} whileTap={{ scale: 0.995 }}>
+        <motion.div layout className="relative overflow-hidden rounded-2xl bg-zinc-900/40 backdrop-blur-md border border-white/5 mb-3 touch-pan-y flex items-center gap-3 p-3 cursor-pointer select-none" onPointerDown={startPress} onPointerUp={handlePointerUp} onPointerCancel={clearPress} onPointerLeave={handlePointerLeave} whileTap={{ scale: 0.995 }}
+            animate={pressProgress > 0 && pressProgress < 100 ? { x: [0, -3, 3, -3, 3, 0] } : { x: 0 }}
+            transition={pressProgress > 0 && pressProgress < 100 ? { duration: 0.35, repeat: Infinity, repeatType: 'loop' } : {}}
+        >
                 <div className="w-14 h-14 bg-zinc-950 rounded-full border border-zinc-800 shadow-[0_6px_18px_rgba(0,0,0,0.4)] relative shrink-0 overflow-hidden flex items-center justify-center">
                     <div className="absolute inset-0 bg-gradient-to-br from-black to-red-950/20 opacity-40" />
                     <div className="relative w-full h-full p-1 flex items-center justify-center">
                         <MuscleMap activeMuscles={muscleGroup ? [muscleGroup] : []} offsetY={yOffset} />
-                        <svg className="absolute inset-0 w-full h-full p-1 pointer-events-none" viewBox="0 0 36 36" aria-hidden>
-                            <circle cx="18" cy="18" r="12" strokeWidth="2.5" stroke="rgba(255,255,255,0.06)" fill="none" />
-                            <circle cx="18" cy="18" r="12" strokeWidth="2.5" stroke="#ef4444" fill="none"
+                        <svg className="absolute -inset-2 w-[calc(56px+16px)] h-[calc(56px+16px)] pointer-events-none" viewBox="0 0 40 40" aria-hidden>
+                            <circle cx="20" cy="20" r="18" strokeWidth="2.5" stroke="rgba(255,255,255,0.06)" fill="none" />
+                            <circle cx="20" cy="20" r="18" strokeWidth="2.5" stroke="#ef4444" fill="none"
                                 strokeDasharray={`${PROG_CIRC}`}
                                 strokeDashoffset={`${PROG_CIRC * (1 - pressProgress / 100)}`}
                                 strokeLinecap="round"
@@ -107,11 +110,11 @@ const ExerciseCard = ({ workout, onEdit, onDelete, onLongPress, userCatalog }: {
                         </div>
 
                             <div className="min-w-0 flex items-center gap-1 border border-zinc-800 px-2 py-0.5 rounded-md">
-                            <div className="w-1.5 h-1.5 rounded-full bg-destaque shrink-0" />
-                            <span className="text-[10px] font-bold text-zinc-300 uppercase tracking-wide truncate max-w-[220px]">
-                                {muscleGroup || 'Geral'}
-                            </span>
-                        </div>
+                                <div className="w-1.5 h-1.5 rounded-full bg-destaque shrink-0" />
+                                <span className="flex-1 min-w-0 text-[10px] font-bold text-zinc-300 uppercase tracking-wide truncate">
+                                    {muscleGroup || 'Geral'}
+                                </span>
+                            </div>
                     </div>
                 </div>
                 <div className="text-zinc-400 ml-3 shrink-0"><ChevronRight size={18} /></div>
