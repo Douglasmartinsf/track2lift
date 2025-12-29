@@ -434,7 +434,8 @@ const WorkoutsTab: React.FC<{ user: UserProfile }> = ({ user }) => {
                         <motion.button
                             whileTap={{ scale: 0.95 }}
                             onClick={() => setRoutineMode('LOAD')}
-                            className="bg-zinc-800/50 text-zinc-300 h-10 w-10 sm:h-12 sm:w-12 flex items-center justify-center rounded-xl border border-zinc-700/50"
+                            aria-label="Carregar rotina"
+                            className="bg-zinc-800/50 text-zinc-300 h-12 min-w-[48px] px-3 sm:px-4 flex items-center justify-center rounded-xl border border-zinc-700/50 shrink-0"
                         >
                             <Bookmark size={18} />
                         </motion.button>
@@ -442,10 +443,11 @@ const WorkoutsTab: React.FC<{ user: UserProfile }> = ({ user }) => {
                         <motion.button 
                             whileTap={{ scale: 0.95 }}
                             onClick={() => { setEditingWorkout(undefined); setIsModalOpen(true); }}
-                            className="bg-gradient-to-br from-destaque to-red-800 text-white h-11 px-4 rounded-xl shadow-lg border border-white/10 flex items-center gap-2 shrink-0"
+                            aria-label="Adicionar exercício"
+                            className="bg-gradient-to-br from-destaque to-red-800 text-white h-12 min-w-[48px] px-3 sm:px-6 rounded-xl shadow-lg border border-white/10 flex items-center gap-2 justify-center shrink-0"
                         >
                             <Plus size={18} strokeWidth={3} />
-                            <span className="font-bold text-xs sm:text-sm uppercase tracking-wider hidden sm:inline">Novo</span>
+                            <span className="font-bold text-xs sm:text-sm uppercase tracking-wider hidden sm:inline">Adicionar</span>
                         </motion.button>
                     </div>
                 </div>
