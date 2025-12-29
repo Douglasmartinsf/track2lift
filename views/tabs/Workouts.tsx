@@ -9,7 +9,7 @@ import WorkoutModal from '../../components/modals/WorkoutModal';
 import RoutineManager from '../../components/modals/RoutineManager';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const ExerciseCard = ({ workout, onEdit, onDelete, userCatalog }: { workout: Workout, onEdit: () => void, onDelete: () => void, userCatalog: Record<string, string[]> }) => {
+const ExerciseCard = ({ workout, onEdit, onDelete, onLongPress, userCatalog }: { workout: Workout, onEdit: () => void, onDelete?: () => void, onLongPress?: () => void, userCatalog: Record<string, string[]> }) => {
     const muscleGroup = workout.exercises[0] ? identifyMuscleGroup(workout.exercises[0].name, userCatalog)?.group : null;
 
     const getMuscleOffset = (group: string | null | undefined) => {
@@ -23,18 +23,53 @@ const ExerciseCard = ({ workout, onEdit, onDelete, userCatalog }: { workout: Wor
 
     const yOffset = getMuscleOffset(muscleGroup);
 
-    const handleDelete = (e: React.MouseEvent) => {
-        e.stopPropagation();
-        if (window.confirm('Excluir este exercício?')) onDelete();
+    // Long-press handling
+    const timerRef = useRef<number | null>(null);
+    const intervalRef = useRef<number | null>(null);
+    const [pressProgress, setPressProgress] = useState(0);
+    const [longPressed, setLongPressed] = useState(false);
+
+    const LONG_PRESS_MS = 600;
+
+    const clearPress = () => {
+        if (timerRef.current) { window.clearTimeout(timerRef.current); timerRef.current = null; }
+        if (intervalRef.current) { window.clearInterval(intervalRef.current); intervalRef.current = null; }
+        setPressProgress(0);
+    }
+
+    const startPress = () => {
+        setLongPressed(false);
+        const start = Date.now();
+        intervalRef.current = window.setInterval(() => {
+            const elapsed = Date.now() - start;
+            const progress = Math.min(100, Math.round((elapsed / LONG_PRESS_MS) * 100));
+            setPressProgress(progress);
+        }, 50);
+
+        timerRef.current = window.setTimeout(() => {
+            setLongPressed(true);
+            clearPress();
+            if (onLongPress) onLongPress();
+        }, LONG_PRESS_MS);
+    }
+
+    const handlePointerUp = (e: React.PointerEvent) => {
+        if (longPressed) {
+            // consumed by long-press
+            setLongPressed(false);
+            clearPress();
+            return;
+        }
+        clearPress();
+        onEdit();
+    }
+
+    const handlePointerLeave = () => {
+        clearPress();
     }
 
     return (
         <div className="relative overflow-hidden rounded-2xl bg-zinc-900/40 backdrop-blur-md border border-white/5 mb-3 touch-pan-y">
-            <button aria-label="Excluir exercício" onClick={handleDelete} className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/20 hover:bg-red-600/20 text-red-400 z-20">
-                <Trash2 size={18} />
-            </button>
-
-            <div onClick={onEdit} className="relative z-10 flex items-center gap-5 p-5 h-[100px] cursor-pointer select-none hover:bg-zinc-800/60 transition-colors duration-150">
                 <div className="w-14 h-14 bg-zinc-950 rounded-full border border-zinc-800 shadow-[0_6px_18px_rgba(0,0,0,0.4)] relative shrink-0 overflow-hidden flex items-center justify-center">
                     <div className="absolute inset-0 bg-gradient-to-br from-black to-red-950/20 opacity-40" />
                     <div className="relative w-full h-full p-1">
@@ -63,7 +98,8 @@ const ExerciseCard = ({ workout, onEdit, onDelete, userCatalog }: { workout: Wor
                         </div>
                     </div>
                 </div>
-            </div>
+                <div className="text-zinc-400 ml-3 shrink-0"><ChevronRight size={18} /></div>
+            </motion.div>
         </div>
     );
 };
