@@ -17,6 +17,14 @@ const SupportFeedback: React.FC<SupportFeedbackProps> = ({ user }) => {
     const [loading, setLoading] = useState(false);
     const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
+    const isSuggestion = type === 'suggestion';
+    const [isFocused, setIsFocused] = useState(false);
+    const textareaFocusClasses = isSuggestion ? 'focus:border-amber-500 focus:ring-1 focus:ring-amber-500' : 'focus:border-destaque focus:ring-1 focus:ring-destaque';
+    const messageIconClass = `${isSuggestion && isFocused ? 'absolute right-4 bottom-4 text-amber-400' : 'absolute right-4 bottom-4 text-zinc-700'} pointer-events-none`;
+    const activeSendButtonClasses = isSuggestion && isFocused
+        ? 'bg-amber-500 text-white hover:bg-amber-600 shadow-[0_0_15px_rgba(245,158,11,0.2)]'
+        : 'bg-destaque text-white hover:bg-red-700 shadow-red-900/20';
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!message.trim()) return;
@@ -103,10 +111,12 @@ const SupportFeedback: React.FC<SupportFeedbackProps> = ({ user }) => {
                             <textarea
                                 value={message}
                                 onChange={(e) => setMessage(e.target.value)}
+                                onFocus={() => setIsFocused(true)}
+                                onBlur={() => setIsFocused(false)}
                                 placeholder={type === 'bug' ? "O app fechou quando cliquei em..." : "Seria legal se tivesse..."}
-                                className="w-full h-40 bg-zinc-950 border border-zinc-800 rounded-2xl p-4 text-sm text-white placeholder-zinc-600 focus:border-destaque focus:ring-1 focus:ring-destaque outline-none resize-none transition-all"
+                                className={`w-full h-40 bg-zinc-950 border border-zinc-800 rounded-2xl p-4 text-sm text-white placeholder-zinc-600 ${textareaFocusClasses} outline-none resize-none transition-all`}
                             />
-                            <MessageSquare size={16} className="absolute right-4 bottom-4 text-zinc-700 pointer-events-none" />
+                            <MessageSquare size={16} className={messageIconClass} />
                         </div>
                     </div>
 
@@ -141,7 +151,7 @@ const SupportFeedback: React.FC<SupportFeedbackProps> = ({ user }) => {
                                 className={`w-full py-4 rounded-2xl font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-lg ${
                                     loading || !message.trim()
                                         ? 'bg-zinc-800 text-zinc-500 cursor-not-allowed'
-                                        : 'bg-destaque text-white hover:bg-red-700 shadow-red-900/20 active:scale-[0.98]'
+                                        : `${activeSendButtonClasses} active:scale-[0.98]`
                                 }`}
                             >
                                 {loading ? (

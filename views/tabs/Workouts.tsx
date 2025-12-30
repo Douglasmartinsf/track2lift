@@ -568,7 +568,7 @@ const WorkoutsTab: React.FC<{ user: UserProfile }> = ({ user }) => {
                                     className="absolute inset-0 flex items-center justify-center pointer-events-none z-10"
                                 >
                                     <div className={`w-full h-full pb-16 pt-8 px-8 transition-transform duration-500 ${muscleStats.focus === 'Descanso' ? 'scale-[1.15]' : 'scale-[0.85]'}`}>
-                                        <MuscleMap activeMuscles={muscleStats.groups} disableZoom={false} offsetY={summaryOffsetY} enableAnimation={true} />
+                                        <MuscleMap activeMuscles={muscleStats.groups} disableZoom={false} offsetY={summaryOffsetY} enableAnimation={true} enableParticles={false} />
                                     </div>
                                     <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-zinc-950 via-zinc-950/80 to-transparent pointer-events-none" />
                                 </motion.div>

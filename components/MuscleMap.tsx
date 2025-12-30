@@ -20,6 +20,7 @@ interface MuscleMapProps {
     disableZoom?: boolean;
     offsetY?: number;
     enableAnimation?: boolean;
+    enableParticles?: boolean;
 }
 
 const MuscleMap: React.FC<MuscleMapProps> = ({ 
@@ -27,7 +28,8 @@ const MuscleMap: React.FC<MuscleMapProps> = ({
     highlightColor = '#DC2626', 
     disableZoom = false,
     offsetY = 0,
-    enableAnimation = false 
+    enableAnimation = false,
+    enableParticles = true
 }) => {
     const scanControls = useAnimation();
     const rawId = useId();
@@ -132,10 +134,9 @@ const MuscleMap: React.FC<MuscleMapProps> = ({
     };
 
     const particles = useMemo(() => {
-        if (!enableAnimation) return [];
-        // Increased from 800 to 1500 because clipping will hide about 40% of them
-        // This ensures the effect remains dense on the body itself.
-        const count = 1500; 
+        if (!enableAnimation || !enableParticles) return [];
+        // default particle count (kept high for full animation). If particles disabled, empty.
+        const count = 1200;
         const generated: Particle[] = [];
         for (let i = 0; i < count; i++) {
             const xBase = Math.random() * 2800 - 200; 
@@ -151,8 +152,8 @@ const MuscleMap: React.FC<MuscleMapProps> = ({
                 size: Math.random() * 3 + 1,
                 color: highlightColor,
                 travelX: (Math.random() - 0.5) * 30,
-                travelY: Math.random() * 300 + 100, 
-                duration: Math.random() * 0.5 + 0.5, 
+                travelY: Math.random() * 220 + 80, 
+                duration: Math.random() * 0.45 + 0.45, 
                 delay: delay 
             });
         }
