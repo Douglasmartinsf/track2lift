@@ -78,22 +78,31 @@ const ExerciseCard = ({ workout, onEdit, onDelete, onLongPress, userCatalog }: {
         >
                 <div className="w-14 h-14 bg-zinc-950 rounded-full border border-zinc-800 shadow-[0_6px_18px_rgba(0,0,0,0.4)] relative shrink-0 overflow-hidden flex items-center justify-center">
                     <div className="absolute inset-0 bg-gradient-to-br from-black to-red-950/20 opacity-40" />
-                    <div className="relative w-full h-full p-1 flex items-center justify-center">
-                        <MuscleMap activeMuscles={muscleGroup ? [muscleGroup] : []} offsetY={yOffset} />
-                        <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 36 36" aria-hidden>
-                            <circle cx="18" cy="18" r="16" strokeWidth="2.5" stroke="rgba(255,255,255,0.06)" fill="none" />
-                            <circle cx="18" cy="18" r="16" strokeWidth="2.5" stroke="#ef4444" fill="none"
-                                strokeDasharray={`${PROG_CIRC}`}
-                                strokeDashoffset={`${PROG_CIRC * (1 - pressProgress / 100)}`}
-                                strokeLinecap="round"
-                                style={{ transition: 'stroke-dashoffset 50ms linear', transform: 'rotate(-90deg)', transformOrigin: '50% 50%' }}
-                            />
-                        </svg>
-                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                            <div className="absolute w-full h-full rounded-full" style={{ background: 'rgba(239,68,68,0.0)', pointerEvents: 'none' }} />
-                            <Trash2 size={18} className="text-red-600" style={{ opacity: Math.min(1, pressProgress / 100) }} />
-                        </div>
-                    </div>
+                    {(() => {
+                        const fadeAmount = Math.min(0.85, (pressProgress / 100) * 0.85);
+                        const visualOpacity = longPressed ? 0.15 : 1 - fadeAmount;
+                        const opacityStyle = { opacity: visualOpacity, transition: 'opacity 60ms linear' };
+                        return (
+                            <div className="relative w-full h-full p-1 flex items-center justify-center">
+                                <div style={opacityStyle} className="w-full h-full flex items-center justify-center">
+                                    <MuscleMap activeMuscles={muscleGroup ? [muscleGroup] : []} offsetY={yOffset} />
+                                </div>
+                                <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 36 36" aria-hidden style={opacityStyle}>
+                                    <circle cx="18" cy="18" r="16" strokeWidth="2.5" stroke="rgba(255,255,255,0.06)" fill="none" />
+                                    <circle cx="18" cy="18" r="16" strokeWidth="2.5" stroke="#ef4444" fill="none"
+                                        strokeDasharray={`${PROG_CIRC}`}
+                                        strokeDashoffset={`${PROG_CIRC * (1 - pressProgress / 100)}`}
+                                        strokeLinecap="round"
+                                        style={{ transition: 'stroke-dashoffset 50ms linear', transform: 'rotate(-90deg)', transformOrigin: '50% 50%' }}
+                                    />
+                                </svg>
+                                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                    <div className="absolute w-full h-full rounded-full" style={{ background: 'rgba(239,68,68,0.0)', pointerEvents: 'none' }} />
+                                    <Trash2 size={18} className="text-red-600" style={{ opacity: Math.min(1, pressProgress / 100) }} />
+                                </div>
+                            </div>
+                        );
+                    })()}
                 </div>
 
                 <div className="flex-1 min-w-0 flex flex-col justify-center">
@@ -160,12 +169,13 @@ const WorkoutsTab: React.FC<{ user: UserProfile }> = ({ user }) => {
 
     useEffect(() => {
         const observer = new IntersectionObserver(([entry]) => {
-            // Detect if sentinel exited past the top of the visible scroll area
-            setIsStuck(entry.boundingClientRect.top < 0);
+            // Use isIntersecting to robustly detect when the sentinel leaves the viewport
+            // If it's not intersecting, the header should be considered "stuck".
+            setIsStuck(!entry.isIntersecting);
         }, { threshold: [0], rootMargin: '0px 0px 0px 0px' });
 
         if (sentinelRef.current) observer.observe(sentinelRef.current);
-        return () => { if (sentinelRef.current) observer.unobserve(sentinelRef.current); };
+        return () => { observer.disconnect(); };
     }, []);
 
     const dateStr = date.toISOString().split('T')[0];
@@ -213,9 +223,22 @@ const WorkoutsTab: React.FC<{ user: UserProfile }> = ({ user }) => {
 
                     if (templates && templates.length > 0) {
                         const template = templates[0];
-                        const currentNames = workouts.map(w => w.name || (w.exercises[0] ? w.exercises[0].name : '')).join('|');
-                        const templateNames = template.data.map(w => w.name || (w.exercises[0] ? w.exercises[0].name : '')).join('|');
-                        setIsRoutineModified(currentNames !== templateNames);
+                        const currentNamesArr = workouts.map(w => w.name || (w.exercises[0] ? w.exercises[0].name : ''));
+                        const templateNamesArr = (template.data || []).map((w: any) => w.name || (w.exercises[0] ? w.exercises[0].name : ''));
+
+                        const sameMultiset = (a: string[], b: string[]) => {
+                            if (a.length !== b.length) return false;
+                            const cnt = new Map<string, number>();
+                            for (const x of a) cnt.set(x, (cnt.get(x) || 0) + 1);
+                            for (const y of b) {
+                                if (!cnt.has(y)) return false;
+                                cnt.set(y, (cnt.get(y) || 0) - 1);
+                                if (cnt.get(y) === 0) cnt.delete(y);
+                            }
+                            return cnt.size === 0;
+                        };
+
+                        setIsRoutineModified(!sameMultiset(currentNamesArr, templateNamesArr));
                     }
                 } catch (e) {
                     console.error("Error verifying modification", e);
@@ -228,11 +251,23 @@ const WorkoutsTab: React.FC<{ user: UserProfile }> = ({ user }) => {
                         .eq('user_id', user.id);
 
                     if (templates) {
-                        const currentNames = workouts.map(w => w.name || (w.exercises[0] ? w.exercises[0].name : '')).join('|');
+                        const currentNamesArr = workouts.map(w => w.name || (w.exercises[0] ? w.exercises[0].name : ''));
+                        const sameMultiset = (a: string[], b: string[]) => {
+                            if (a.length !== b.length) return false;
+                            const cnt = new Map<string, number>();
+                            for (const x of a) cnt.set(x, (cnt.get(x) || 0) + 1);
+                            for (const y of b) {
+                                if (!cnt.has(y)) return false;
+                                cnt.set(y, (cnt.get(y) || 0) - 1);
+                                if (cnt.get(y) === 0) cnt.delete(y);
+                            }
+                            return cnt.size === 0;
+                        };
+
                         const exactMatch = templates.find(t => {
                             if (!t.data || t.data.length !== workouts.length) return false;
-                            const templateNames = t.data.map(w => w.name || (w.exercises[0] ? w.exercises[0].name : '')).join('|');
-                            return currentNames === templateNames;
+                            const templateNamesArr = (t.data || []).map((w: any) => w.name || (w.exercises[0] ? w.exercises[0].name : ''));
+                            return sameMultiset(currentNamesArr, templateNamesArr);
                         });
                         setActiveRoutineName(exactMatch ? exactMatch.name : null);
                         setIsRoutineModified(false);
@@ -255,7 +290,7 @@ const WorkoutsTab: React.FC<{ user: UserProfile }> = ({ user }) => {
         }
 
         if (editingWorkout) {
-            await supabase.from('workouts').update(workout).eq('id', editingWorkout.id);
+            await supabase.from('workouts').update(payload).eq('id', editingWorkout.id);
         } else {
             await supabase.from('workouts').insert([payload]);
         }
@@ -428,8 +463,8 @@ const WorkoutsTab: React.FC<{ user: UserProfile }> = ({ user }) => {
 
             <div className={`sticky top-0 z-[100] -mx-4 px-4 flex items-center justify-between gap-3 transition-all duration-300 ease-in-out ${
                 isStuck 
-                ? 'pt-6 pb-4 bg-zinc-950 shadow-2xl border-b border-zinc-800' 
-                : 'pt-2 pb-2 bg-transparent border-b border-transparent'
+                ? 'pt-5 pb-3 bg-zinc-950 shadow-2xl border-b border-zinc-800' 
+                : 'pt-1 pb-4 bg-transparent border-b border-transparent'
             }`}>
                     <div className="flex items-center gap-2 sm:gap-4 shrink-0">
                         <button onClick={() => setDate(new Date(date.setDate(date.getDate() - 1)))} className="p-2 hover:bg-zinc-800 rounded-full transition text-zinc-400 hover:text-white"><ChevronLeft size={18}/></button>
@@ -498,7 +533,7 @@ const WorkoutsTab: React.FC<{ user: UserProfile }> = ({ user }) => {
                                     </h3>
                                     <AnimatePresence>
                                         {/* Only show 'Edited' badge if routine is modified AND map is collapsed (card is closed) */}
-                                        {isRoutineModified && !isMapExpanded && (
+                                        {activeRoutineName && isRoutineModified && !isMapExpanded && (
                                             <motion.div 
                                                 initial={{ opacity: 0, scale: 0.8, x: -5 }}
                                                 animate={{ opacity: 1, scale: 1, x: 0 }}
@@ -642,8 +677,8 @@ const WorkoutsTab: React.FC<{ user: UserProfile }> = ({ user }) => {
                         ) : (
                             workouts.map((w) => (
                                 <motion.div layout key={w.id} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, scale: 0.9 }} transition={{ type: "spring", stiffness: 500, damping: 35 }}>
-                                    <ExerciseCard workout={w} userCatalog={userCatalog} onEdit={() => { setEditingWorkout(w); setIsModalOpen(true); }} onDelete={() => setWorkoutToDelete(w)} onLongPress={() => setWorkoutToDelete(w)} />
-                                </motion.div>
+                                        <ExerciseCard workout={w} userCatalog={userCatalog} onEdit={() => { setEditingWorkout(JSON.parse(JSON.stringify(w))); setTimeout(() => setIsModalOpen(true), 50); }} onDelete={() => setWorkoutToDelete(w)} onLongPress={() => setWorkoutToDelete(w)} />
+                                    </motion.div>
                             ))
                         )}
                     </AnimatePresence>

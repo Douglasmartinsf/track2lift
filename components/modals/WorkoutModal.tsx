@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { Workout, Exercise, ExerciseSet, UserProfile } from '../../types';
 import { identifyMuscleGroup, getExercisesForGroup, addCustomExercise, getExerciseCatalog } from '../../services/workoutService';
@@ -22,14 +22,17 @@ const WorkoutModal: React.FC<WorkoutModalProps> = ({ onClose, onSave, initialDat
     // Assuming App architecture passes user down or uses a context.
     
     const initialExercise = initialData?.exercises?.[0] || { name: '', type: 'strength', sets: [{ reps: 0, weight: 0 }] };
-    
+
     const [selectedGroup, setSelectedGroup] = useState<string>('');
     const [muscleGroups, setMuscleGroups] = useState<string[]>([]);
-    
-    // State management for exercises
+
+    // Helper to generate a stable local id for sets (used as key)
+    const genId = () => `${Date.now().toString(36)}-${Math.random().toString(36).slice(2,8)}`;
+
+    // State management for exercises (use deep clones so we don't mutate parent's objects)
     const [availableExercises, setAvailableExercises] = useState<string[]>([]);
-    const [exerciseName, setExerciseName] = useState(initialExercise.name);
-    const [sets, setSets] = useState<ExerciseSet[]>(initialExercise.sets);
+    const [exerciseName, setExerciseName] = useState<string>(() => initialExercise.name || '');
+    const [sets, setSets] = useState<ExerciseSet[]>(() => (initialExercise.sets || []).map(s => ({ ...s, _localId: genId() })));
 
     // Logic to handle "Custom" input vs "Select" dropdown
     const [isCustomInput, setIsCustomInput] = useState(false);
@@ -58,6 +61,40 @@ const WorkoutModal: React.FC<WorkoutModalProps> = ({ onClose, onSave, initialDat
 
         return () => document.body.classList.remove('modal-open');
     }, [user, initialExercise.name]);
+
+    // If the modal receives new initialData after mount, reset local state with deep clones
+    const initializedRef = useRef(false);
+    useEffect(() => {
+        if (!initializedRef.current) {
+            initializedRef.current = true;
+            return; // skip first run to avoid double-initialization
+        }
+
+        if (initialData) {
+            const ex = initialData.exercises?.[0] || { name: '', sets: [] };
+            setExerciseName(ex.name || '');
+            setSets((ex.sets || []).map(s => ({ ...s, _localId: genId() })));
+            if (user && ex.name) {
+                try {
+                    const fullCatalog = getExerciseCatalog(user);
+                    const id = identifyMuscleGroup(ex.name, fullCatalog);
+                    setSelectedGroup(id?.group || '');
+                } catch (e) {
+                    setSelectedGroup('');
+                }
+            }
+        } else {
+            // reset to defaults for new exercise
+            setExerciseName('');
+            setSets([{ reps: 0, weight: 0, _localId: genId() }]);
+            setSelectedGroup('');
+        }
+    }, [initialData, user]);
+
+    // Update a specific field on a set by its local id
+    const updateSetField = (id: string, field: string, value: any) => {
+        setSets(prev => prev.map(s => s._localId === id ? { ...s, [field]: value } : s));
+    };
 
     // Fetch exercises whenever group changes
     useEffect(() => {
@@ -111,14 +148,14 @@ const WorkoutModal: React.FC<WorkoutModalProps> = ({ onClose, onSave, initialDat
     const addSet = () => {
         const lastSet = sets[sets.length - 1];
         if (isCardio) {
-            setSets([...sets, { duration: lastSet?.duration || 0 }]);
+            setSets(prev => [...prev, { duration: lastSet?.duration || 0, _localId: genId() }]);
         } else {
-            setSets([...sets, { reps: lastSet?.reps || 0, weight: lastSet?.weight || 0 }]);
+            setSets(prev => [...prev, { reps: lastSet?.reps || 0, weight: lastSet?.weight || 0, _localId: genId() }]);
         }
     };
 
-    const removeSet = (index: number) => {
-        setSets(sets.filter((_, i) => i !== index));
+    const removeSet = (id: string) => {
+        setSets(prev => prev.filter(s => s._localId !== id));
     };
 
     // Validation Logic
@@ -321,7 +358,7 @@ const WorkoutModal: React.FC<WorkoutModalProps> = ({ onClose, onSave, initialDat
                             <AnimatePresence initial={false}>
                                 {sets.map((set, i) => (
                                     <motion.div 
-                                        key={i} 
+                                        key={set._localId}
                                         initial={{ opacity: 0, x: -10 }} 
                                         animate={{ opacity: 1, x: 0 }} 
                                         exit={{ opacity: 0, scale: 0.9 }}
@@ -343,12 +380,11 @@ const WorkoutModal: React.FC<WorkoutModalProps> = ({ onClose, onSave, initialDat
                                                         placeholder="0" 
                                                         value={set.duration || ''} 
                                                         onChange={e => {
-                                                            const newSets = [...sets];
-                                                            newSets[i].duration = Math.max(0, Number(e.target.value));
-                                                            // Limpar reps/weight para garantir consistência
-                                                            delete newSets[i].reps;
-                                                            delete newSets[i].weight;
-                                                            setSets(newSets);
+                                                            const val = Math.max(0, Number(e.target.value));
+                                                            updateSetField(set._localId, 'duration', val);
+                                                            // ensure consistency
+                                                            updateSetField(set._localId, 'reps', undefined);
+                                                            updateSetField(set._localId, 'weight', undefined);
                                                         }} 
                                                     />
                                                     <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 pointer-events-none text-zinc-600">
@@ -368,9 +404,8 @@ const WorkoutModal: React.FC<WorkoutModalProps> = ({ onClose, onSave, initialDat
                                                             placeholder="0" 
                                                             value={set.reps || ''} 
                                                             onChange={e => {
-                                                                const newSets = [...sets];
-                                                                newSets[i].reps = Math.max(0, Number(e.target.value));
-                                                                setSets(newSets);
+                                                                const val = Math.max(0, Number(e.target.value));
+                                                                updateSetField(set._localId, 'reps', val);
                                                             }} 
                                                         />
                                                         <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-zinc-600 font-bold uppercase pointer-events-none">Reps</span>
@@ -384,9 +419,8 @@ const WorkoutModal: React.FC<WorkoutModalProps> = ({ onClose, onSave, initialDat
                                                             placeholder="0" 
                                                             value={set.weight || ''} 
                                                             onChange={e => {
-                                                                const newSets = [...sets];
-                                                                newSets[i].weight = Math.max(0, Number(e.target.value));
-                                                                setSets(newSets);
+                                                                const val = Math.max(0, Number(e.target.value));
+                                                                updateSetField(set._localId, 'weight', val);
                                                             }} 
                                                         />
                                                         <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-zinc-600 font-bold uppercase pointer-events-none">Kg</span>
@@ -395,7 +429,7 @@ const WorkoutModal: React.FC<WorkoutModalProps> = ({ onClose, onSave, initialDat
                                             )}
                                         </div>
                                         <button 
-                                            onClick={() => removeSet(i)} 
+                                            onClick={() => removeSet(set._localId)} 
                                             className="w-10 h-10 flex items-center justify-center text-zinc-600 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors"
                                         >
                                             <Trash2 size={18}/>
